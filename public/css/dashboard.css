@@ -1,0 +1,45 @@
+.total_countbox{
+    width: 280px;
+    height: 150px;
+    background-image: radial-gradient(circle 248px at center, #16d9e3 0%, #30c7ec 47%, #46aef7 100%) !important;
+    border-radius: 10px;
+    float: left;
+    margin-right: 15px;
+    padding: 10px 10px 10px 10px;
+    color: white;
+}
+.completed_countbox{
+    width: 280px;
+    height: 150px;
+    background-image: radial-gradient(circle 248px at center, #16d9e3 0%, #30c7ec 47%, #46aef7 100%) !important;
+    border-radius: 10px;
+    float: left;
+    margin-right: 15px;
+    padding: 10px 10px 10px 10px;
+    color: white;
+}
+.pending_countbox{
+    width: 280px;
+    height: 150px;
+    background-image: radial-gradient(circle 248px at center, #16d9e3 0%, #30c7ec 47%, #46aef7 100%) !important;
+    border-radius: 10px;
+    float: left;
+    margin-right: 15px;
+    padding: 10px 10px 10px 10px;
+    color: white;
+}
+.main_table{
+    width: 100%;
+    height: 600px;
+}
+.main_table label{
+    font-size: 18px;
+    font-weight: 700;
+}
+.main_table p{
+    font-size: 18px;
+}
+.button_section h2.content_pending{
+    font-size: 17px;
+    padding: 0px 0px 6px 10px;
+}
