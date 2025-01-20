@@ -24,7 +24,7 @@ class App extends BaseConfig
      *
      * @var string
      */
-    public $baseURL = 'http://localhost/hr-connect-live/';
+    public $baseURL = 'http://localhost/hrconnect/';
 
     /**
      * --------------------------------------------------------------------------
