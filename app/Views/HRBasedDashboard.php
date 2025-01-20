@@ -8,18 +8,6 @@
     $CAREER = new CareerModel();
 ?>
 
-
-<style>
-    .anniversary-container .table-container .table-hover td{
-        font-size: x-small;
-    }
-
-    .birthday-container .table-container .table-hover td{
-        font-size: x-small;
-    }
-</style>
-
-
 <div class="row Hrbased row-lg-12 mt-1">
     <div class="col col-lg-7"></div>
     <div class="col col-lg-5 ps-3 d-flex">
@@ -179,7 +167,7 @@
                 <div class="event-data">
                     <div class="row row-lg-12">
                         <div class="col-md-8">
-                            <span><b><?= $event['EventName'] ?> <?= date('d/m/y', strtotime($event['EventDate'])) ?></b></span>
+                            <span><b><?= $event['EventName'] ?></b></span>
                         </div>
                         <div class="col-md-4 event-date">
                             <span><?= date('d M Y, h:i A', strtotime($event['EventDate'])) ?></span>
@@ -213,7 +201,7 @@
                 <tbody>
                     <?php if (!empty($allCareerList)): ?>
                         <?php foreach ($allCareerList as $index => $career): ?>
-                            <?php if ($index >= 6) break; ?>
+                            <?php if ($index >= 7) break; ?>
                             <tr>
                                 <td><?= $career['job_Title']; ?></td>
                                 <td><?= $CAREER->NofApplicants($career['job_IDPK'], ['fdate' => '2020-01-01', 'todate' => date('Y-m-d')]); ?> Applied</td>
@@ -264,7 +252,7 @@
             </div>
         </div>
 
-        <div class="anniversary-container mt-2 pt-1">
+        <div class="anniversary-container mt-2 pt-1 mb-1">
             <div class="col ms-2">
                 <span>Upcomming Anniversary</span>
             </div>

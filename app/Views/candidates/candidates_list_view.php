@@ -269,7 +269,7 @@ if (isset($_SESSION['msg'])) {
 </style>
 
 <div class="career ms-4">
-    <div class="row ms-0 me-0 pt-2">
+    <div class="row ms-0 me-0 pt-2 mt-2">
         <div class="col col-lg-7">
             <div class="d-flex justify-content-start">
                 <div class="form-group ml-1">
@@ -297,7 +297,7 @@ if (isset($_SESSION['msg'])) {
             </div>
         </div>
     <?php } ?>
-    <div class="cantabs me-0 mt-2 pt-2 pb-2">
+    <div class="cantabs me-0 mt-2 pt-2 pb-2 mt-4">
         <div class="tabs ms-1 me-1">
             <?php if ($trickid != 11 && $trickid != 9) { ?>
                 <a href="#" class="tab disabled" id="trackid-12" data-trackid="12">Untouched-<span id="Tit-count-12"></span></a>
