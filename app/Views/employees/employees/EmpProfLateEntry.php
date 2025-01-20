@@ -66,28 +66,33 @@
                 <td>Date</td>
                 <td>Check-in Timing</td>
                 <td>Late by</td>
-                <!-- <td>Action</td> -->
             </tr>
         </thead>
         <tbody>
             <?php $i=1; ?>
             <?php $fixedTime = new DateTime("09:45:00"); ?>
             <?php $fixedTime->setDate(2000, 1, 1); ?>
-            <?php foreach($LateEntry as $late): ?>
-            <tr>
-                <td class="ps-3"><?= $i++ ?></td>
-                <td><?= date("d F Y", strtotime($late['LogDateDay'])) ?></td>
-                <td><?= date("h:i A", strtotime($late['FirstLogDate'])) ?></td>
-                <?php 
-                    $firstLogTime = new DateTime($late['FirstLogDate']);
-                    $firstLogTime->setDate(2000, 1, 1);
-                    $diff = $fixedTime->diff($firstLogTime);
-                    $diffInMinutes = ($diff->h * 60) + $diff->i;
-                ?>
-                <td><?= $diffInMinutes ?> Mins</td>
-                <!-- <td></td> -->
-            </tr>
-            <?php endforeach; ?>
+            <?php 
+                if($LateEntry){
+                    foreach($LateEntry as $late): ?>
+                        <tr>
+                            <td class="ps-3"><?= $i++ ?></td>
+                            <td><?= date("d F Y", strtotime($late['LogDateDay'])) ?></td>
+                            <td><?= date("h:i A", strtotime($late['FirstLogDate'])) ?></td>
+                            <?php 
+                                $firstLogTime = new DateTime($late['FirstLogDate']);
+                                $firstLogTime->setDate(2000, 1, 1);
+                                $diff = $fixedTime->diff($firstLogTime);
+                                $diffInMinutes = ($diff->h * 60) + $diff->i;
+                            ?>
+                            <td><?= $diffInMinutes ?> Mins</td>
+                        </tr>
+            <?php endforeach;
+                } else{ ?>
+                    <tr>
+                        <td style="text-align:center;" colspan="4">No Data Available</td>
+                    </tr>
+            <?php } ?>
         </tbody>
     </table>
 </div>
@@ -122,7 +127,6 @@
         var fed = moment(dates[1]).format('YYYY/MM/DD');
         var newUrl = '<?php echo $BasicDetails['EmployeeId']; ?>' + '?trickId=5&fsd=' + encodeURIComponent(fsd) + '&fed=' + encodeURIComponent(fed);
         window.location.replace(newUrl);
-        // window.history.replaceState(null, '', <?php echo $BasicDetails['EmployeeId'] ?>+'?trickId=5&fsd='+encodeURIComponent(fsd)+'&fed='+encodeURIComponent(fed));
     });
 
 </script>

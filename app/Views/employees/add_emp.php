@@ -1020,15 +1020,15 @@ if (isset($_SESSION['msg'])) {
         }
         if ($('#DepartmentId').val() === null || $('#DepartmentId').val() === '') {
           $('#DepartmentId').addClass('is-invalid');
-          Test[1] = false;
+           Test[1] = false;
         }
         if ($('#DesignationIDFK').val() === null || $('#DesignationIDFK').val() === '') {
           $('#DesignationIDFK').addClass('is-invalid');
-          Test[2] = false;
+           Test[2] = false;
         }
         if ($('#Status').val() === null || $('#Status').val() === '') {
           $('#Status').addClass('is-invalid');
-          Test[3] = false;
+           Test[3] = false;
         }
         if ($('#EmployementType').val() === null || $('#EmployementType').val() === '') {
           $('#EmployementType').addClass('is-invalid');

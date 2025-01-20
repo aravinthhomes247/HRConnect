@@ -37,7 +37,7 @@
         <!-- DataTable bootsrup 5 -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.bootstrap5.css">
-
+        
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
         <link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/b-3.2.0/b-html5-3.2.0/datatables.min.css" rel="stylesheet">
 
@@ -46,11 +46,11 @@
     <body>
         <div class="layout">
             <?php
-            $fdate = date("Y-m-d");
-            $todate = date("Y-m-d");
-            $currentpage = uri_string();
-            $currentpage = preg_replace('/\/\d+$/', '', $currentpage)
-            // print_r($currentpage);exit(0);
+                $fdate = date("Y-m-d");
+                $todate = date("Y-m-d");
+                $currentpage = uri_string();
+                $currentpage = preg_replace('/\/\d+$/', '', $currentpage)
+                // print_r($currentpage);exit(0);
             ?>
             <?php if ($session->get('user_level') == 1) { ?>
                 <div class="sidebar">
@@ -237,15 +237,15 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
     <script src="https://cdn.datatables.net/v/dt/jszip-3.10.1/b-3.2.0/b-html5-3.2.0/datatables.min.js"></script>
-
+   
 
     <!-- tiny editor -->
     <?php
 
-    use App\Models\CareerModel;
+        use App\Models\CareerModel;
 
-    $this->careerModel = new CareerModel();
-    $ret_arr = $this->careerModel->get_tinyMCE_code();
+        $this->careerModel = new CareerModel();
+        $ret_arr = $this->careerModel->get_tinyMCE_code(); 
     ?>
     <script src="https://cdn.tiny.cloud/1/<?= $ret_arr['tinyMCE_API']; ?>/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
@@ -291,11 +291,11 @@
 
         $(document).ready(function() {
             $('#dataTable').DataTable({
-                columnDefs: [{
-                        className: 'align-left',
+                columnDefs: [{ 
+                                className: 'align-left', 
                         targets: '_all'
                     } // Apply to all columns
-                ]
+                            ]
             });
             // $('.dataTable').DataTable({
             //     columnDefs: [{ 
@@ -309,6 +309,6 @@
             selector: 'textarea.TinyMCE',
         });
     </script>
-    </lang>
+</lang>
 
-    </html>
+</html>

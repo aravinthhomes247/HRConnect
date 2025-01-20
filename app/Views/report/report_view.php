@@ -24,6 +24,29 @@
         height: 25px;
         color: #8146D4;
     }
+
+    .dropdown {
+        display: none;
+        position: absolute;
+        background-color: white;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        width: 120px;
+    }
+
+    .dropdown a {
+        padding: 5px 10px !important;
+        display: block;
+        /* color: black !important; */
+        text-decoration: none !important;
+        width: 100% !important;
+    }
+
+    .dropdown a:hover {
+        background-color: #f0f0f0;
+    }
 </style>
 
 
@@ -33,8 +56,8 @@
             <input type="hidden" name="trickid" id="trickid" value="<?= $trickid ?>">
             <a href="<?= site_url('/reportemp?trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 1) ? 'active' : '' ?>">All</a>
             <a href="<?= site_url('/reportemp?trickid=2&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 2) ? 'active' : '' ?>">Late Comers - <?= $lateComers ?></a>
-            <!-- <a href="#" class="btn">Early Log-Out</a>
-            <a href="#" class="btn">Abnormal Time Log</a> -->
+            <a href="<?= site_url('/reportemp?trickid=3&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 3) ? 'active' : '' ?>">Early Log-Out -</a>
+            <a href="<?= site_url('/reportemp?trickid=4&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 4) ? 'active' : '' ?>">Abnormal Time Log -</a>
         </div>
         <div class="col col-lg-4">
             <div class="action ms-3">
@@ -100,7 +123,8 @@
                         <td>Employee Name</td>
                         <td>Employee Code</td>
                         <td>Designation</td>
-                        <td>Log-IN</td>
+                        <td>No of days Late</td>
+                        <td>Action</td>
                     </tr>
                 </thead>
                 <tbody>
@@ -111,10 +135,50 @@
                                 <td><?php echo $row['name']; ?></td>
                                 <td><?php echo $row['UserId']; ?></td>
                                 <td><?php echo $row['designations']; ?></td>
-                                <td><?php echo $row['FirstLogin']; ?></td>
+                                <td>5 days</td>
+                                <td>
+                                    <a href="javascript:void(0);" class="menu-trigger">
+                                        <img src="<?php echo base_url('../public/images/img/Group.png') ?>" alt="menu" id="menu-icon">
+                                    </a>
+                                    <div class="dropdown" style="display: none;">
+                                        <a href="#">Edit</a>
+                                        <a href="#">Delete</a>
+                                    </div>
+                                </td>
                             </tr>
                         <?php endforeach; ?> 
                      <?php endif; ?>
+                </tbody>
+            </table>
+        <?php } else if($trickid == 3) { ?>
+            <table class="table table-hover ms-2" id="examp1">
+                <thead class="table-secondary">
+                    <tr>
+                        <td>S.No</td>
+                        <td>Employee Name</td>
+                        <td>Employee Code</td>
+                        <td>Designation</td>
+                        <td>Log-Out</td>
+                        <td>Early By</td>
+                        <td>Total Hrs</td>
+                    </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        <?php } else if($trickid == 4) { ?>
+            <table class="table table-hover ms-2" id="examp1">
+                <thead class="table-secondary">
+                    <tr>
+                        <td>S.No</td>
+                        <td>Employee Name</td>
+                        <td>Employee Code</td>
+                        <td>Designation</td>
+                        <td>Issue Type</td>
+                        <td>Action</td>
+                    </tr>
+                </thead>
+                <tbody>    
                 </tbody>
             </table>
         <?php } ?>
@@ -139,6 +203,23 @@
 </div>
 
 <script>
+    const menuTriggers = document.querySelectorAll('.menu-trigger');
+    menuTriggers.forEach((trigger) => {
+        trigger.addEventListener('click', (event) => {
+            event.stopPropagation();
+            document.querySelectorAll('.dropdown').forEach((dropdown) => {
+                dropdown.style.display = 'none';
+            });
+            const dropdown = trigger.nextElementSibling;
+            dropdown.style.display = 'block';
+        });
+    });
+    document.addEventListener('click', () => {
+        document.querySelectorAll('.dropdown').forEach((dropdown) => {
+            dropdown.style.display = 'none';
+        });
+    });
+    
     $(document).ready(function() {
         var trickid = $('#trickid').val();
         var filename;

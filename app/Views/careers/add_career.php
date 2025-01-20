@@ -130,7 +130,7 @@
             }
             for (let index = 0; index < flag.length; index++) {
                 if(flag[index] == false){
-                    return false;
+                return false;
                 }
             }
             $('#AddDepartmentForm').submit();

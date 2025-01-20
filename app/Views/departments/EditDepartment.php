@@ -98,7 +98,7 @@
         if (!name) {
             $('#DepartmentName').addClass('is-invalid');
         }else{
-            $('#AddDepartmentForm').submit();
+        $('#AddDepartmentForm').submit();
         }
     });
 

@@ -294,28 +294,27 @@ class LogModel extends Model
         $fdate = $data1['fdate'];
         $todate = $data1['todate'];
 
-        $sqltemptable = "   DROP TEMPORARY TABLE if exists `temptable`";
-        $sql_select11 = "   CREATE TEMPORARY TABLE temptable SELECT UserId, B.EmployeeName as name, MIN(LogDate) as FirstLogin, C.designations 
-                                FROM biometric.devicelogs_processed 
-                                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
-                                LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
-                                WHERE DATE(LogDate) BETWEEN '$fdate ' AND '$todate' 
-                                GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate) 
-                                ORDER BY `FirstLogin` ASC";
+        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
+        $sql_select11 = "CREATE TEMPORARY TABLE temptable SELECT UserId, B.EmployeeName as name, MIN(LogDate) as FirstLogin, C.designations, COUNT(B.EmployeeName) AS UserCount
+                            FROM biometric.devicelogs_processed 
+                            LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
+                            LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
+                            WHERE DATE(LogDate) BETWEEN '$fdate ' AND '$todate' 
+                            GROUP BY UserId
+                            ORDER BY `FirstLogin` ASC";
+        $sql_select = "SELECT * FROM `temptable` where  temptable.FirstLogin >= $fdate  AND TIME(FirstLogin) >= '09:46:00'  ";
+        $this->db->query($sqltemptable);
+        $this->db->query($sql_select11);
+        $data['lateComersDetailsLog'] = $this->db->query($sql_select)->getResultArray();
+        $data['lateComers'] = $this->db->query($sql_select)->getResult();
 
-        $sql_select = " SELECT * FROM `temptable` where  temptable.FirstLogin >= $fdate  AND TIME(FirstLogin) >= '09:46:00'  ";
+        // echo '<pre>';
+        //     print_r($data['lateComersDetailsLog']);
+        // echo '</pre>';
+        // exit(0);
 
-        // print_r($sql_select11);   exit();
 
-        $temptable = $this->db->query($sqltemptable);
-        $querytemp = $this->db->query($sql_select11);
-        $query_select = $this->db->query($sql_select);
-        $data['lateComersDetailsLog'] = $query_select->getResultArray();
-        $data['lateComers'] = $query_select->getResult();
 
-        // print_r($result);exit;
-        // print_r($data['lateComersDetailsLog']);
-        //     exit;
         return $data['lateComersDetailsLog'];
     }
 

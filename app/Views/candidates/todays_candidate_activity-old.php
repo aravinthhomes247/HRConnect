@@ -38,11 +38,11 @@ if (isset($_SESSION['msg'])) {
         padding: 0px 5px;
         /* height: 27px; */
         /* font-size: 15px; */
-        line-height: 25px;
-        border-radius: 25px;
+            line-height: 25px;
+            border-radius: 25px;
         color: #8146D4;
         background-color: #F0E5FF;
-        margin-right: 4px;
+            margin-right: 4px;
         /* margin-top: 4px; */
         }
 

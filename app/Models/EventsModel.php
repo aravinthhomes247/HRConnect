@@ -4,7 +4,9 @@ namespace App\Models;
 
 use Codeigniter\Controller\HRController;
 use CodeIgniter\Model;
-use FFI;
+
+
+
 
 class EventsModel extends Model
 {

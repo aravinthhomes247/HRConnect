@@ -654,7 +654,6 @@ class EmployeeModel extends Model
         $sql = "SELECT EmployeeCode FROM employees WHERE EmployeeId = $id";
         $data = $this->db->query($sql)->getRowArray();
         $EmployeeCode = $data['EmployeeCode'];
-        // $EmployeeCode = 'H247OFF76';
         $date_start .= " 00:00:00";
         $date_end .= " 23:59:59";
 
@@ -664,113 +663,87 @@ class EmployeeModel extends Model
                           AND LogDate BETWEEN '$date_start' AND '$date_end'
                           GROUP BY DATE(LogDate)
                           ORDER BY LogDateDay ASC) AS SubQuery
-                WHERE TIME(FirstLogDate) > '09:45:00'";
+                WHERE TIME(FirstLogDate) > '09:45:59' ";
 
-        $data = $this->bio->query($sql)->getResultArray();
-        return $data;
+        $data['LateEntry'] = $this->bio->query($sql)->getResultArray();
+        return $data['LateEntry'];
     }
 
     public function getEmployeeTimeLogs($id, $date_start, $date_end)
     {
-        $date_start = '2022-09-02';
-        $date_end = '2022-09-15';
+        // $date_start = '2025-01-01';
+        // $date_end = '2025-01-15';
+        $result = [];
 
-        // $sql = "SELECT B.LogDate, Late_Login, Early_Logout
-        //             CASE 
-        //                 WHEN TIME(B.LogDate) > '09:45:00' THEN 1
-        //                 ELSE 0
-        //             END AS Late_Login,
-        //             CASE 
-        //                 WHEN TIME(B.LogDate) < '18:30:00' THEN 1
-        //                 ELSE 0
-        //             END AS Early_Logout
-        //         FROM homes247_backend.employees A 
-        //         LEFT JOIN biomatric.devicelogs_processed B ON B.UserId = A.EmployeeCode 
-        //         WHERE A.EmployeeId = $id AND DATE(B.LogDate) BETWEEN '$date_start' AND '$date_end'
-        //         ORDER BY B.LogDate";
-
-        $sql = "SELECT 
-                    MIN(B.LogDate) AS LogDate, -- Get the earliest record for each HH:MM
-                    (CASE 
-                        WHEN TIME(MIN(B.LogDate)) > '09:45:00' THEN 1
-                        ELSE 0
-                    END) AS Late_Login,
-                    (CASE 
-                        WHEN TIME(MIN(B.LogDate)) < '18:30:00' THEN 1
-                        ELSE 0
-                    END) AS Early_Logout
+        $sql = "SELECT B.LogDate, Min(B.LogDate) as First, Max(B.LogDate) as Last,
+                (CASE WHEN TIME(Min(B.LogDate)) > '09:45:59' THEN 1 ELSE 0 END) AS Late_Login, 
+                (CASE WHEN TIME(Max(B.LogDate)) < '18:30:00' THEN 1 ELSE 0 END) AS Early_Logout,
+                TIMEDIFF( MAX(B.LogDate), MIN(B.LogDate)) as workingHours
                 FROM homes247_backend.employees A 
-                LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode 
+                LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode
                 WHERE A.EmployeeId = $id AND DATE(B.LogDate) BETWEEN '$date_start' AND '$date_end'
-                GROUP BY DATE_FORMAT(B.LogDate, '%Y-%m-%d %H:%i') -- Group by date and time to the minute
-                ORDER BY LogDate";
-        $data = $this->bio->query($sql)->getResultArray();
-
-        $groupedData = [];
-        foreach ($data as $row) {
+                GROUP BY YEAR(B.LogDate),MONTH(B.LogDate),DAY(B.LogDate)";
+        $MinMax = $this->bio->query($sql)->getResultArray();
+        foreach ($MinMax as $row) {
             $date = date('Y-m-d', strtotime($row['LogDate']));
-            $groupedData[$date][] = [
-                'LogDate' => $row['LogDate'],
-                'Late_Login' => $row['Late_Login'],
-                'Early_Logout' => $row['Early_Logout'],
-                'LogTime' => date('H:i:s', strtotime($row['LogDate'])),
+            $result[$date]['DayInfo'] = [
                 'Day' => strtoupper(date('D', strtotime($row['LogDate']))),
-                'd' => date('d', strtotime($row['LogDate']))
+                'd' => date('d', strtotime($row['LogDate'])),
+                'WHS' => $row['workingHours']
+            ];
+            $result[$date]['minmax'] = [
+                'LogDate' => $row['LogDate'],
+                'First' => date('h:i A', strtotime($row['First'])),
+                'Last' => date('h:i A', strtotime($row['Last'])),
+                'Late_Login' => $row['Late_Login'],
+                'Early_Logout' => $row['Early_Logout']
             ];
         }
 
+        $sql = "SELECT LogDate
+                FROM homes247_backend.employees A 
+                LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode 
+                WHERE A.EmployeeId = $id AND DATE(B.LogDate) BETWEEN '$date_start' AND '$date_end'
+                GROUP BY DATE_FORMAT(B.LogDate, '%Y-%m-%d %H:%i')
+                ORDER BY LogDate";
+        $logs = $this->bio->query($sql)->getResultArray();
+        $groupedlogs = [];
+        foreach ($logs as $row) {
+            $date = date('Y-m-d', strtotime($row['LogDate']));
+            $groupedlogs[$date][] = [
+                'LogDate' => $row['LogDate'],
+                'LogTime' => date('H:i:s', strtotime($row['LogDate'])),
+            ];
+        }
+
+
         $points = [];
-        foreach ($groupedData as $date => $group) {
-            foreach ($group as $i => $g) {
-                if (count($group) == 1) {
-                    if ($g['LogTime'] < '09:45:00') {
-                        $points[$date][] = ['time' => '09:45:00', 'auto' => 0, 'real' => $g['LogTime']];
-                        $points[$date][] = ['time' => '18:30:00', 'auto' => 1, 'real' => $g['LogTime']];
-                    } else if ($g['LogTime'] > '18:30:00') {
-                        $points[$date][] = ['time' => '09:45:00', 'auto' => 1, 'real' => $g['LogTime']];
-                        $points[$date][] = ['time' => '18:30:00', 'auto' => 0, 'real' => $g['LogTime']];
-                    } else {
-                        $points[$date][] = ['time' => $g['LogTime'], 'auto' => 0, 'real' => $g['LogTime']];
-                        $points[$date][] = ['time' => '18:30:00', 'auto' => 1, 'real' => $g['LogTime']];
-                    }
-                } else {
-                    if (count($group) - 1 == $i) {
-                        if ($g['LogTime'] > '18:30:00') {
-                            $points[$date][] = ['time' => '18:30:00', 'auto' => 0, 'real' => $g['LogTime']];
-                        } else {
-                            $points[$date][] = ['time' => $g['LogTime'], 'auto' => 0, 'real' => $g['LogTime']];
-                            $points[$date][] = ['time' => '18:30:00', 'auto' => 1, 'real' => $g['LogTime']];
-                        }
-                    } else if ($i == 0) {
-                        if ($g['LogTime'] < '09:45:00') {
-                            $points[$date][] = ['time' => '09:45:00', 'auto' => 0, 'real' => $g['LogTime']];
-                        } else {
-                            $points[$date][] = ['time' => '09:45:00', 'auto' => 1, 'real' => $g['LogTime']];
-                            $points[$date][] = ['time' => $g['LogTime'], 'auto' => 0, 'real' => $g['LogTime']];
-                        }
-                    } else {
-                        $points[$date][] = ['time' => $g['LogTime'], 'auto' => 0, 'real' => $g['LogTime']];
-                    }
-                }
+        foreach ($groupedlogs as $date => $bunchs) {
+            $points[$date][] = ['time' => '00:00:00', 'auto' => 1];
+            foreach ($bunchs as $i => $bunch) {
+                $points[$date][] = ['time' => $bunch['LogTime'], 'auto' => 0];
             }
+            $points[$date][] = ['time' => '23:59:59', 'auto' => 1];
         }
-
-        $pointgroup = [];
+        $pointresult = [];
         foreach ($points as $date => $point) {
-            for ($i = 0; $i < count($point) - 1; $i++) {
-                $pointgroup[$date][] = $this->point_distence($point[$i]['time'], $point[$i]['auto'], $point[$i + 1]['time'], $point[$i + 1]['auto']);
+            for($i=0; $i < count($point)-1; $i++) {
+                $pointresult[$date][] = $this->point_distence($point[$i]['time'], $point[$i]['auto'], $point[$i + 1]['time'], $point[$i + 1]['auto']);
             }
         }
-
-        echo '<pre>';
-        print_r($pointgroup);
-        echo '</pre>';
-        exit(0);
+        foreach ($pointresult as $date => $bunchs) {
+            $result[$date]['Points'] = $bunchs;
+        }
 
 
-        return $groupedData;
+        // echo '<pre>';
+        // print_r($result);
+        // echo '</pre>';
+        // exit(0);
+
+
+        return $result;
     }
-
     public function point_distence($start, $sa, $end, $ea)
     {
         $s = new DateTime($start);
@@ -778,7 +751,8 @@ class EmployeeModel extends Model
         $diff = $s->diff($e);
         $Mins = ($diff->h * 60) + ($diff->i);
         return array(
-            'percentage' => round($Mins / 5.25),
+            'percentage' => round(($Mins / 1440) * 100), //24 Hrs
+            // 'percentage' => round(($Mins / 540) * 100), // 9 Hrs
             'start' => date('h:i A', strtotime($start)),
             'end' => date('h:i A', strtotime($end)),
             's_auto' => $sa,

@@ -6,8 +6,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Homes24/7.in</title>
-  
+  <title>HR Connect</title>
+
   <!-- <link rel="icon" type="image/png" href="<?php echo base_url('../public/favicon.png'); ?>"> -->
   <link rel="icon" type="image/png" href="https://duzblbyuf5ibr.cloudfront.net/hrpanel/favicon.png">
 
@@ -213,6 +213,10 @@
               </li>
 
             <?php } elseif ($session->get('user_level') == 18) { ?>
+
+
+
+              
               <?php
               $fdate = date("Y-m-d");
               $todate = date("Y-m-d");
@@ -295,6 +299,11 @@
                   <p> Careers </p>
                 </a>
               </li>
+
+
+
+
+
 
 
             <?php } elseif ($session->get('user_level') == 24) { ?>

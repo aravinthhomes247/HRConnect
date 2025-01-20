@@ -658,6 +658,8 @@ class HRController extends BaseController
             return view('employees/employees/EmpProfLateEntry', $data);
         } elseif ($trickId == 6) {
             $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $date_start, $date_end);
+            $data['fsd'] = $date_start;
+            $data['fed'] = $date_end;
             return view('employees/employees/EmpProfTimeLogs', $data);
         } elseif ($trickId == 7) {
             $data['month'] = $month;
@@ -1038,13 +1040,24 @@ class HRController extends BaseController
         $data1 = [
             'fdate' => $_GET['fdate'],
             'todate' => $_GET['todate'],
-            'trickid' => $_GET['trickid'],
+            'trickid' => $_GET['trickid'] ?? 1,
         ];
 
         $logModel = new LogModel();
-        $data1['selectedemps'] = $logModel->getSearchAllLog($data1);
-        $data1['lateComersDetailsLog'] = $logModel->lateComersListM($data1);
         $data1['lateComers'] = count($logModel->lateComersListM($data1));
+        
+        if($_GET['trickid'] == 1){
+            $data1['selectedemps'] = $logModel->getSearchAllLog($data1);
+        }
+        if($_GET['trickid'] == 2){
+            $data1['lateComersDetailsLog'] = $logModel->lateComersListM($data1);
+        }
+        if($_GET['trickid'] == 3){
+        
+        }
+        if($_GET['trickid'] == 4){
+        
+        }
 
         return view('report/report_view', $data1);
     }

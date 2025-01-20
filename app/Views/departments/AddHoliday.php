@@ -85,7 +85,7 @@
             $('.invalid-feedback-dept').show();
         }
         if (name && date && checkedCount > 0) {
-            $('#AddDepartmentForm').submit();
+        $('#AddDepartmentForm').submit();
         }
     });
 </script>

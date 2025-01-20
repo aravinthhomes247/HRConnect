@@ -4,10 +4,8 @@
 <?php echo ($this->section("body")) ?>
 
 <?php
-
-use App\Models\CareerModel;
-
-$CAREER = new CareerModel();
+    use App\Models\CareerModel;
+    $CAREER = new CareerModel();
 ?>
 
 
