@@ -185,13 +185,11 @@ class LogModel extends Model
         $fdate = $data['fdate'];
         $todate = $data['todate'];
         $trickid = $data['trickid'];
-
         if (isset($lrid) && !empty($lrid) && $lrid != "NA" && $lrid != 0) {
             $dataBaseReason = "AND l.IDPK = '$lrid'";
         } else {
             $dataBaseReason = "";
         }
-
         if ($trickid == 1) {
             $trick = "$dataBaseReason AND e.Status='Working' ";
         } elseif ($trickid == 2) {
@@ -201,8 +199,6 @@ class LogModel extends Model
             // $trick=" and Reason is NULL AND e.Status='Working' ";
             $trick = "$dataBaseReason AND `mb`.`Mail_Msg` is NULL AND e.Status='Working'";
         }
-
-
         $sql = "SELECT e.EmployeeId AS EmployeeId, e.EmployeeCode AS EmployeeCode, EmployeeName, d.dt AS `AbsentDate`,l.leaveReason as Reason, DAYNAME(d.dt), a.ReasonMsg, a.IDPK as ReasonIDPK
                     FROM (SELECT DATE (dp.LogDate) AS dt FROM biometric.devicelogs_processed dp
                     WHERE dp.LogDate >= '$fdate' AND dp.LogDate < DATE_ADD( '$todate' ,INTERVAL 1 DAY)
@@ -213,13 +209,8 @@ class LogModel extends Model
                     LEFT JOIN leavereason l ON l.IDPK = a.leaveReasonIDFK 
                     LEFT JOIN mail_base mb ON mb.Mail_IDPK = a.Mail_Base_IDFK
                     WHERE p.UserId IS NULL  and DAYNAME(d.dt) NOT IN ('Sunday') $trick ";
-
-
         $data['absentsdetailslog'] = $this->db->query($sql)->getResultArray(); //run the query
         // print_r($data['absentsdetailslog']); exit();
-        return $data['absentsdetailslog'];
-
-
         return $data['absentsdetailslog'];
     }
 
@@ -228,13 +219,11 @@ class LogModel extends Model
         $lrid = $data['LRID'];
         $fdate = $data['fdate'];
         $todate = $data['todate'];
-
         if (isset($lrid) && !empty($lrid) && $lrid != "NA" && $lrid != 0) {
             $dataBaseReason = "AND l.IDPK = '$lrid'";
         } else {
             $dataBaseReason = "";
         }
-
         $sql = "SELECT SUM(`mb`.`Mail_Msg` is NULL) as pending,SUM(`mb`.`Mail_Msg` is NOT NULL) as updeated
                 FROM (SELECT DATE (dp.LogDate) AS dt FROM biometric.devicelogs_processed dp
                 WHERE dp.LogDate >= '$fdate' AND dp.LogDate < DATE_ADD( '$todate' ,INTERVAL 1 DAY)
@@ -250,9 +239,6 @@ class LogModel extends Model
         // print_r($data['countFilter']); exit();
         return $data['countFilter'];
     }
-
-
-
     public function selectReasonM()
     {
         $sql = "SELECT * FROM `leavereason` ORDER BY LeaveReason ASC ";
@@ -260,11 +246,8 @@ class LogModel extends Model
         // print_r($data['selectdesignation']); exit();
         return $data['selectReason'];
     }
-
-
     public function lateComerslog()
     {
-        // $date = date('Y-m-d');
         $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
         $sql_select11 = "   CREATE TEMPORARY TABLE temptable SELECT UserId,B.EmployeeName as name, MIN(LogDate) as FirstLogin 
                                 FROM biometric.devicelogs_processed 
@@ -272,50 +255,14 @@ class LogModel extends Model
                                 WHERE DATE(LogDate) = CURRENT_DATE()  
                                 GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate) 
                                 ORDER BY `FirstLogin` DESC";
-
         $sql_select = " SELECT * FROM `temptable` where temptable.FirstLogin >= CURRENT_DATE()  AND TIME(FirstLogin) >= '09:46:00'  ";
-
-        // print_r($sql_select11);   exit();
 
         $temptable = $this->db->query($sqltemptable);
         $querytemp = $this->db->query($sql_select11);
         $query_select = $this->db->query($sql_select);
         $data['lateComers'] = $query_select->getResult();
 
-        // print_r($data['lateComers']);exit();
         return $data['lateComers'];
-
-        // print_r($data['lateComersDetailsLog']->getResult());
-        //     exit;
-    }
-    public function lateComersListM($data1)
-    {
-
-        $fdate = $data1['fdate'];
-        $todate = $data1['todate'];
-
-        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
-        $sql_select11 = "CREATE TEMPORARY TABLE temptable SELECT UserId, B.EmployeeName as name, MIN(LogDate) as FirstLogin, C.designations, COUNT(B.EmployeeName) AS UserCount
-                            FROM biometric.devicelogs_processed 
-                            LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
-                            LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
-                            WHERE DATE(LogDate) BETWEEN '$fdate ' AND '$todate' 
-                            GROUP BY UserId
-                            ORDER BY `FirstLogin` ASC";
-        $sql_select = "SELECT * FROM `temptable` where  temptable.FirstLogin >= $fdate  AND TIME(FirstLogin) >= '09:46:00'  ";
-        $this->db->query($sqltemptable);
-        $this->db->query($sql_select11);
-        $data['lateComersDetailsLog'] = $this->db->query($sql_select)->getResultArray();
-        $data['lateComers'] = $this->db->query($sql_select)->getResult();
-
-        // echo '<pre>';
-        //     print_r($data['lateComersDetailsLog']);
-        // echo '</pre>';
-        // exit(0);
-
-
-
-        return $data['lateComersDetailsLog'];
     }
 
     // public function attendanceListM($data){
@@ -331,22 +278,6 @@ class LogModel extends Model
     //     return $data['attendanceList'];
     // }
 
-    public function getSearchAllLog($data1)
-    {
-        $fdate = $data1['fdate'];
-        $todate = $data1['todate'];
-
-        $sql1 = "SELECT UserId, B.EmployeeName as name, LogDate, C.designations, MIN(LogDate) as login, MAX(LogDate) as logout, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
-                FROM biometric.`devicelogs_processed` 
-                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
-                LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
-                WHERE DATE(LogDate) BETWEEN '$fdate' AND '$todate'
-                GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate)  
-                ORDER BY LogDate asc";
-
-        $data['selectedemps'] = $this->db->query($sql1)->getResultArray(); //run the query
-        return $data['selectedemps'];
-    }
     public function getEmpAllLog($data1)
     {
 
@@ -397,5 +328,110 @@ class LogModel extends Model
         //     exit;
 
         return $data['empLatecomer'];
+    }
+
+
+
+
+
+    public function getSearchAllLog($data1)
+    {
+        $fdate = $data1['fdate'];
+        $todate = $data1['todate'];
+
+        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
+        $sql_select11 = "CREATE TEMPORARY TABLE temptable
+                SELECT UserId, B.EmployeeName as name, LogDate, C.designations, MIN(LogDate) as login, MAX(LogDate) as logout, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
+                FROM biometric.`devicelogs_processed` 
+                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
+                LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
+                WHERE DATE(LogDate) BETWEEN '$fdate' AND '$todate'
+                GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate)  
+                ORDER BY LogDate asc";
+        $sql_select = "SELECT * FROM `temptable` WHERE workingHours != '00:00:00'";
+
+        $this->db->query($sqltemptable);
+        $this->db->query($sql_select11);
+        $data['selectedemps'] = $this->db->query($sql_select)->getResultArray(); //run the query
+        return $data['selectedemps'];
+    }
+
+    public function lateComersListM($data1)
+    {
+        $fdate = $data1['fdate'];
+        $todate = $data1['todate'];
+
+        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
+        $sql_select11 = "CREATE TEMPORARY TABLE temptable 
+                            SELECT UserId, B.EmployeeName as name, MIN(LogDate) as FirstLogin, MAX(LogDate) as LastLogin, C.designations, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
+                            FROM biometric.devicelogs_processed 
+                            LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId
+                            LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
+                            WHERE DATE(LogDate) BETWEEN '$fdate' AND '$todate'  
+                            GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate) 
+                            ORDER BY `FirstLogin` DESC";
+        $sql_select = "SELECT * FROM `temptable` WHERE TIME(FirstLogin) > '09:45:59' AND workingHours != '00:00:00'";
+
+        $this->db->query($sqltemptable);
+        $this->db->query($sql_select11);
+        $data['lateComersDetailsLog'] = $this->db->query($sql_select)->getResultArray();
+
+        return $data['lateComersDetailsLog'];
+    }
+
+    public function EarlyoutListM($data){
+        $fdate = $data['fdate'];
+        $todate = $data['todate'];
+
+        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
+        $sql_select11 = "CREATE TEMPORARY TABLE temptable 
+                            SELECT UserId, B.EmployeeName as name, MIN(LogDate) as FirstLogin, MAX(LogDate) as LastLogin, C.designations, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
+                            FROM biometric.devicelogs_processed 
+                            LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId
+                            LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
+                            WHERE DATE(LogDate) BETWEEN '$fdate' AND '$todate'  
+                            GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate) 
+                            ORDER BY `FirstLogin` DESC";
+        $sql_select = "SELECT * FROM `temptable` WHERE TIME(LastLogin) < '18:30:00' AND workingHours != '00:00:00'";
+
+        $this->db->query($sqltemptable);
+        $this->db->query($sql_select11);
+        $query_select = $this->db->query($sql_select);
+        $data['early'] = $query_select->getResultArray();
+
+        return $data['early'];
+    }
+
+    public function AbnormalListM($data){
+        $fdate = $data['fdate'];
+        $todate = $data['todate'];
+
+        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
+        $sql_select11 = "CREATE TEMPORARY TABLE temptable
+                SELECT UserId, B.EmployeeName as name, LogDate, C.designations, MIN(LogDate) as login, MAX(LogDate) as logout, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
+                FROM biometric.`devicelogs_processed` 
+                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
+                LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK
+                WHERE DATE(LogDate) BETWEEN '$fdate' AND '$todate'
+                GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate)  
+                ORDER BY LogDate DESC";
+        $sql_select = "SELECT *,
+                        (CASE WHEN login = logout THEN 1 ELSE 0 END) AS Miss_Bunch,
+                        (CASE WHEN TIME(login) > '09:45:59' THEN 1 ELSE 0 END) AS Late_Login,
+                        (CASE WHEN TIME(logout) < '18:30:00' THEN 1 ELSE 0 END) AS Early_Logout,
+                        (CASE WHEN workingHours < '09:00:00' THEN 1 ELSE 0 END) AS Low_Wh
+                       FROM temptable
+                       WHERE (login = logout) OR (TIME(login) > '09:45:59') OR (TIME(logout) < '18:30:00') OR (workingHours < '09:00:00')";
+
+        $this->db->query($sqltemptable);
+        $this->db->query($sql_select11);
+        $data['abnormal'] = $this->db->query($sql_select)->getResultArray(); //run the query
+
+        // echo '<pre>';
+        //     print_r($data['abnormal']);
+        // echo '</pre>';
+        // exit(0);
+
+        return $data['abnormal'];
     }
 }

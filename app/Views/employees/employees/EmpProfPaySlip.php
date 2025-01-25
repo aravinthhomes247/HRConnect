@@ -2,7 +2,20 @@
 <?php echo ($this->extend("layouts/header-new")) ?>
 <?php echo ($this->section("body")) ?>
 
+<style>
+    .dt-column-title,
+    .dt-column-order {
+        background-color: transparent !important;
+        color: black !important;
+    }
 
+    a.file-download.dissabled {
+        background-color: #98A2B3;
+        pointer-events: none;
+        color: white;
+        border-color: black;
+    }
+</style>
 
 
 <div class="profile-container mt-2 ms-4 ps-1 pt-1 pe-1">
@@ -27,8 +40,8 @@
         </div>
         <div class="col col-lg-2 col-md-1 rep">
             <span>Reporting To</span><br>
-            <span><strong>Abijith</strong></span><br>
-            <span>Product Head</span>
+            <span><strong><?= $BasicDetails['ReportingPerson'] ?></strong></span><br>
+            <span><?= $BasicDetails['ReportingDesignation'] ?></span>
         </div>
     </div>
     <hr class="mt-1 md-1">
@@ -52,7 +65,7 @@
         <div class="col col-lg-4 mt-1">
         </div>
         <div class="col col-lg-8">
-            <div class="action">
+            <!-- <div class="action">
                 <i class="fa-solid fa-calendar-days"></i>
                 <input class="form-control"
                     type="text"
@@ -60,66 +73,58 @@
                     name="month"
                     style="padding-left: 35px; box-sizing: border-box;">
                 <button class="btn btn-primary" id="applyfilter" style="margin-left: 10px;">Check</button>
-            </div>
+            </div> -->
         </div>
     </div>
-    <table class="table table-hover mt-2">
+    <table class="table table-hover mt-2" id="dataTable">
         <thead class="table-secondary">
             <tr>
                 <td class="ps-3">S.No</td>
-                <td>Payment date</td>
+                <td>Payment Month</td>
                 <td>No of Absent</td>
                 <td>Salary Credited</td>
                 <td>Action</td>
             </tr>
         </thead>
         <tbody>
-            <?php $i = 1; ?>
+            <?php $i = 1;?>
             <?php foreach ($PaySlip as $pay): ?>
+                <?php 
+                    $sl_date = date('Y-m-', strtotime($pay['Date'])).$pay['Salary_date'];
+                    $sl_date = date('Y-m-d', strtotime($sl_date));
+                ?>
                 <tr>
                     <td class="ps-3"><?= $i++ ?></td>
-                    <td><?= date('d F Y', strtotime($pay['Updated_on'])) ?></td>
-                    <td><?= $pay['Absent_Days'] ?> Days</td>
-                    <td>₹ <?= number_format($pay['Credited_Salary'], 0) ?></td>
-                    <td><a href="<?= base_url('payslip-download/' . $pay['IDPK']); ?>" class="file-download">Generate Payslip <i class="fa-solid fa-file-arrow-down"></i></a></td>
+                    <td><?= date('F Y', strtotime($pay['Date'])) ?></td>
+                    <td><?= $pay['LOP'] ?> Days</td>
+                    <td>₹ <?= number_format($pay['Net_salary'], 0) ?></td>
+                    <td>
+                        <?php if ($mode == 1) { ?>
+                            <?php if ($sl_date < date('Y-m-d') && $pay['Status'] != 0): ?>
+                                <a href="<?= base_url('payslip-download/' . $pay['IDPK']); ?>" class="file-download" target="_blank">
+                                    Download <i class="fa-solid fa-file-arrow-down"></i>
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= base_url('payslip-download/' . $pay['IDPK']); ?>" class="file-download dissabled" target="_blank">
+                                    Download <i class="fa-solid fa-file-arrow-down"></i>
+                                </a>
+                            <?php endif; ?>
+                        <?php } else { ?>
+                            <?php if ($pay['Status'] != 0): ?>
+                                <a href="<?= base_url('payslip-download/' . $pay['IDPK']); ?>" class="file-download" target="_blank">
+                                    Download <i class="fa-solid fa-file-arrow-down"></i>
+                                </a>
+                            <?php else: ?>
+                                <a href="<?= base_url('payslip-download/' . $pay['IDPK']); ?>" class="file-download dissabled" target="_blank">
+                                    Download <i class="fa-solid fa-file-arrow-down"></i>
+                                </a>
+                            <?php endif; ?>
+                        <?php } ?>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
 </div>
-
-<?php $fsd = !empty($month) && strtotime($month) ? date("MMMM, YYYY", strtotime($month)) : date('MMMM, YYYY'); ?>
-
-<script>
-    $('input[name="month"]').daterangepicker({
-        singleDatePicker: true, // Use single date picker mode
-        showMonthYearPicker: true, // Show month and year only
-        format: 'MMMM, YYYY', // Format the display as "September, 2024"
-        locale: {
-            format: 'MMMM, YYYY', // Set the format for display
-        },
-        startDate: '<?= $fsd ?>', // Start date is the start of the current month
-        endDate: moment().endOf('month'), // End date is the end of the current month
-        minDate: '01/01/2020', // Optional: Set a minimum date if needed
-        maxDate: moment().subtract(1, 'month').endOf('month'), // Optional: Set a maximum date if needed
-        showDropdowns: true, // Display dropdowns for month/year selection
-        drops: 'down', // Make the calendar dropdown downwards
-        autoApply: true // Automatically apply the selected date
-    });
-
-    $('#applyfilter').on('click', function() {
-        var dateRange = $('input[name="month"]').val();
-        var date = moment(dateRange).format('YYYY/MM/DD');
-        var selectedMonth = moment(dateRange, 'MMMM, YYYY');
-        var currentMonthEnd = moment().endOf('month');
-        if (selectedMonth.isSame(currentMonthEnd, 'month')) {
-            // console.log('Selected current month');
-        } else {
-            var newUrl = '<?php echo $BasicDetails['EmployeeId']; ?>' + '?trickId=7&month=' + encodeURIComponent(date);
-            window.location.replace(newUrl);
-        }
-    });
-</script>
-
 
 <?php echo ($this->endSection()) ?>

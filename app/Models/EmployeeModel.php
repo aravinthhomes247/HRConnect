@@ -141,25 +141,26 @@ class EmployeeModel extends Model
 
     public function insertsalaryinfo($data)
     {
-        $EmployeeIDFK = $data['EmployeeIDFK'];
-        $BasicSalary = $data['BasicSalary'];
-        $HRA = $data['HRA'];
-        $FBP = $data['FBP'];
         $PF = $data['PF'];
         $PT = $data['PT'];
+        $HRA = $data['HRA'];
+        $FBP = $data['FBP'];
         $PF_VOL = $data['PF_VOL'];
         $Insurance = $data['Insurance'];
-        $SD = $data['SD'];
-        $GrossSalary = $data['GrossSalary'];
+        $Grativity = $data['Grativity'];
         $NetSalary = $data['NetSalary'];
+        $BasicSalary = $data['BasicSalary'];
+        $GrossSalary = $data['GrossSalary'];
+        $EmployeeIDFK = $data['EmployeeIDFK'];
 
-        $sql = "INSERT INTO `salary_info`(`EmployeeIDFK`, `BasicSalary`, `HRA`, `FBP`, `PF`, `PT`, `PF_VOL`, `Insurance`, `SD`, `GrossSalary`, `NetSalary`) 
-              VALUES ($EmployeeIDFK,$BasicSalary,$HRA,$FBP,$PF,$PT,$PF_VOL,$Insurance,$SD,$GrossSalary,$NetSalary)";
+        $sql = "INSERT INTO `salary_info`(`EmployeeIDFK`, `BasicSalary`, `HRA`, `FBP`, `PF`, `PT`, `PF_VOL`, `Insurance`, `Grativity`, `GrossSalary`, `NetSalary`) 
+              VALUES ($EmployeeIDFK,$BasicSalary,$HRA,$FBP,$PF,$PT,$PF_VOL,$Insurance,$Grativity,$GrossSalary,$NetSalary)";
 
         $this->db->query($sql);
     }
 
-    public function insertbankaccinfo($data){
+    public function insertbankaccinfo($data)
+    {
         $EmployeeIDFK = $data['EmployeeIDFK'];
         $AccountHolderName = $data['AccountHolderName'];
         $BankName = $data['BankName'];
@@ -228,7 +229,6 @@ class EmployeeModel extends Model
     }
     public function allEmpsListM($data)
     {
-
         $trickid = $data['trickid'];
         if ($data['trickid'] == 1) {
             $trick = "Where A.Status = 'Working'";
@@ -238,39 +238,47 @@ class EmployeeModel extends Model
             $trick = " ";
         } elseif ($data['trickid'] == 4) {
             $trick = "Where A.Status = 'Abscond' ";
+        } elseif ($data['trickid'] == 5) {
+            $trick = "Where (G.GrossSalary = 0 OR G.GrossSalary is NULL) AND A.Status = 'Working'";
         }
 
-        $sql = "  SELECT D.CandidateId ,A.EmployeeId ,A.EmployeeName, A.EmployeeCode, A.Gender, B.designations, C.EmployeeTypeName,E.DV_IDPK,E.DVStatus, E.OfferLetterImage , E.INT_CON_Letter, F.EBD_IDPK, F.EmployeeIDFK FROM `employees` A 
+        $sql = "SELECT D.CandidateId ,A.EmployeeId ,A.EmployeeName, A.EmployeeCode, A.Gender, B.designations, 
+                       C.EmployeeTypeName,E.DV_IDPK,E.DVStatus, E.OfferLetterImage , E.INT_CON_Letter, F.EBD_IDPK,
+                       F.EmployeeIDFK, A.last_working, A.settlement_day, A.final_set_status, A.final_set_amound, G.GrossSalary 
+                FROM `employees` A 
                 LEFT JOIN `designation` B ON B.IDPK=A.DesignationIDFK 
                 LEFT JOIN employement_type C ON C.IDPK= A.EmployementType 
                 LEFT JOIN candidates D ON D.EmployeeIDFK = A.EmployeeID
                 LEFT JOIN document_verification E ON E.CandidateIDFK = D.CandidateId
                 LEFT JOIN emp_bank_details F ON F.EmployeeIDFK = A.EmployeeId
+                LEFT JOIN salary_info G ON G.EmployeeIDFK = A.EmployeeId
                 $trick ORDER BY A.`EmployeeName` ASC";
-
 
         $data['allEmpsList'] = $this->db->query($sql)->getResultArray(); //run the query
 
         // print_r($data['allEmpsList']);exit;
         return $data['allEmpsList'];
     }
+
+    public function MissingSalaryCountM(){
+        $sql = "SELECT count(Status) as missing 
+                FROM `employees` A
+                LEFT JOIN salary_info B ON B.EmployeeIDFK = A.EmployeeId
+                WHERE (B.GrossSalary = 0 OR B.GrossSalary is NULL) AND A.Status = 'Working'";
+        $data['missing'] = $this->db->query($sql)->getResultArray(); //run the query
+        return $data['missing'];
+    }
     public function activeCountM()
     {
-
         $sql = "SELECT COUNT(Status) as active FROM `employees` Where Status='Working' ";
-
         $data['active'] = $this->db->query($sql)->getResultArray(); //run the query
-
         // print_r($data);      exit;
         return $data['active'];
     }
     public function inActiveCountM()
     {
-
         $sql = "SELECT COUNT(Status) as inactive FROM `employees` Where Status='InActive' ";
-
         $data['inactive'] = $this->db->query($sql)->getResultArray(); //run the query
-
         // print_r($data);      exit;
         return $data['inactive'];
     }
@@ -608,7 +616,7 @@ class EmployeeModel extends Model
     {
         $sql = "SELECT B.designations, C.EmployeeTypeName, A.Image, A.EmployeeId, A.EmployeeName, A.EmployeeCode, A.Status, A.Gender, A.DOB, A.BLOODGROUP,
                        A.FatherName, A.MotherName, A.PlaceOfBirth, A.ResidentialAddress, A.PermanentAddress, A.ContactNo, A.AltContactno, A.EContactNo,
-                       A.Email, A.PersonalMail, A.Salary_date, D.EmployeeName as ReportingPerson, E.designations as ReportingDesignation
+                       A.Email, A.PersonalMail, A.Salary_date, D.EmployeeName as ReportingPerson, E.designations as ReportingDesignation, A.Aadhar_No, A.PAN_No, A.PF_No, A.ESI_No
                 FROM `employees` A
                 LEFT JOIN `designation` B ON B.IDPK = A.DesignationIDFK
                 LEFT JOIN employement_type C ON C.IDPK= A.EmployementType
@@ -681,7 +689,7 @@ class EmployeeModel extends Model
                 TIMEDIFF( MAX(B.LogDate), MIN(B.LogDate)) as workingHours
                 FROM homes247_backend.employees A 
                 LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode
-                WHERE A.EmployeeId = $id AND DATE(B.LogDate) BETWEEN '$date_start' AND '$date_end'
+                WHERE A.EmployeeId = $id AND B.LogDate BETWEEN '$date_start' AND '$date_end'
                 GROUP BY YEAR(B.LogDate),MONTH(B.LogDate),DAY(B.LogDate)";
         $MinMax = $this->bio->query($sql)->getResultArray();
         foreach ($MinMax as $row) {
@@ -719,28 +727,48 @@ class EmployeeModel extends Model
 
         $points = [];
         foreach ($groupedlogs as $date => $bunchs) {
-            $points[$date][] = ['time' => '00:00:00', 'auto' => 1];
+            $points[$date][] = ['time' => '07:00:00', 'auto' => 1];  //Total Time Line Start
             foreach ($bunchs as $i => $bunch) {
                 $points[$date][] = ['time' => $bunch['LogTime'], 'auto' => 0];
             }
-            $points[$date][] = ['time' => '23:59:59', 'auto' => 1];
+            $points[$date][] = ['time' => '23:00:00', 'auto' => 1];  //Total Time Line End
         }
+
         $pointresult = [];
         foreach ($points as $date => $point) {
-            for($i=0; $i < count($point)-1; $i++) {
-                $pointresult[$date][] = $this->point_distence($point[$i]['time'], $point[$i]['auto'], $point[$i + 1]['time'], $point[$i + 1]['auto']);
+            for ($i = 0; $i < count($point) - 1; $i++) {
+                if ($i == 0) {
+                    $pointresult[$date][] = $this->point_distence($point[$i]['time'], $point[$i]['auto'], $point[$i + 1]['time'], $point[$i + 1]['auto']);
+                } else {
+                    if ($point[$i - 1]['auto'] == 0 && $point[$i]['auto'] == 0) {
+                        $point[$i]['auto'] = 1;
+                        // $point[$i+1]['auto'] = 1;
+                    }
+                    $pointresult[$date][] = $this->point_distence($point[$i]['time'], $point[$i]['auto'], $point[$i + 1]['time'], $point[$i + 1]['auto']);
+                }
             }
         }
+
         foreach ($pointresult as $date => $bunchs) {
             $result[$date]['Points'] = $bunchs;
         }
 
+        foreach ($result as $date => $info) {
+            for ($key = 0; $key < count($info['Points']); $key++) {
+                if ($key != 0 && $key != count($info['Points']) - 1) {
+                    if (($info['Points'][$key - 1]['s_auto'] == 0 && $info['Points'][$key - 1]['e_auto'] == 0) && ($info['Points'][$key + 1]['s_auto'] == 0 && $info['Points'][$key + 1]['e_auto'] == 0)) {
+                        $result[$date]['Points'][$key]['color'] = 0;
+                        $result[$date]['Points'][$key]['s_auto'] = 1;
+                        $result[$date]['Points'][$key]['e_auto'] = 1;
+                    }
+                }
+            }
+        }
 
         // echo '<pre>';
         // print_r($result);
         // echo '</pre>';
         // exit(0);
-
 
         return $result;
     }
@@ -751,51 +779,143 @@ class EmployeeModel extends Model
         $diff = $s->diff($e);
         $Mins = ($diff->h * 60) + ($diff->i);
         return array(
-            'percentage' => round(($Mins / 1440) * 100), //24 Hrs
-            // 'percentage' => round(($Mins / 540) * 100), // 9 Hrs
+            'percentage' => round(($Mins / 960) * 100), // 16 Hrs (7:00 to 10:59)
+            // 'percentage' => round(($Mins / 1440) * 100), // 24 Hrs (12:00 to 11:59)
+            // 'percentage' => round(($Mins / 540) * 100), // 9 Hrs (9:30 to 6:30)
             'start' => date('h:i A', strtotime($start)),
             'end' => date('h:i A', strtotime($end)),
             's_auto' => $sa,
             'e_auto' => $ea,
-            'color' => ($sa == $ea) ? 1 : 0,
+            'color' => ($sa == 0 && $ea == 0) ? 1 : 0,
         );
     }
 
-    public function getEmployeePaySlip($id, $month)
+    public function getEmployeePaySlip($id)
     {
-        if ($month != "" || !empty($month) || $month != null) {
-            $month = "AND MONTH(Updated_on) = MONTH('$month') AND YEAR(Updated_on) = YEAR('$month')";
-        } else {
-            $month = "";
-        }
-        $sql = "SELECT * FROM salary_info WHERE EmployeeIDFK = $id $month";
+        $sql = "SELECT B.Salary_date, A.LOP, A.Date, A.IDPK, A.Status, A.Net_salary 
+                FROM payslips A
+                INNER JOIN employees B ON B.EmployeeId = A.EmployeeIDFK 
+                WHERE EmployeeIDFK = $id 
+                AND (MONTH(Date) != MONTH(CURRENT_DATE()) OR YEAR(Date) != YEAR(CURRENT_DATE()))";
         $data = $this->db->query($sql)->getResultArray();
         // print_r($data);exit(0);
         return $data;
     }
 
+    public function getPayslip($id)
+    {
+        $sql = "SELECT A.LOP, A.SD1, A.Acc_Type, A.Net_salary, B.EmployeeIDFK, B.BasicSalary, B.HRA, B.FBP, B.PF, B.PT, B.PF_VOL, B.Insurance, B.SD2
+                FROM payslips A
+                LEFT JOIN salary_info B ON B.EmployeeIDFK = A.EmployeeIDFK
+                LEFT JOIN emp_bank_details C ON C.EmployeeIDFK = A.EmployeeIDFK
+                WHERE A.IDPK = $id";
+        $data = $this->db->query($sql)->getRowArray();
+        $empid = $data['EmployeeIDFK'];
+
+        $sql = "SELECT BankName, Type FROM emp_bank_details WHERE EmployeeIDFK = $empid";
+        $accs = $this->db->query($sql)->getResultArray();
+        $data['Accounts'] = $accs;
+
+        return $data;
+    }
+
+    public function UpdatePayslip($id, $data)
+    {
+        $sql = "UPDATE `payslips` SET `LOP`=?, `Acc_Type`=?,`Basic`=?,`HRA`=?,`FBP`=?,`SD1`=?,`PF`=?,
+                                      `PT`=?,`PFVOL`=?,`SD2`=?,`Insurance`=?,`Net_salary`=?,`Status`=? 
+                WHERE IDPK = $id";
+        $this->db->query($sql, [$data['LOP'], $data['Acc_Type'], $data['Basic'], $data['HRA'], $data['FBP'], $data['SD1'], $data['PF'], $data['PT'], $data['PFVOL'], $data['SD2'], $data['Insurance'], $data['Net_salary'], $data['Status']]);
+
+        return true;
+    }
+
+    public function PayslipManualSave($data)
+    {
+        $fdate = $data['fdate'];
+        $trickId = ($data['trickid'] == 1) ? 'B.Salary_date = 5' : 'B.Salary_date = 10';
+
+        $sql = "UPDATE payslips A
+                INNER JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                SET A.Status = 2
+                WHERE (YEAR(A.Date) = YEAR('$fdate') AND MONTH(A.Date) = MONTH('$fdate')) AND $trickId";
+        $this->db->query($sql);
+
+        return true;
+    }
+
+    public function getAllPayslips($dat)
+    {
+        $this->autopayslipmaker();
+
+        $fdate = $dat['fdate'];
+        $trickCondition = ($dat['trickid'] == 1) ? 'B.Salary_date = 5' : 'B.Salary_date = 10';
+
+        // Query 1: Fetch employee and payslip details
+        $sql = "SELECT B.EmployeeName, B.Salary_date, A.LOP, A.Net_salary, A.Date, A.Status, A.IDPK
+                FROM payslips A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                WHERE YEAR(A.Date) = YEAR('$fdate') AND MONTH(A.Date) = MONTH('$fdate') AND $trickCondition";
+        $data['results'] = $this->db->query($sql)->getResultArray();
+
+        // Query 2: Count payslips by status (combine into one query)
+        $sql = "SELECT A.Status,COUNT(*) AS count
+                FROM payslips A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                WHERE YEAR(Date) = YEAR('$fdate') AND MONTH(Date) = MONTH('$fdate') AND $trickCondition 
+                GROUP BY Status";
+        $statusCounts = $this->db->query($sql)->getResultArray();
+        $data['mode0'] = 0;
+        $data['mode1'] = 0;
+        $data['mode2'] = 0;
+        foreach ($statusCounts as $row) {
+            $data['mode' . $row['Status']] = $row['count'];
+        }
+
+        // Query 3: Count employees by salary date condition (combine into one query)
+        $sql = "SELECT SUM(CASE WHEN B.Salary_date = 5 THEN 1 ELSE 0 END) AS trick1_count,
+                       SUM(CASE WHEN B.Salary_date = 10 THEN 1 ELSE 0 END) AS trick2_count
+                FROM payslips A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                WHERE YEAR(A.Date) = YEAR('$fdate') AND MONTH(A.Date) = MONTH('$fdate')";
+        $trickCounts = $this->db->query($sql)->getRowArray();
+        $data['trick1_count'] = $trickCounts['trick1_count'] ?? 0;
+        $data['trick2_count'] = $trickCounts['trick2_count'] ?? 0;
+
+        return $data;
+    }
+
+
+    public function autopayslipmaker()
+    {
+        $sql = "SELECT A.EmployeeId 
+                FROM employees A
+                LEFT JOIN payslips B ON B.EmployeeIDFK = A.EmployeeId 
+                                        AND MONTH(B.Date) = MONTH(CURRENT_DATE()) 
+                                        AND YEAR(B.Date) = YEAR(CURRENT_DATE())
+                WHERE A.Status = 'Working' AND B.EmployeeIDFK IS NULL";
+        $data = $this->db->query($sql)->getResultArray();
+
+        foreach ($data as $i => $value) {
+            $sql = "INSERT INTO `payslips`(`EmployeeIDFK`, `LOP`, `Basic`, `HRA`, `FBP`, `SD1`, `PF`, `PT`, `PFVOL`, `SD2`, `Insurance`, `Net_salary`, `Status`) 
+                  VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $this->db->query($sql, [$value['EmployeeId'], 0, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0]);
+        }
+    }
+
     public function getEmployeePaySlipSpecific($id)
     {
-        $sql = "(SELECT A.BasicSalary, A.HRA, A.FBP, A.PF, A.PT, A.PF_VOL, A.Spl_Ded, A.PF_NO, A.ESI_NO, A.NOD, A.MOP, A.Absent_Days, A.Credited_Salary,
-                        B.DOJ, B.EmployeeCode, B.EmployeeName, C.designations, D.deptName, E.UAN_No, E.PAN_No, E.AccountNo, A.Updated_on
-                FROM salary_info A
+        $sql = "SELECT A.Basic, A.HRA, A.FBP, A.PF, A.PT, A.PFVOL, A.SD2, A.SD1, A.Insurance, A.Net_salary, A.Date, A.LOP, A.Net_salary,
+                       B.PF_No, B.ESI_No, B.DOJ, B.EmployeeCode, B.EmployeeName, B.PAN_No, B.UAN_No,
+                       C.designations,
+                       D.deptName,
+                       E.AccountNo, E.Mode
+                FROM payslips A 
                 LEFT JOIN `employees` B ON B.EmployeeId = A.EmployeeIDFK
                 LEFT JOIN `designation` C ON C.IDPK = B.DesignationIDFK
                 LEFT JOIN `departments` D ON D.IDPK = B.DepartmentId
-                LEFT JOIN `emp_bank_details` E ON E.EmployeeIDFK = A.EmployeeIDFK
-                WHERE E.Type = 1 AND A.IDPK = $id) 
-                UNION
-                (SELECT A.BasicSalary, A.HRA, A.FBP, A.PF, A.PT, A.PF_VOL, A.Spl_Ded, A.PF_NO, A.ESI_NO, A.NOD, A.MOP, A.Absent_Days, A.Credited_Salary,
-                        B.DOJ, B.EmployeeCode, B.EmployeeName, C.designations, D.deptName, E.UAN_No, E.PAN_No, E.AccountNo, A.Updated_on
-                FROM salary_info A
-                LEFT JOIN `employees` B ON B.EmployeeId = A.EmployeeIDFK
-                LEFT JOIN `designation` C ON C.IDPK = B.DesignationIDFK
-                LEFT JOIN `departments` D ON D.IDPK = B.DepartmentId
-                LEFT JOIN `emp_bank_details` E ON E.EmployeeIDFK = A.EmployeeIDFK
-                WHERE E.Type = 2 AND A.IDPK = $id 
-                AND NOT EXISTS (SELECT 1 FROM `emp_bank_details` WHERE EmployeeIDFK = A.EmployeeIDFK AND Type = 1))";
+                LEFT JOIN `emp_bank_details` E ON E.EmployeeIDFK = A.EmployeeIDFK and E.Type = A.Acc_Type
+                WHERE A.IDPK = $id";
         $data = $this->db->query($sql)->getRowArray();
-        // print_r($data);exit(0);
         return $data;
     }
 
@@ -845,11 +965,12 @@ class EmployeeModel extends Model
         foreach ($data as $key => $value) {
             $setClause = "`$key` = '" . $value . "'";
             $column = $key;
+            $record = $value;
         }
 
         // Construct the SQL query
-        $employee_table = ["ReportManagerIDFK", "Salary_date","ContractPeriod","Aadhar_No", "PAN_No", "UAN_No", "EContactNo"];
-        $salary_info = ["BasicSalary", "HRA", "FBP", "PF", "PT", "PF_VOL", "Insurance", "SD", "GrossSalary", "NetSalary"];
+        $employee_table = ["ReportManagerIDFK", "Salary_date", "ContractPeriod", "Aadhar_No", "PAN_No", "UAN_No", "EContactNo", "ESI_No", "PF_No"];
+        $salary_info = ["BasicSalary", "HRA", "FBP", "PF", "PT", "PF_VOL", "Insurance", "Grativity", "GrossSalary", "NetSalary"];
         $emp_bank_table = ["AccountHolderName", "BankName", "BankBranch", "AccountNo", "IFSCode", "Mode"];
         $bio_employee_table = ["EmployeeName", "EmployeeCode", "Gender", "DOB", "BLOODGROUP", "FatherName", "MotherName", "PlaceOfBirth", "ResidentialAddress", "PermanentAddress", "ContactNo", "AltContactno", "Email", "PersonalMail", "DepartmentId", "DesignationIDFK", "Status", "EmployementType", "DOJ", "Image"];
 
@@ -858,16 +979,103 @@ class EmployeeModel extends Model
             $sql2 = "UPDATE `employees` SET $setClause WHERE `EmployeeId` = ?";
             $this->db->query($sql1, $id);
             $this->db->query($sql2, $id);
+            if ($column == "Status") {
+            }
         } else if (in_array($column, $employee_table)) {
             $sql3 = "UPDATE `employees` SET $setClause WHERE `EmployeeId` = ?";
             $this->db->query($sql3, $id);
         } else if (in_array($column, $salary_info)) {
-            $sql4 = "UPDATE `salary_info` SET $setClause WHERE `EmployeeIDFK` = ?";
-            $this->db->query($sql4, $id);
+            $sql6 = "SELECT * FROM salary_info WHERE EmployeeIDFK = ?";
+            $salary = $this->db->query($sql6, $id)->getResultArray();
+            $sal = count($salary);
+            $salary = $salary[0];
+
+            if ($sal > 0) {
+
+                $Gross = $salary['GrossSalary'] ?? 0.00;
+                $Pf = $salary['PF'] ?? 0.00;
+                $Pt = $salary['PT'] ?? 0.00;
+                $Pfvol = $salary['PF_VOL'] ?? 0.00;
+                $Ins = $salary['Insurance'] ?? 0.00;
+                $Grati = $salary['Grativity'] ?? 0.00;
+                $Esi = $salary['ESI'] ?? 0;
+                $Esi_vol = ($Esi == 1) ? ($Gross / 100) * 4 : 0;
+                if ($column == "PF") {
+                    $Pf = $record;
+                } else if ($column == "PT") {
+                    $Pt = $record;
+                } else if ($column == "PF_VOL") {
+                    $Pfvol = $record;
+                } else if ($column == "Insurance") {
+                    $Ins = $record;
+                } else if ($column == "Grativity") {
+                    $Grati = $record;
+                } else if ($column == "GrossSalary") {
+                    $Gross = $record;
+                }
+                $Gross_earn = $Gross - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
+                $Basic = ($Gross / 100) * 40;
+                $Hra   = ($Basic / 100) * 40;
+                $Fbp   = $Gross_earn - ($Basic + $Hra);
+                $Netsal = ($Basic + $Hra + $Fbp) - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
+                $sql4 = "UPDATE `salary_info` SET `BasicSalary`=?,`HRA`=?,`FBP`=?,`PF`=?,`PT`=?,`PF_VOL`=?,
+                                                  `Insurance`=?,`Grativity`=?,`ESI`=?,`GrossSalary`=?,`NetSalary`=? 
+                         WHERE `EmployeeIDFK` = ?";
+                $this->db->query($sql4, [$Basic, $Hra, $Fbp, $Pf, $Pt, $Pfvol, $Ins, $Grati, $Esi, $Gross, $Netsal, $id]);
+            } else {
+                $sql7 = "INSERT INTO `salary_info`(`EmployeeIDFK`, `BasicSalary`, `HRA`, `FBP`, `PF`, `PT`, `PF_VOL`, `Insurance`, `Grativity`, `GrossSalary`, `NetSalary`, `ESI`) 
+                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+                $this->db->query($sql7, [$id, 0.00, 0.00, 0.00, 1800.00, 200.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0]);
+
+                $sql6 = "SELECT * FROM salary_info WHERE EmployeeIDFK = ?";
+                $salary = $this->db->query($sql6, $id)->getRowArray();
+
+                $Gross = $salary['GrossSalary'] ?? 0.00;
+                $Pf = $salary['PF'] ?? 0.00;
+                $Pt = $salary['PT'] ?? 0.00;
+                $Pfvol = $salary['PF_VOL'] ?? 0.00;
+                $Ins = $salary['Insurance'] ?? 0.00;
+                $Grati = $salary['Grativity'] ?? 0.00;
+                $Esi = $salary['ESI'] ?? 0;
+                $Esi_vol = ($Esi == 1) ? ($Gross / 100) * 4 : 0;
+                if ($column == "PF") {
+                    $Pf = $record;
+                } else if ($column == "PT") {
+                    $Pt = $record;
+                } else if ($column == "PF_VOL") {
+                    $Pfvol = $record;
+                } else if ($column == "Insurance") {
+                    $Ins = $record;
+                } else if ($column == "Grativity") {
+                    $Grati = $record;
+                } else if ($column == "GrossSalary") {
+                    $Gross = $record;
+                }
+                $Gross_earn = $Gross - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
+                $Basic = ($Gross / 100) * 40;
+                $Hra   = ($Basic / 100) * 40;
+                $Fbp   = $Gross_earn - ($Basic + $Hra);
+                $Netsal = ($Basic + $Hra + $Fbp) - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
+                $sql4 = "UPDATE `salary_info` SET `BasicSalary`=?,`HRA`=?,`FBP`=?,`PF`=?,`PT`=?,`PF_VOL`=?,
+                                                  `Insurance`=?,`Grativity`=?,`ESI`=?,`GrossSalary`=?,`NetSalary`=? 
+                         WHERE `EmployeeIDFK` = ?";
+                $this->db->query($sql4, [$Basic, $Hra, $Fbp, $Pf, $Pt, $Pfvol, $Ins, $Grati, $Esi, $Gross, $Netsal, $id]);
+            }
         } else if (in_array($column, $emp_bank_table)) {
             $sql5 = "UPDATE `emp_bank_details` SET $setClause WHERE `EmployeeIDFK`=? AND `Type`= $acctype";
             $this->db->query($sql5, $id);
         }
+        return true;
+    }
+
+
+    public function UpdateSingleAbsEmployee($id, $data)
+    {
+        $sql3 = "UPDATE `employees` 
+                 SET last_working=?,settlement_day=?,final_set_status=?,final_set_amound=? 
+                 WHERE `EmployeeId` = ?";
+        $this->db->query($sql3, [$data['last_working'], $data['settlement_day'], $data['final_set_status'], $data['final_set_amound'], $id]);
+
         return true;
     }
 }

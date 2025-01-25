@@ -52,6 +52,12 @@ class AdminModel extends Model
         return $data['settings'];
     }
 
+    public function getSettingsSpecific($name){
+        $sql="SELECT IDPK, Name, Value FROM settings WHERE Name = '$name'";
+        $data['settings'] = $this->db->query($sql)->getRowArray();
+        return $data['settings'];
+    }
+
     public function updateSettings($data){
         foreach($data as $key => $value){
             $sql="UPDATE `settings` SET `Value`='$value' WHERE Name='$key'";

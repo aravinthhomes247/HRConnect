@@ -9,11 +9,12 @@ if (isset($_SESSION['msg'])) {
 ?>
 
 <style>
-  .holiday{
+  .holiday {
     width: 97%;
   }
 
-  .add-holiday, .tabstate{
+  .add-holiday,
+  .tabstate {
     height: max-content;
   }
 
@@ -140,16 +141,20 @@ if (isset($_SESSION['msg'])) {
     border-left: 0.5px solid #8146D4 !important;
   }
 
-  .form-control{
+  .form-control {
     font-size: smaller;
   }
 
-  .input-group{
+  .input-group {
     font-size: smaller;
   }
 
-  .tab{
+  .tab {
     font-size: smaller;
+  }
+
+  .input-group.bk input{
+    background-color: white !important;
   }
 </style>
 
@@ -477,12 +482,24 @@ if (isset($_SESSION['msg'])) {
           <div class="row row-lg-12">
             <div class="col col-lg-3">
               <div class="mb-2">
+                <label class="ps-0">Gross Salary</label>
+                <div class="input-group bk mb-2">
+                  <div class="input-group-prepend">
+                    <div class="input-group-text">₹</div>
+                  </div>
+                  <input type="number" class="form-control" name="GrossSalary" id="GrossSalary" placeholder="Ex.16000.00">
+                </div>
+                <span id="error_GrossSalary" class="text-danger danger2"></span>
+              </div>
+            </div>
+            <div class="col col-lg-3">
+              <div class="mb-2">
                 <label class="ps-0">Basic Salary</label>
                 <div class="input-group mb-2">
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="BasicSalary" id="BasicSalary" placeholder="Ex.15000.00">
+                  <input type="number" class="form-control" name="BasicSalary" id="BasicSalary" placeholder="Ex.15000.00" readonly>
                 </div>
                 <span id="error_BasicSalary" class="text-danger danger2"></span>
               </div>
@@ -494,7 +511,7 @@ if (isset($_SESSION['msg'])) {
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="HRA" id="HRA" placeholder="Ex.500.00">
+                  <input type="number" class="form-control" name="HRA" id="HRA" placeholder="Ex.500.00" readonly>
                 </div>
                 <span id="error_HRA" class="text-danger danger2"></span>
               </div>
@@ -506,7 +523,7 @@ if (isset($_SESSION['msg'])) {
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="FBP" id="FBP" placeholder="Ex.300.00">
+                  <input type="number" class="form-control" name="FBP" id="FBP" placeholder="Ex.300.00" readonly>
                 </div>
                 <span id="error_FBP" class="text-danger danger2"></span>
               </div>
@@ -514,11 +531,11 @@ if (isset($_SESSION['msg'])) {
             <div class="col col-lg-3">
               <div class="mb-2">
                 <label class="ps-0">PF</label>
-                <div class="input-group mb-2">
+                <div class="input-group bk mb-2">
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="PF" id="PF" placeholder="Ex.250.00">
+                  <input type="number" class="form-control" name="PF" id="PF" placeholder="Ex.250.00" value="1800">
                 </div>
                 <span id="error_PF" class="text-danger danger2"></span>
               </div>
@@ -526,23 +543,23 @@ if (isset($_SESSION['msg'])) {
             <div class="col col-lg-3">
               <div class="mb-2">
                 <label class="ps-0">PT</label>
-                <div class="input-group mb-2">
+                <div class="input-group bk mb-2">
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="PT" id="PT" placeholder="Ex.250.00">
+                  <input type="number" class="form-control" name="PT" id="PT" placeholder="Ex.250.00" value="200">
                 </div>
                 <span id="error_PT" class="text-danger danger2"></span>
               </div>
             </div>
             <div class="col col-lg-3">
               <div class="mb-2">
-                <label class="ps-0">PF Vol</label>
-                <div class="input-group mb-2">
+                <label class="ps-0">PF Voluntary</label>
+                <div class="input-group bk mb-2">
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="PF_VOL" id="PF_VOL" placeholder="Ex.500.00">
+                  <input type="number" class="form-control" name="PF_VOL" id="PF_VOL" placeholder="Ex.500.00" value="0">
                 </div>
                 <span id="error_PF_VOL" class="text-danger danger2"></span>
               </div>
@@ -550,37 +567,35 @@ if (isset($_SESSION['msg'])) {
             <div class="col col-lg-3">
               <div class="mb-2">
                 <label class="ps-0">Insurance</label>
-                <div class="input-group mb-2">
+                <div class="input-group bk mb-2">
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="Insurance" id="Insurance" placeholder="Ex.160.00">
+                  <input type="number" class="form-control" name="Insurance" id="Insurance" placeholder="Ex.160.00" value="0">
                 </div>
                 <span id="error_Insurance" class="text-danger danger2"></span>
               </div>
             </div>
             <div class="col col-lg-3">
               <div class="mb-2">
-                <label class="ps-0">SD</label>
-                <div class="input-group mb-2">
+                <label class="ps-0">Grativity</label>
+                <div class="input-group bk mb-2">
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="SD" id="SD" placeholder="Ex.100.00">
+                  <input type="number" class="form-control" name="Grativity" id="SD" placeholder="Ex.100.00" value="0">
                 </div>
                 <span id="error_SD" class="text-danger danger2"></span>
               </div>
             </div>
             <div class="col col-lg-3">
               <div class="mb-2">
-                <label class="ps-0">Gross Salary</label>
-                <div class="input-group mb-2">
-                  <div class="input-group-prepend">
-                    <div class="input-group-text">₹</div>
-                  </div>
-                  <input type="number" class="form-control" name="GrossSalary" id="GrossSalary" placeholder="Ex.16000.00">
-                </div>
-                <span id="error_GrossSalary" class="text-danger danger2"></span>
+                <label class="ps-0">ESI</label>
+                  <select class="form-select" name="ESI" id="ESI">
+                    <option value="0">No</option>
+                    <option value="1">Yes (0.75% + 3.25%)</option>
+                  </select>
+                <span id="error_ESI" class="text-danger danger2"></span>
               </div>
             </div>
             <div class="col col-lg-3">
@@ -590,7 +605,7 @@ if (isset($_SESSION['msg'])) {
                   <div class="input-group-prepend">
                     <div class="input-group-text">₹</div>
                   </div>
-                  <input type="number" class="form-control" name="NetSalary" id="NetSalary" placeholder="Ex.14840.00">
+                  <input type="number" class="form-control" name="NetSalary" id="NetSalary" placeholder="Ex.14840.00" readonly>
                 </div>
                 <span id="error_NetSalary" class="text-danger danger2"></span>
               </div>
@@ -812,7 +827,7 @@ if (isset($_SESSION['msg'])) {
 
 <script>
   $(document).ready(function() {
-    
+
     const selectedFilesMap = {
       1: [],
       2: [],
@@ -933,10 +948,10 @@ if (isset($_SESSION['msg'])) {
     function form_validate(tab) {
       if (tab == 1) {
         $('#EmployeeName,#MotherName,#PlaceOfBirth,#FatherName,#PermanentAddress, #ResidentialAddress, #EContactNo, #EmployeeCode, #Gender, #DOB, #BLOODGROUP, #ContactNo, #PersonalMail, #Email, #AltContactno').removeClass('is-invalid');
-        var Test=[];
+        var Test = [];
         if ($('#EmployeeName').val().trim() === '') {
           $('#EmployeeName').addClass('is-invalid');
-           Test[0] = false;
+          Test[0] = false;
         }
         if ($('#EmployeeCode').val().trim() === '') {
           $('#EmployeeCode').addClass('is-invalid');
@@ -1003,32 +1018,31 @@ if (isset($_SESSION['msg'])) {
         // }
 
         for (let index = 0; index < Test.length; index++) {
-          if(Test[index] == false){
+          if (Test[index] == false) {
             return false;
           }
         }
         return true;
-      } 
-      else if (tab == 2) {
-        var Test=[];
+      } else if (tab == 2) {
+        var Test = [];
         $('.danger2').html('');
         $('.danger2').hide();
         $('#DOJ,#Salary_date,#ReportManagerIDFK,#ContractPeriod,#EmployementType,#Status,#DesignationIDFK,#DepartmentId,#UAN_No,#PAN_No,#Aadhar_No').removeClass('is-invalid');
         if ($('#DOJ').val().trim() === '') {
           $('#DOJ').addClass('is-invalid');
-           Test[0] = false;
+          Test[0] = false;
         }
         if ($('#DepartmentId').val() === null || $('#DepartmentId').val() === '') {
           $('#DepartmentId').addClass('is-invalid');
-           Test[1] = false;
+          Test[1] = false;
         }
         if ($('#DesignationIDFK').val() === null || $('#DesignationIDFK').val() === '') {
           $('#DesignationIDFK').addClass('is-invalid');
-           Test[2] = false;
+          Test[2] = false;
         }
         if ($('#Status').val() === null || $('#Status').val() === '') {
           $('#Status').addClass('is-invalid');
-           Test[3] = false;
+          Test[3] = false;
         }
         if ($('#EmployementType').val() === null || $('#EmployementType').val() === '') {
           $('#EmployementType').addClass('is-invalid');
@@ -1039,7 +1053,7 @@ if (isset($_SESSION['msg'])) {
           Test[5] = false;
         }
         if ($('#Salary_date').val() === null || $('#Salary_date').val() === '') {
-          $('#Salary_date').addClass('is-invalid');  
+          $('#Salary_date').addClass('is-invalid');
           Test[6] = false;
         }
         if ($('#BasicSalary').val().trim() === '' || isNaN($('#BasicSalary').val().trim())) {
@@ -1099,55 +1113,54 @@ if (isset($_SESSION['msg'])) {
         //    Test[] = false;
         // }
         for (let index = 0; index < Test.length; index++) {
-          if(Test[index] == false){
+          if (Test[index] == false) {
             $('.danger2').show();
             return false;
           }
         }
         return true;
-      } 
-      else if (tab == 3) {
-        var Test=[];
+      } else if (tab == 3) {
+        var Test = [];
         $('#P_AccountHolderName,#P_BankName,#P_BankBranch,#P_AccountNo,#P_IFSCode,#O_AccountHolderName,#O_BankName,#O_BankBranch,#O_AccountNo,#O_IFSCode,#P_Mode,#O_Mode').removeClass('is-invalid');
         if ($('#P_AccountHolderName').val().trim() === '') {
           $('#P_AccountHolderName').addClass('is-invalid');
-           Test[0] = false;
+          Test[0] = false;
         }
         if ($('#P_BankName').val().trim() === '') {
           $('#P_BankName').addClass('is-invalid');
-           Test[1] = false;
+          Test[1] = false;
         }
         if ($('#P_BankBranch').val().trim() === '') {
           $('#P_BankBranch').addClass('is-invalid');
-           Test[2] = false;
+          Test[2] = false;
         }
         if ($('#P_AccountNo').val().trim() === '') {
           $('#P_AccountNo').addClass('is-invalid');
-           Test[3] = false;
+          Test[3] = false;
         }
         if ($('#P_IFSCode').val().trim() === '') {
           $('#P_IFSCode').addClass('is-invalid');
-           Test[4] = false;
+          Test[4] = false;
         }
         if ($('#O_AccountHolderName').val().trim() === '') {
           $('#O_AccountHolderName').addClass('is-invalid');
-           Test[5] = false;
+          Test[5] = false;
         }
         if ($('#O_BankName').val().trim() === '') {
           $('#O_BankName').addClass('is-invalid');
-           Test[6] = false;
+          Test[6] = false;
         }
         if ($('#O_BankBranch').val().trim() === '') {
           $('#O_BankBranch').addClass('is-invalid');
-           Test[7] = false;
+          Test[7] = false;
         }
         if ($('#O_AccountNo').val().trim() === '') {
           $('#O_AccountNo').addClass('is-invalid');
-           Test[8] = false;
+          Test[8] = false;
         }
         if ($('#O_IFSCode').val().trim() === '') {
           $('#O_IFSCode').addClass('is-invalid');
-           Test[9] = false;
+          Test[9] = false;
         }
         if ($('#P_Mode').val() === null || $('#P_Mode').val() === '') {
           $('#P_Mode').addClass('is-invalid');
@@ -1158,7 +1171,7 @@ if (isset($_SESSION['msg'])) {
           Test[11] = false;
         }
         for (let index = 0; index < Test.length; index++) {
-          if(Test[index] == false){
+          if (Test[index] == false) {
             return false;
           }
         }
@@ -1166,9 +1179,42 @@ if (isset($_SESSION['msg'])) {
       }
     }
 
-
+    $('#GrossSalary, #PF, #PT, #PF_VOL, #Insurance, #SD, #ESI').on("change",function(){
+      salary_calc();
+    });
 
   });
+
+  function salary_calc(){
+    var Gross = parseFloat($('#GrossSalary').val()) || 0.00;
+    var Pf = parseFloat($('#PF').val()) || 0.00;
+    var Pt = parseFloat($('#PT').val()) || 0.00;
+    var Pfvol = parseFloat($('#PF_VOL').val()) || 0.00;
+    var Ins = parseFloat($('#Insurance').val()) || 0.00;
+    var Grati = parseFloat($('#SD').val()) || 0.00;
+    var Esi = $('#ESI').val() || 0;
+    if(Esi == 1){
+      var Esi_vol = (Gross/100)*4;
+    }else{
+      var Esi_vol = 0;
+    }
+
+    var Gross_earn = parseFloat(Gross-(Pf+Pfvol+Pt+Ins+Grati+Esi_vol));
+    var Basic = parseFloat((Gross/100)*40);
+    var Hra   = parseFloat((Basic/100)*40);
+    var Fbp   = parseFloat(Gross_earn-(Basic+Hra));
+    var Netsal= parseFloat((Basic+Hra+Fbp)-(Pf+Pfvol+Pt+Ins+Grati+Esi_vol));
+
+    $('#BasicSalary').val(Basic.toFixed(2));
+    $('#HRA').val(Hra.toFixed(2));
+    $('#FBP').val(Fbp.toFixed(2));
+    $('#PF').val(Pf.toFixed(2));
+    $('#PT').val(Pt.toFixed(2));
+    $('#PF_VOL').val(Pfvol.toFixed(2));
+    $('#Insurance').val(Ins.toFixed(2));
+    $('#SD').val(Grati.toFixed(2));
+    $('#NetSalary').val(Netsal.toFixed(2));
+  }
 </script>
 
 

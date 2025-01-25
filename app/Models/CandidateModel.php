@@ -2531,9 +2531,17 @@ class CandidateModel extends Model
 
     public function GetJobExperience()
     {
-        $sql = "SELECT * FROM job_experience";
+        $sql = $sql = "SELECT A.IDPK, A.Options,CASE 
+                                                    WHEN COUNT(B.job_experience) > 0 THEN 0
+                                                    ELSE 1
+                                                END AS Del
+                        FROM job_experience A
+                        LEFT JOIN careers_job_lists B ON B.job_experience = A.IDPK AND B.active_Id = 1
+                        GROUP BY A.IDPK, A.Options";
         $data = $this->db->query($sql)->getResultArray();
+
         // print_r($data);exit(0);
+
         return $data;
     }
 

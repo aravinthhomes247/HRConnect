@@ -178,6 +178,28 @@
                         </div>
                     </td>
                 </tr>
+                <tr>
+                    <th>Aadhar No</th>
+                    <td class="editable" data-name="Aadhar_No" data-type="number"><?= $BasicDetails['Aadhar_No'] ?? 'NA' ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>PAN No</th>
+                    <td class="editable" data-name="PAN_No" data-type="text"><?= $BasicDetails['PAN_No'] ?? 'NA' ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                        </div>
+                    </td>
+                </tr>
             </tbody>
         </table>
     </div>

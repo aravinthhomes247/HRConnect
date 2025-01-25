@@ -33,6 +33,10 @@
 
         <!-- Date Range Picker -->
         <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css" />
+        
+        <!-- Month Picker -->
+        <link rel="stylesheet" href="<?php echo base_url('../public/dist/css/MonthPicker.min.css'); ?>">
+        <link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css" />
 
         <!-- DataTable bootsrup 5 -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
@@ -74,8 +78,8 @@
                         <a href="#" style="pointer-events:none">
                             <li class="list-group-item <?= ($currentpage == 'xxxxxxxxx') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>Tickets <span style="font-size:xx-small;color:red;">Coming Soon</span></span></li>
                         </a>
-                        <a href="#" style="pointer-events:none">
-                            <li class="list-group-item <?= ($currentpage == 'xxxxxxxxx') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Payroll <span style="font-size:xx-small;color:red;">Coming Soon</span></span></li>
+                        <a href="<?php echo base_url('payrolls?trickid=1&fdate=' . date('Y-m-d', strtotime('-1 month', strtotime($fdate)))) ?>">
+                            <li class="list-group-item <?= ($currentpage == 'payrolls') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Payroll</span></li>
                         </a>
                         <a href="<?php echo base_url('careers?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'careers' || $currentpage == 'applicants' || $currentpage == 'add-career' || $currentpage == 'edit-career') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/career.ico'); ?>" class="sidemenu-img-7"><span>Careers</span></li>
@@ -229,6 +233,13 @@
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js"></script>
     <script src="<?php echo base_url('../public/js/timepicker-bs4.js'); ?>"></script>
 
+    <?php if($currentpage == 'payrolls'){ ?>
+        <!-- monthpicker -->
+        <script src="https://code.jquery.com/jquery-1.12.1.min.js"></script>
+        <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="<?php echo base_url('../public/js/monthpicker.js'); ?>"></script>
+    <?php } ?>
+
     <!-- DataTable bootstrup 5 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
@@ -241,9 +252,7 @@
 
     <!-- tiny editor -->
     <?php
-
         use App\Models\CareerModel;
-
         $this->careerModel = new CareerModel();
         $ret_arr = $this->careerModel->get_tinyMCE_code(); 
     ?>

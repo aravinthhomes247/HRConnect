@@ -236,9 +236,14 @@ $routes->get('/delete-holiday/(:any)', 'HRController::DeleteHoliday/$1',['filter
 $routes->post('/update-settings-options', 'HRController::UpdateJobExperience', ['filter' => 'auth']);
 
 $routes->post('/employee-edit/single/(:any)', 'HRController::UpdateEmployee/$1',['filter' => 'auth']);
+$routes->post('/employee-edit/single-abs/(:any)', 'HRController::UpdateAbsEmployee/$1',['filter' => 'auth']);
 
 
 
+$routes->get('/payrolls', 'HRController::payrolls',['filter' => 'auth']);
+$routes->get('/payslip-edit/(:any)', 'HRController::payroll_edit/$1',['filter' => 'auth']);
+$routes->post('/payslip-update', 'HRController::payroll_update',['filter' => 'auth']);
+$routes->get('/payslip-manual-save', 'HRController::payroll_save',['filter' => 'auth']);
 // $routes->get('/HRtodays_activity', 'HRController::HRtodays_candidate_activityC', ['filter' => 'auth']);
 // $routes->get('dashboard', 'HRDashboard::presents');
 // CRUD RESTful Routes

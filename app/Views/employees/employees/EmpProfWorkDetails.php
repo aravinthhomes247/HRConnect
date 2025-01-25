@@ -3,11 +3,11 @@
 <?php echo ($this->section("body")) ?>
 
 <style>
-    .fa-regular{
+    .fa-regular {
         vertical-align: middle;
     }
 
-    .edit-icon{
+    .edit-icon {
         cursor: pointer;
     }
 
@@ -19,7 +19,7 @@
         background-color: transparent;
     }
 
-    .action-btns{
+    .action-btns {
         display: flex;
         gap: 5px;
     }
@@ -27,6 +27,7 @@
     i.fa-pencil.edit-icon:hover {
         color: #8146D4 !important;
     }
+
     .profile-container i.imageedit {
         background-color: #8146D4;
         border-radius: 50%;
@@ -36,11 +37,21 @@
         right: 0px;
         position: absolute;
     }
+    button.close {
+        color: #8045d2;
+        border-radius: 50%;
+        padding: 3px 10px;
+        border-color: #8045d2;
+    }
+    .modal-header {
+        text-align: center;
+        background-color: #925EDD14;
+    }
 </style>
 
 <div class="profile-container mt-2 ms-4 ps-1 pt-1 pe-1">
     <div class="row me-0">
-        <input type="file" id="fileImage" style="display: none;"/>
+        <input type="file" id="fileImage" style="display: none;" />
         <div class="col col-lg-1 col-md-1" style="position: relative;">
             <?php if (empty($BasicDetails['Image'])) { ?>
                 <img class="img-circle elevation-2" src="<?php echo base_url('public/images/default-profile.png') ?>">
@@ -71,11 +82,11 @@
         <nav class="nav nav-pills flex-column flex-sm-row">
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId']); ?>">Basic Details</a>
             <a class="flex-sm-fill text-sm-center nav-link active" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=2'); ?>">Work Details</a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=3'); ?>" >Approvals </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=4'); ?>" >Attanance </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=5'); ?>" >Late Entry </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=6'); ?>" >Time Logs </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=7'); ?>" >Pay slip </a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=3'); ?>">Approvals </a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=4'); ?>">Attanance </a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=5'); ?>">Late Entry </a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=6'); ?>">Time Logs </a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=7'); ?>">Pay slip </a>
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=8'); ?>">Files</a>
         </nav>
     </div>
@@ -94,7 +105,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -105,7 +116,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -116,7 +127,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -127,7 +138,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -139,7 +150,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -150,7 +161,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -161,7 +172,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -172,29 +183,40 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th>Aadhar No</th>
-                    <td class="editable" data-name="Aadhar_No" data-type="number"><?= $WorkDetails['Employement']['Aadhar_No'] ?? 'NA' ?></td>
+                    <th>ESI Number</th>
+                    <td class="editable" data-name="ESI_No" data-type="text"><?= $BasicDetails['ESI_No'] ?? 'NA' ?></td>
                     <td>
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
                 <tr>
-                    <th>PAN No</th>
-                    <td class="editable" data-name="PAN_No" data-type="text"><?= $WorkDetails['Employement']['PAN_No'] ?? 'NA' ?></td>
+                    <th>PF Number</th>
+                    <td class="editable" data-name="PF_No" data-type="text"><?= $BasicDetails['PF_No'] ?? 'NA' ?></td>
                     <td>
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>UAN No</th>
+                    <td class="editable" data-name="UAN_No" data-type="text"><?= $WorkDetails['Employement']['UAN_No'] ?? 'NA' ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -206,94 +228,6 @@
         <h5 class="mt-2 ms-2">Salary Information</h5>
         <table class="table table-hover">
             <tbody>
-                <tr>
-                    <th class="green">Basic Salary</th>
-                    <td class="editable" data-name="BasicSalary" data-type="number"><?= $WorkDetails['Salary']['BasicSalary'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="green">HRA</th>
-                    <td class="editable" data-name="HRA" data-type="number"><?= $WorkDetails['Salary']['HRA'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="green">FBP</th>
-                    <td class="editable" data-name="FBP" data-type="number"><?= $WorkDetails['Salary']['FBP'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="red">PF</th>
-                    <td class="editable" data-name="PF" data-type="number"><?= $WorkDetails['Salary']['PF'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="red">PT</th>
-                    <td class="editable" data-name="PT" data-type="number"><?= $WorkDetails['Salary']['PT'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="red">PF Vol</th>
-                    <td class="editable" data-name="PF_VOL" data-type="number"><?= $WorkDetails['Salary']['PF_VOL'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="red">Insurance</th>
-                    <td class="editable" data-name="Insurance" data-type="number"><?= $WorkDetails['Salary']['Insurance'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="red">SD</th>
-                    <td class="editable" data-name="SD" data-type="number"><?= $WorkDetails['Salary']['SD'] ?? 'NA'  ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
                 <tr class="highlight">
                     <th>Gross Salary</th>
                     <td class="editable" data-name="GrossSalary" data-type="number"><?= $WorkDetails['Salary']['GrossSalary'] ?? 'NA'  ?></td>
@@ -305,15 +239,103 @@
                         </div>
                     </td>
                 </tr>
-                <tr class="highlight">
-                    <th>Net Salary</th>
-                    <td class="editable" data-name="NetSalary" data-type="number"><?= $WorkDetails['Salary']['NetSalary'] ?? 'NA' ?></td>
+                <tr>
+                    <th class="green">Basic Salary</th>
+                    <td class="editable" data-name="BasicSalary" data-type="number"><?= $WorkDetails['Salary']['BasicSalary'] ?? 'NA'  ?></td>
+                    <td>
+                        <!-- <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <th class="green">HRA</th>
+                    <td class="editable" data-name="HRA" data-type="number"><?= $WorkDetails['Salary']['HRA'] ?? 'NA'  ?></td>
+                    <td>
+                        <!-- <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <th class="green">FBP</th>
+                    <td class="editable" data-name="FBP" data-type="number"><?= $WorkDetails['Salary']['FBP'] ?? 'NA'  ?></td>
+                    <td>
+                        <!-- <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div> -->
+                    </td>
+                </tr>
+                <tr>
+                    <th class="red">PF</th>
+                    <td class="editable" data-name="PF" data-type="number"><?= $WorkDetails['Salary']['PF'] ?? 'NA'  ?></td>
                     <td>
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="red">PT</th>
+                    <td class="editable" data-name="PT" data-type="number"><?= $WorkDetails['Salary']['PT'] ?? 'NA'  ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="red">PF Vol</th>
+                    <td class="editable" data-name="PF_VOL" data-type="number"><?= $WorkDetails['Salary']['PF_VOL'] ?? 'NA'  ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="red">Insurance</th>
+                    <td class="editable" data-name="Insurance" data-type="number"><?= $WorkDetails['Salary']['Insurance'] ?? 'NA'  ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="highlight">
+                    <th class="green">Grativity</th>
+                    <td class="editable" data-name="Grativity" data-type="number"><?= $WorkDetails['Salary']['Grativity'] ?? 'NA'  ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr class="highlight">
+                    <th>Net Salary</th>
+                    <td class="editable" data-name="NetSalary" data-type="number"><?= $WorkDetails['Salary']['NetSalary'] ?? 'NA' ?></td>
+                    <td>
+                        <!-- <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div> -->
                     </td>
                 </tr>
             </tbody>
@@ -323,7 +345,7 @@
 
 <div class="row ms-2 me-0">
     <input type="hidden" id="acc-type">
-    <div class="employeeinfo mt-2 ms-3">
+    <div class="employeeinfo mt-2 ms-3 mb-3">
         <h5 class="mt-2 ms-2">Personal Bank Information</h5>
         <table class="table table-hover">
             <tbody>
@@ -334,18 +356,18 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
                 <tr>
                     <th>Bank Name</th>
-                    <td class="editable" data-name="BankName" data-type="text" ><?= $WorkDetails['Personal']['BankName'] ?? 'NA' ?></td>
+                    <td class="editable" data-name="BankName" data-type="text"><?= $WorkDetails['Personal']['BankName'] ?? 'NA' ?></td>
                     <td>
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -356,7 +378,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -367,7 +389,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -378,7 +400,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -387,47 +409,35 @@
                     <td class="editable" data-name="Mode" data-type="select-paymode" data-actype="2">
                         <?php switch ($WorkDetails['Personal']['Mode']) {
                             case 1:
-                                echo('Bank Transfer');
+                                echo ('Bank Transfer');
                                 break;
                             case 2:
-                                echo('Cash');
+                                echo ('Cash');
                                 break;
                             case 3:
-                                echo('UPI');
+                                echo ('UPI');
                                 break;
                             case 4:
-                                echo('Check');
+                                echo ('Check');
                                 break;
                             default:
-                                echo('NA');
+                                echo ('NA');
                                 break;
-                        }?>
+                        } ?>
                     </td>
                     <td>
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <th>UAN No</th>
-                    <td class="editable" data-name="UAN_No" data-type="text"><?= $WorkDetails['Employement']['UAN_No'] ?? 'NA' ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="2" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-
             </tbody>
         </table>
     </div>
 
-    <div class="employeeinfo mt-2 ms-3">
+    <div class="employeeinfo mt-2 ms-3 mb-3">
         <h5 class="mt-2 ms-2">Official Bank Information</h5>
         <table class="table table-hover">
             <tbody>
@@ -438,7 +448,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="1" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -449,7 +459,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="1" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -460,7 +470,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="1" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -471,7 +481,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="1" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -482,7 +492,7 @@
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="1" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
@@ -490,45 +500,66 @@
                     <th>Payment Mode</th>
                     <td class="editable" data-name="Mode" data-type="select-paymode" data-actype="1">
                         <?php switch ($WorkDetails['Official']['Mode']) {
-                                case 1:
-                                    echo('Bank Transfer');
-                                    break;
-                                case 2:
-                                    echo('Cash');
-                                    break;
-                                case 3:
-                                    echo('UPI');
-                                    break;
-                                case 4:
-                                    echo('Check');
-                                    break;
-                                default:
-                                    echo('NA');
-                                    break;
-                            }?>
+                            case 1:
+                                echo ('Bank Transfer');
+                                break;
+                            case 2:
+                                echo ('Cash');
+                                break;
+                            case 3:
+                                echo ('UPI');
+                                break;
+                            case 4:
+                                echo ('Check');
+                                break;
+                            default:
+                                echo ('NA');
+                                break;
+                        } ?>
                     </td>
                     <td>
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">
                             <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="1" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
                         </div>
                     </td>
                 </tr>
-                <tr>
-                    <th>UAN No</th>
-                    <td class="editable" data-name="UAN_No" data-type="text"><?= $WorkDetails['Employement']['UAN_No'] ?? 'NA' ?></td>
-                    <td>
-                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
-                        <div class="action-btns">
-                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" data-acctype="1" style="color: #01e305; display:none;"></i></button>
-                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>  
-                        </div>
-                    </td>
-                </tr>
-
             </tbody>
         </table>
+    </div>
+</div>
+
+<div class="modal fade" id="confirmNA" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">InActive or Abscond Employee</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h6>Is the full and final settlement completed for this employee?</h6>
+                <form action="#" id="confirmNoForm" style="display:none;">
+                    <div class="row mt-2">
+                        <div class="col form-group">
+                            <label for=>Employee Last Working Date?</label>
+                            <input type="date" class="form-control" id="LastWorkingDate" required>
+                        </div>
+                        <div class="col form-group">
+                            <label>How many days required?</label>
+                            <input type="number" class="form-control" id="DaysRequired" placeholder="15" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" style="display: none;" class="btn btn-primary" id="confirmSave">Save</button>
+                <button type="button" class="btn btn-success" id="confirmYes">Yes</button>
+                <button type="button" class="btn btn-danger" id="confirmNo">NO</button>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -557,25 +588,25 @@
                                         ${DEPARTMENTS.map(element => `<option value="${element.IDPK}" ${(currentText === element.deptName) ? 'selected' : ''}>${element.deptName}</option>`).join('')}
                                     </select>`);
                 }
-            } else if(type === "select-Des"){
+            } else if (type === "select-Des") {
                 if (editableTd.find('select').length === 0) {
                     editableTd.html(`<select class="form-control" name="${inpname}">
                                         ${DESIGNATIONS.map(element => `<option value="${element.IDPK}" ${(currentText === element.designations) ? 'selected' : ''}>${element.designations}</option>`).join('')}
                                     </select>`);
                 }
-            } else if(type === "select-Emptyp"){
+            } else if (type === "select-Emptyp") {
                 if (editableTd.find('select').length === 0) {
                     editableTd.html(`<select class="form-control" name="${inpname}">
                                         ${EMPTYPES.map(element => `<option value="${element.IDPK}" ${(currentText === element.EmployeeTypeName) ? 'selected' : ''}>${element.EmployeeTypeName}</option>`).join('')}
                                     </select>`);
                 }
-            } else if(type === "select-Man"){
+            } else if (type === "select-Man") {
                 if (editableTd.find('select').length === 0) {
                     editableTd.html(`<select class="form-control" name="${inpname}">
                                         ${MANAGERS.map(element => `<option value="${element.EmployeeId}" ${(currentText === element.EmployeeName) ? 'selected' : ''}>${element.EmployeeName}</option>`).join('')}
                                     </select>`);
                 }
-            } else if(type === "select-status"){
+            } else if (type === "select-status") {
                 if (editableTd.find('select').length === 0) {
                     editableTd.html(`<select class="form-control" name="${inpname}">
                                         <option value="Working" ${(currentText === 'Working') ? 'selected' : ''}>Working</option>
@@ -583,7 +614,7 @@
                                         <option value="InActive" ${(currentText === 'InActive') ? 'selected' : ''}>InActive</option>
                                     </select>`);
                 }
-            } else if(type === "select-paymode" && actype == 1){
+            } else if (type === "select-paymode" && actype == 1) {
                 if (editableTd.find('select').length === 0) {
                     editableTd.html(`<select class="form-control" name="${inpname}">
                                         <option value="1" ${(currentText === 'Bank Transfer') ? 'selected' : ''}>Bank Transfer</option>
@@ -592,7 +623,7 @@
                                         <option value="4" ${(currentText === 'Check') ? 'selected' : ''}>Check</option>
                                     </select>`);
                 }
-            } else if(type === "select-paymode" && actype == 2){
+            } else if (type === "select-paymode" && actype == 2) {
                 if (editableTd.find('select').length === 0) {
                     editableTd.html(`<select class="form-control" name="${inpname}">
                                         <option value="1" ${(currentText === 'Bank Transfer') ? 'selected' : ''}>Bank Transfer</option>
@@ -630,19 +661,92 @@
 
             // Save action on save icon click
             saveIcon.on('click', function() {
-                if($(this).data('acctype')){
+                if ($(this).data('acctype')) {
                     $('#acc-type').val($(this).data('acctype'));
-                }else{
+                } else {
                     $('#acc-type').val('');
                 }
 
                 $('#acc-type').val();
                 if (type === "select" || type === "select-Dep" || type === "select-Des" || type === "select-Emptyp" || type === "select-Man" || type === "select-status" || type === "select-paymode") {
-                    saveValue(row, editableTd, inpname, select.val(), currentText, "saveicon");
+                    if (type === "select-status" && select.val() != "Working") {
+                        $('#confirmNA').modal('show');
+                    } else {
+                        saveValue(row, editableTd, inpname, select.val(), currentText, "saveicon");
+                    }
                 } else {
                     saveValue(row, editableTd, inpname, input.val().trim(), currentText, "saveicon");
                 }
             });
+
+
+            $('#confirmYes').on('click', function() {
+                // console.log("Yes");
+                const data = {};
+                data['final_set_status'] = 1;
+                data['final_set_amound'] = 0.00;
+                // Perform AJAX request to save data
+                $.ajax({
+                    url: '<?= base_url() . '/employee-edit/single-abs/' . $BasicDetails['EmployeeId'] ?>',
+                    type: 'POST',
+                    data: data,
+                    success: function(response) {
+                        console.log('Updated successfully:', response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log('Failed to update:', error);
+                        alert('Failed to update!');
+                    }
+                });
+                saveValue(row, editableTd, inpname, select.val(), currentText, "saveicon");
+            });
+
+            $('#confirmNo').on('click', function() {
+                // console.log("No");
+                $('#confirmNo').hide();
+                $('#confirmYes').hide();
+                $('#confirmNoForm').show();
+                $('#confirmSave').show();
+            });
+
+            $('#confirmSave').on('click', function() {
+                var lwd = $('#LastWorkingDate').val();
+                var drq = $('#DaysRequired').val();
+                if (lwd == '') {
+                    $('#LastWorkingDate').addClass('is-invalid');
+                }
+                if (drq == '') {
+                    $('#DaysRequired').addClass('is-invalid');
+                }
+                if (lwd && drq) {
+                    var result = new Date(lwd);
+                    result.setDate(result.getDate() + parseInt(drq));
+                    result = new Date(result.getFullYear(),result.getMonth(),result.getDate());
+                    result = result.getFullYear()+'-'+String(result.getMonth() + 1).padStart(2, '0')+'-'+result.getDate();
+
+                    const data = {};
+                    data['last_working'] = lwd;
+                    data['settlement_day'] = result;
+                    data['final_set_status'] = 0;
+                    data['final_set_amound'] = 0.00;
+
+                    // Perform AJAX request to save data
+                    $.ajax({
+                        url: '<?= base_url() . '/employee-edit/single-abs/' . $BasicDetails['EmployeeId'] ?>',
+                        type: 'POST',
+                        data: data,
+                        success: function(response) {
+                            console.log('Updated successfully:', response);
+                        },
+                        error: function(xhr, status, error) {
+                            console.log('Failed to update:', error);
+                            alert('Failed to update!');
+                        }
+                    });
+
+                    saveValue(row, editableTd, inpname, select.val(), currentText, "saveicon");
+                }
+            })
 
             // Cancel action on cancel icon click
             cancelIcon.on('click', function() {

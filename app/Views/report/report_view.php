@@ -56,8 +56,8 @@
             <input type="hidden" name="trickid" id="trickid" value="<?= $trickid ?>">
             <a href="<?= site_url('/reportemp?trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 1) ? 'active' : '' ?>">All</a>
             <a href="<?= site_url('/reportemp?trickid=2&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 2) ? 'active' : '' ?>">Late Comers - <?= $lateComers ?></a>
-            <a href="<?= site_url('/reportemp?trickid=3&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 3) ? 'active' : '' ?>">Early Log-Out -</a>
-            <a href="<?= site_url('/reportemp?trickid=4&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 4) ? 'active' : '' ?>">Abnormal Time Log -</a>
+            <a href="<?= site_url('/reportemp?trickid=3&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 3) ? 'active' : '' ?>">Early Exiters - <?= $earlylogout ?></a>
+            <a href="<?= site_url('/reportemp?trickid=4&fdate=' . $fdate . '&todate=' . $todate) ?>" class="btn <?= ($trickid == 4) ? 'active' : '' ?>">Abnormal Time Log - <?= $abnormal ?></a>
         </div>
         <div class="col col-lg-4">
             <div class="action ms-3">
@@ -96,26 +96,26 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php 
-                        $i = 1;
-                        if ($selectedemps): ?>
-                            <?php foreach ($selectedemps as $row): ?>
-                                <tr>
-                                    <td><?php echo $i++; ?></td>
-                                    <td><?php echo $row['name'] ?></td>
-                                    <td><?php echo $row['UserId'] ?>
-                                        <input type="hidden" id="UserId" value="<?= $row['UserId'] ?>">
-                                    </td>
-                                    <td><?php echo $row['designations'] ?></td>
-                                    <td> <?php echo $row['login'] ?> </td>
-                                    <td> <?php echo $row['logout'] ?> </td>
-                                    <td><?php echo $row['workingHours'] ?></td>
-                                </tr>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                    <?php
+                    $i = 1;
+                    if ($selectedemps): ?>
+                        <?php foreach ($selectedemps as $row): ?>
+                            <tr>
+                                <td><?php echo $i++; ?></td>
+                                <td><?php echo $row['name'] ?></td>
+                                <td><?php echo $row['UserId'] ?>
+                                    <input type="hidden" id="UserId" value="<?= $row['UserId'] ?>">
+                                </td>
+                                <td><?php echo $row['designations'] ?></td>
+                                <td> <?php echo date("Y-m-d h:i A", strtotime($row['login'])) ?> </td>
+                                <td> <?php echo date("Y-m-d h:i A", strtotime($row['logout'])) ?> </td>
+                                <td><?php echo $row['workingHours'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
-        <?php } else if($trickid == 2) { ?>
+        <?php } else if ($trickid == 2) { ?>
             <table class="table table-hover ms-2" id="examp1">
                 <thead class="table-secondary">
                     <tr>
@@ -123,34 +123,37 @@
                         <td>Employee Name</td>
                         <td>Employee Code</td>
                         <td>Designation</td>
-                        <td>No of days Late</td>
-                        <td>Action</td>
+                        <td>Log-IN</td>
+                        <td>Late By</td>
+                        <td>Total Hrs</td>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php $i=1; if($lateComersDetailsLog): ?>
-                        <?php foreach($lateComersDetailsLog as $row): ?>
-                            <tr>                      
+                    <?php $i = 1;
+                    if ($lateComersDetailsLog): ?>
+                        <?php foreach ($lateComersDetailsLog as $row): ?>
+                            <tr>
                                 <td><?php echo $i++; ?></td>
                                 <td><?php echo $row['name']; ?></td>
                                 <td><?php echo $row['UserId']; ?></td>
                                 <td><?php echo $row['designations']; ?></td>
-                                <td>5 days</td>
+                                <td><?php echo date("Y-m-d h:i A", strtotime($row['FirstLogin'])) ?></td>
                                 <td>
-                                    <a href="javascript:void(0);" class="menu-trigger">
-                                        <img src="<?php echo base_url('../public/images/img/Group.png') ?>" alt="menu" id="menu-icon">
-                                    </a>
-                                    <div class="dropdown" style="display: none;">
-                                        <a href="#">Edit</a>
-                                        <a href="#">Delete</a>
-                                    </div>
+                                    <?php
+                                    $first = date('Y-m-d', strtotime($row['LastLogin'])) . ' 09:45:00';
+                                    $firstLogin = new DateTime($first);
+                                    $lastLogin = new DateTime($row['FirstLogin']);
+                                    $interval = $firstLogin->diff($lastLogin);
+                                    ?>
+                                    <?php echo $interval->format('%H:%I') ?>
                                 </td>
+                                <td><?php echo $row['workingHours'] ?></td>
                             </tr>
-                        <?php endforeach; ?> 
-                     <?php endif; ?>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
-        <?php } else if($trickid == 3) { ?>
+        <?php } else if ($trickid == 3) { ?>
             <table class="table table-hover ms-2" id="examp1">
                 <thead class="table-secondary">
                     <tr>
@@ -164,9 +167,31 @@
                     </tr>
                 </thead>
                 <tbody>
+                    <?php $i = 1;
+                    if ($earlylogoutDetails): ?>
+                        <?php foreach ($earlylogoutDetails as $row): ?>
+                            <tr>
+                                <td><?= $i++ ?></td>
+                                <td><?= $row['name'] ?></td>
+                                <td><?= $row['UserId'] ?></td>
+                                <td><?= $row['designations'] ?></td>
+                                <td><?= date("Y-m-d h:i A", strtotime($row['LastLogin'])) ?></td>
+                                <td>
+                                    <?php
+                                    $firstLogin = new DateTime($row['LastLogin']);
+                                    $last = date('Y-m-d', strtotime($row['LastLogin'])) . ' 18:30:00';
+                                    $lastLogin = new DateTime($last);
+                                    $interval = $firstLogin->diff($lastLogin);
+                                    ?>
+                                    <?= $interval->format('%H:%I') ?>
+                                </td>
+                                <td><?= $row['workingHours'] ?></td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
-        <?php } else if($trickid == 4) { ?>
+        <?php } else if ($trickid == 4) { ?>
             <table class="table table-hover ms-2" id="examp1">
                 <thead class="table-secondary">
                     <tr>
@@ -174,11 +199,35 @@
                         <td>Employee Name</td>
                         <td>Employee Code</td>
                         <td>Designation</td>
+                        <td>Date</td>
                         <td>Issue Type</td>
-                        <td>Action</td>
                     </tr>
                 </thead>
-                <tbody>    
+                <tbody>
+                    <?php $i = 1;
+                    if ($abnormalDetails): ?>
+                        <?php foreach ($abnormalDetails as $row): ?>
+                            <tr>
+                                <td><?= $i++ ?></td>
+                                <td><?= $row['name'] ?></td>
+                                <td><?= $row['UserId'] ?></td>
+                                <td><?= $row['designations'] ?></td>
+                                <td><?= date("Y-m-d", strtotime($row['LogDate'])) ?></td>
+                                <td>
+                                    <?php
+                                    if ($row['Miss_Bunch'] == 1) {
+                                        echo 'Single Punch';
+                                    } else if ($row['Late_Login'] == 1) {
+                                        echo 'late Punch In';
+                                    } else if ($row['Early_Logout'] == 1) {
+                                        echo 'Early Punch Out';
+                                    } else if ($row['Low_Wh'] == 1) {
+                                        echo 'Insufficient Working Hours';
+                                    } ?>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </tbody>
             </table>
         <?php } ?>
@@ -219,13 +268,13 @@
             dropdown.style.display = 'none';
         });
     });
-    
+
     $(document).ready(function() {
         var trickid = $('#trickid').val();
         var filename;
-        if(trickid == 1){
+        if (trickid == 1) {
             filename = 'Logdata';
-        }else if(trickid == 2){
+        } else if (trickid == 2) {
             filename = 'LateEntry';
         }
 

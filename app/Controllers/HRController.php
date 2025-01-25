@@ -387,14 +387,16 @@ class HRController extends BaseController
         return redirect()->back();
     }
 
-    public function GetEvent($id){
+    public function GetEvent($id)
+    {
         $eventModel = new EventsModel();
         $data['event'] = $eventModel->EventDetails($id);
         // print_r($data['event']);exit(0);
         return $this->response->setJSON(['status' => 'success', 'files' => $data['event']]);
     }
 
-    public function UpdateEvent(){
+    public function UpdateEvent()
+    {
         $eventModel = new EventsModel();
         $data['EventId'] = $_POST['id'];
         $data['EventName'] = $_POST['EventName'];
@@ -405,7 +407,8 @@ class HRController extends BaseController
         return $this->response->redirect(site_url('/allevents'));
     }
 
-    public function DeleteEvent($id){
+    public function DeleteEvent($id)
+    {
         $eventModel = new EventsModel();
         $result = $eventModel->DeleteEvent($id);
         return $this->response->redirect(site_url('/allevents'));
@@ -438,6 +441,7 @@ class HRController extends BaseController
         $data['inactive'] = $this->empModel->inActiveCountM();
         $data['abscond'] = $this->empModel->abscondCountM();
         $data['allEmpCount'] = $this->empModel->allEmpCountM();
+        $data['missing'] = $this->empModel->MissingSalaryCountM();
 
         $data['allEmpsList'] = $this->empModel->allEmpsListM($data);
         // $data['allEmpsList'] = $this->empModel->orderBy('EmployeeName', 'ASC')->findAll();
@@ -544,12 +548,12 @@ class HRController extends BaseController
         $this->empModel->insert_employeesHomes($data['Employee']);
         $this->empModel->insert($data['Employee']);
         $EmployeeId = $this->db->insertID();
-        
+
         $data['salary'] = [
             'EmployeeIDFK' => $EmployeeId,
             'PF' => $_POST['PF'],
             'PT' => $_POST['PT'],
-            'SD' => $_POST['SD'],
+            'Grativity' => $_POST['Grativity'],
             'HRA' => $_POST['HRA'],
             'FBP' => $_POST['FBP'],
             'PF_VOL' => $_POST['PF_VOL'],
@@ -591,12 +595,12 @@ class HRController extends BaseController
         $i = $j = 0;
         if ($Allfiles && count($Allfiles) > 0) {
             foreach ($Allfiles as $Catfiles) {
-                if($j != 0){
+                if ($j != 0) {
                     if (isset($Catfiles) && count($Catfiles) > 0) {
                         foreach ($Catfiles as $file) {
                             if ($file->isValid() && !$file->hasMoved()) {
                                 $originalFileName = $file->getClientName();
-                                echo("file= ".$originalFileName);
+                                echo ("file= " . $originalFileName);
                                 $filePath = $target_dir . $originalFileName;
                                 $fileName = $originalFileName;
                                 $pathInfo = pathinfo($originalFileName);
@@ -620,7 +624,7 @@ class HRController extends BaseController
                 }
                 $j++;
             }
-            if($imagedata){
+            if ($imagedata) {
                 $this->empModel->getEmployeeProFilesStore($imagedata);
             }
         }
@@ -662,8 +666,9 @@ class HRController extends BaseController
             $data['fed'] = $date_end;
             return view('employees/employees/EmpProfTimeLogs', $data);
         } elseif ($trickId == 7) {
-            $data['month'] = $month;
-            $data['PaySlip'] = $this->empModel->getEmployeePaySlip($id, $month);
+            $data['PaySlip'] = $this->empModel->getEmployeePaySlip($id);
+            $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
+            $data['mode'] = $data['mode']['Value'];
             return view('employees/employees/EmpProfPaySlip', $data);
         } elseif ($trickId == 8) {
             $data['Files'] = $this->empModel->getEmployeeFiles($id);
@@ -785,12 +790,95 @@ class HRController extends BaseController
         }
     }
 
-    public function payslipDownload($id)
+    public function payrolls()
     {
-        $data = $this->empModel->getEmployeePaySlipSpecific($id);
-        // print_r($data);exit(0);
+        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data['trickid'] = $_GET['trickid'] ?? 1;
+        $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
+        $data['mode'] = $data['mode']['Value'];
+        $results = $this->empModel->getAllPayslips($data);
+        $data['payslips'] = $results['results'];
+        $data['state0'] = $results['mode0'];
+        $data['state1'] = $results['mode1'];
+        $data['state2'] = $results['mode2'];
+        $data['trick1_count'] = $results['trick1_count'];
+        $data['trick2_count'] = $results['trick2_count'];
+        return view('report/payrolls', $data);
+    }
+
+    public function payroll_edit($id)
+    {
+        $data = $this->empModel->getPayslip($id);
+        return $this->response->setJSON(['status' => 'success', 'files' => $data]);
+    }
+
+    public function payroll_update()
+    {
+        $fdate = $_POST['fdate'] ?? date('Y-m-d');
+        $trickid = $_POST['trickid'] ?? 1;
+
+        $id = $_POST['id'];
+        $data['LOP'] = $_POST['LOP'];
+        $data['Acc_Type'] = $_POST['Acc_Type'];
+        $data['Basic'] = $_POST['Basic'];
+        $data['HRA'] = $_POST['HRA'];
+        $data['FBP'] = $_POST['FBP'];
+        $data['SD1'] = $_POST['SD1'];
+        $data['PF'] = $_POST['PF'];
+        $data['PT'] = $_POST['PT'];
+        $data['PFVOL'] = $_POST['PFVOL'];
+        $data['SD2'] = $_POST['SD2'];
+        $data['Insurance'] = $_POST['Insurance'];
+        $data['Net_salary'] = $_POST['Net_salary'];
+        $data['Status'] = 1;
+
+        $this->empModel->UpdatePayslip($id, $data);
+        return $this->response->redirect(site_url('/payrolls?trickid='.$trickid.'&fdate='.$fdate));
+    }
+
+    public function payroll_save(){
+        $data['fdate'] = $_GET['fdate'];
+        $data['trickid'] = $_GET['trickid'];
+        $this->empModel->PayslipManualSave($data);
+        return true;
+    }
+
+    public function payslipDownload($payslipid)
+    {
+        $Res = $this->empModel->getEmployeePaySlipSpecific($payslipid);
+
+        $date = date('d-m-Y', strtotime($Res['Date']));
+        $date = \DateTime::createFromFormat("d-m-Y", $date);
+        $maxDays = $date->format("t");
+
+        $data['EmpID'] = $Res['EmployeeCode'] ?? '-';
+        $data['PFNo'] = $Res['PF_No'] ?? '-';
+        $data['NOD'] = $maxDays ?? '-';
+        $data['Designation'] = $Res['designations'] ?? '-';
+        $data['AcNo'] = $Res['AccountNo'] ?? '-';
+        $data['ModeofPay'] = $Res['Mode'] ?? 1;
+        $data['LOP'] = $Res['LOP'] ?? 0;
+        $data['EmployeeName'] = $Res['EmployeeName'] ?? '-';
+        $data['ESINo'] = $Res['ESI_No'] ?? '-';
+        $data['DOJ'] = $Res['DOJ'] ?? '-';
+        $data['Department'] = $Res['deptName'] ?? '-';
+        $data['PAN'] = $Res['PAN_No'] ?? '-';
+        $data['UANNo'] = $Res['UAN_No'] ?? '-';
+        $data['BASIC'] = $Res['Basic'] ?? 0.00;
+        $data['HRA'] = $Res['HRA'] ?? 0.00;
+        $data['FBP'] = $Res['FBP'] ?? 0.00;
+        $data['SpecialEarnings'] = $Res['SD1'] ?? 0.00;
+        $data['PF'] = $Res['PF'] ?? 0.00;
+        $data['PT'] = $Res['PT'] ?? 0.00;
+        $data['PFVoluntary'] = $Res['PFVOL'] ?? 0.00;
+        $data['Insurance'] = $Res['Insurance'] ?? 0.00;
+        $data['SpecialDeductions'] = $Res['SD2'] ?? 0.00;
+        $data['Credited_Salary'] = $Res['Net_salary'] ?? '-';
+        $data['Date'] = $Res['Date'] ?? '-';
+
         // return view('report/payslip_format',$data);
-        $NAME = $data['EmployeeCode'] . '-' . date('F-Y', strtotime($data['Updated_on'])) . '.pdf';
+
+        $NAME = $data['EmpID'] . '-' . date('F-Y', strtotime($data['Date'])) . '.pdf';
         $html = view('report/payslip_format', $data);
         $options = new Options();
         $options->set('isHtml5ParserEnabled', true);
@@ -1038,25 +1126,27 @@ class HRController extends BaseController
     public function reportSearchAllLog()
     {
         $data1 = [
-            'fdate' => $_GET['fdate'],
-            'todate' => $_GET['todate'],
+            'fdate' => $_GET['fdate'] ?? date('Y-m-d'),
+            'todate' => $_GET['todate'] ?? date('Y-m-d'),
             'trickid' => $_GET['trickid'] ?? 1,
         ];
 
         $logModel = new LogModel();
-        $data1['lateComers'] = count($logModel->lateComersListM($data1));
-        
-        if($_GET['trickid'] == 1){
+        $data1['lateComers'] = count($logModel->lateComersListM($data1)) ?? 0;
+        $data1['earlylogout'] = count($logModel->EarlyoutListM($data1)) ?? 0;
+        $data1['abnormal'] = count($logModel->AbnormalListM($data1)) ?? 0;
+
+        if ($data1['trickid'] == 1) {
             $data1['selectedemps'] = $logModel->getSearchAllLog($data1);
         }
-        if($_GET['trickid'] == 2){
+        if ($data1['trickid'] == 2) {
             $data1['lateComersDetailsLog'] = $logModel->lateComersListM($data1);
         }
-        if($_GET['trickid'] == 3){
-        
+        if ($data1['trickid'] == 3) {
+            $data1['earlylogoutDetails'] = $logModel->EarlyoutListM($data1);
         }
-        if($_GET['trickid'] == 4){
-        
+        if ($data1['trickid'] == 4) {
+            $data1['abnormalDetails'] = $logModel->AbnormalListM($data1);
         }
 
         return view('report/report_view', $data1);
@@ -1402,7 +1492,7 @@ class HRController extends BaseController
         $file = $this->request->getFile('Resumefileinput');
         if ($file->isValid() && !$file->hasMoved()) {
             $originalFileName = $file->getClientName();
-        }else{
+        } else {
             $originalFileName = 'NA';
         }
 
@@ -1691,7 +1781,7 @@ class HRController extends BaseController
     public function update_CandiProfileC()
     {
         $canId = $this->request->getPost('CandidateId');
-        
+
         $file = $this->request->getFile('CandidateResume');
         $target_dir = "Uploads/candidates/$canId/";
         if (!file_exists($target_dir)) {
@@ -1725,7 +1815,7 @@ class HRController extends BaseController
         ];
 
         $save = $this->candidateModel->edit_Candi_profileM($data);
-        return $this->response->redirect(site_url('/'.$this->request->getPost('returnurl').'?canId=' . $canId));
+        return $this->response->redirect(site_url('/' . $this->request->getPost('returnurl') . '?canId=' . $canId));
         // return $this->response->redirect(site_url('/edit_Candi_profile?canId=' . $canId));
     }
     public function edit_candidateC()
@@ -3758,7 +3848,7 @@ class HRController extends BaseController
     public function candidate_ListC()
     {
         $session = session();
-        $adminId = $session->get('EmpIDFK'); 
+        $adminId = $session->get('EmpIDFK');
 
         $data['fdate'] = $_GET['fdate'] ?? '';
         $data['todate'] = $_GET['todate'] ?? '';
@@ -4488,7 +4578,7 @@ class HRController extends BaseController
 
     public function UpdateSettings()
     {
-        $data = ["auto-assign" => $_POST['auto-assign']];
+        $data = [$_POST['name'] => $_POST['value']];
         $this->admin->updateSettings($data);
         return $this->response->redirect(site_url('/settings'));
     }
@@ -4639,7 +4729,7 @@ class HRController extends BaseController
             $name = 'Image';
             $data[$name] = $imageName;
         }
-        
+
         $acctype = $this->request->getPost('acc-type');
 
         $this->empModel->UpdateSingleEmployee($id, $data, $acctype);
@@ -4647,14 +4737,20 @@ class HRController extends BaseController
         return $this->response->setJSON(['status' => 'success']);
     }
 
-    public function ReApproveCandidate($id){
-        $this->candidateModel->ReApproveCandidate($id);
+    public function UpdateAbsEmployee($id){
+        $data['last_working'] = $_POST['last_working'] ?? NULL;
+        $data['settlement_day'] = $_POST['settlement_day'] ?? NULL;
+        $data['final_set_status'] = $_POST['final_set_status'];
+        $data['final_set_amound'] = $_POST['final_set_amound'];
+
+        $this->empModel->UpdateSingleAbsEmployee($id, $data);
+
         return $this->response->setJSON(['status' => 'success']);
     }
 
-
-
-
-
+    public function ReApproveCandidate($id)
+    {
+        $this->candidateModel->ReApproveCandidate($id);
+        return $this->response->setJSON(['status' => 'success']);
+    }
 }
-

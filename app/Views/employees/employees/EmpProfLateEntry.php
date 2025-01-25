@@ -27,8 +27,8 @@
         </div>
         <div class="col col-lg-2 col-md-1 rep">
             <span>Reporting To</span><br>
-            <span><strong>Abijith</strong></span><br>
-            <span>Product Head</span>
+            <span><strong><?= $BasicDetails['ReportingPerson'] ?></strong></span><br>
+            <span><?= $BasicDetails['ReportingDesignation'] ?></span>
         </div>
     </div>
     <hr class="mt-1 md-1">
