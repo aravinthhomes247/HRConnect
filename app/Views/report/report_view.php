@@ -102,7 +102,7 @@
                         <?php foreach ($selectedemps as $row): ?>
                             <tr>
                                 <td><?php echo $i++; ?></td>
-                                <td><?php echo $row['name'] ?></td>
+                                <td> <a href="<?= base_url('/reportempdia?id=' . $row['EmployeeId'] . '&trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>"><?= $row['name'] ?></a></td>
                                 <td><?php echo $row['UserId'] ?>
                                     <input type="hidden" id="UserId" value="<?= $row['UserId'] ?>">
                                 </td>

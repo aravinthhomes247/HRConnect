@@ -5,6 +5,8 @@ namespace App\Models;
 use Codeigniter\Controller\HRController;
 use CodeIgniter\Model;
 use DateTime;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class EmployeeModel extends Model
 {
@@ -260,7 +262,8 @@ class EmployeeModel extends Model
         return $data['allEmpsList'];
     }
 
-    public function MissingSalaryCountM(){
+    public function MissingSalaryCountM()
+    {
         $sql = "SELECT count(Status) as missing 
                 FROM `employees` A
                 LEFT JOIN salary_info B ON B.EmployeeIDFK = A.EmployeeId
@@ -619,7 +622,7 @@ class EmployeeModel extends Model
                        A.Email, A.PersonalMail, A.Salary_date, D.EmployeeName as ReportingPerson, E.designations as ReportingDesignation, A.Aadhar_No, A.PAN_No, A.PF_No, A.ESI_No
                 FROM `employees` A
                 LEFT JOIN `designation` B ON B.IDPK = A.DesignationIDFK
-                LEFT JOIN employement_type C ON C.IDPK= A.EmployementType
+                LEFT JOIN `employement_type` C ON C.IDPK= A.EmployementType
                 LEFT JOIN `employees` D ON D.EmployeeId = A.ReportManagerIDFK
                 LEFT JOIN `designation` E ON E.IDPK = D.DesignationIDFK
                 WHERE A.EmployeeId = $id";
@@ -653,9 +656,190 @@ class EmployeeModel extends Model
         return $data;
     }
 
-    public function getEmployeeApprovals() {}
+    public function getEmployeeApprovals($id)
+    {
+        $sql = "SELECT A.Subject, A.Status, A.Raised_On, B.Name, C.EmployeeName
+                FROM tickets A 
+                LEFT JOIN ticket_types B ON B.IDPK = A.TypeIDFK
+                LEFT JOIN employees C ON C.EmployeeId = A.EmployeeIDFK
+                WHERE A.EmployeeIDFK = $id";
+        $data = $this->db->query($sql)->getResultArray();
+        return $data;
+    }
 
-    public function getEmployeeAttendence() {}
+
+
+
+
+
+    public function getEmployeeAttendence($id, $date_start, $date_end)
+    {
+        $sql = "SELECT A.*, B.Name
+                FROM leaves A
+                LEFT JOIN leavetype B ON B.IDPK = A.TypeIDFK
+                WHERE A.EmployeeIDFK = $id AND (DATE(A.Date) BETWEEN '$date_start' AND '$date_end')";
+        $leaves = $this->db->query($sql)->getResultArray();
+        return $leaves;
+    }
+
+    public function getEmployeeTotalWorkDays($id, $date_start, $date_end)
+    {
+        $TOTALDAYS = $this->NoFDays($date_start, $date_end);
+        $sql = "SELECT DepartmentId FROM employees WHERE EmployeeId = $id";
+        $department = $this->db->query($sql)->getRow()->DepartmentId;
+        $sql = "SELECT WO1, WO2, WO3, WO4, WO5, WO6, WO7 FROM departments WHERE IDPK = $department";
+        $data['WOD'] = $this->db->query($sql)->getRowArray();
+        $TOTALWEEKOFF = 0;
+        for ($i = 1; $i < count($data['WOD']); $i++) {
+            if ($data['WOD']['WO' . $i] == 1) {
+                $TOTALWEEKOFF += $this->checkweekoff($i - 1, $date_start, $date_end);
+            }
+        }
+        $sql = "SELECT CASE WHEN SameDate = 1 THEN
+                            -- Create a date using current year and the month/day from Date
+                            CASE
+                                WHEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d') < CURRENT_DATE()
+                                THEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d')
+                                ELSE DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d')  -- If date is in the future or today, use this year
+                            END
+                        ELSE
+                            -- Use the original date for SameDate != 1
+                            Date
+                        END AS AdjustedDate
+                FROM holidays 
+                WHERE DepartmentIDFK LIKE '%\"$department\"%'";
+        $holidays = $this->db->query($sql)->getResultArray();
+        $TOTALHOLIDAYS = 0;
+        foreach ($holidays as $holiday) {
+            $HOLIWEEKOFF = 0;
+            if ($this->checkholiday($holiday['AdjustedDate'], $date_start, $date_end) == 1) {
+                for ($i = 1; $i < count($data['WOD']); $i++) {
+                    if ($data['WOD']['WO' . $i] == 1) {
+                        $HOLIWEEKOFF += $this->checkweekoff($i - 1, $holiday['AdjustedDate'], $holiday['AdjustedDate']);
+                    }
+                }
+                if ($HOLIWEEKOFF == 0) {
+                    $TOTALHOLIDAYS++;
+                }
+            }
+        }
+        $TOTALDAYS = $TOTALDAYS - ($TOTALWEEKOFF + $TOTALHOLIDAYS);
+        return $TOTALDAYS;
+    }
+    public function NoFDays($fdate, $todate)
+    {
+        $startDate = new DateTime($fdate);
+        $endDate = new DateTime($todate);
+        $endDate->modify('+1 day');
+        $interval = $startDate->diff($endDate);
+        $days = $interval->days;
+        return $days;
+    }
+    public function checkweekoff($Day, $fdate, $todate)
+    {
+        $start = new DateTime($fdate);
+        $end = new DateTime($todate);
+        $end->modify('+1 day'); // Include the end date in the range
+        $interval = new \DateInterval('P1D'); // 1-day interval
+        $daterange = new \DatePeriod($start, $interval, $end);
+        $Count = 0;
+        foreach ($daterange as $date) {
+            if ($date->format('w') == $Day) { // 'w' gives the day of the week (0 for Sunday)
+                $Count++;
+            }
+        }
+        return $Count;
+    }
+    public function checkholiday($date, $date_start, $date_end)
+    {
+        $date_start = new DateTime($date_start);
+        $date = new DateTime($date);
+        $date_end = new DateTime($date_end);
+        if ($date >= $date_start && $date <= $date_end) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    public function getEmployeeTotalAbsend($id, $date_start, $date_end)
+    {
+        $sql = "SELECT count(*) as count
+                FROM leaves
+                WHERE EmployeeIDFK = $id
+                AND Status = 1
+                AND TypeIDFK != 6 
+                AND (DATE(Date) BETWEEN '$date_start' AND '$date_end')";
+        $leaves = $this->db->query($sql)->getRow()->count;
+        $this->AutoLeaveGenerater();
+        return $leaves;
+    }
+
+
+    public function AutoLeaveGenerater()
+    {
+        $yesdate = date('Y-m-d', strtotime("-1 day"));
+        $sql = "SELECT EmployeeId,EmployeeCode FROM employees Where Status= 'Working' ";
+        $emps = $this->bio->query($sql)->getResultArray();
+
+        foreach ($emps as $emp) {
+            $code = $emp['EmployeeCode'];
+            $id = $emp['EmployeeId'];
+            $sql = "SELECT count(*) as count FROM biometric.devicelogs_processed WHERE UserId = '$code' AND DATE(LogDate) = '$yesdate'";
+            $count = $this->bio->query($sql)->getRow()->count;
+
+            if ($count == 0) {
+                $sql = "SELECT DepartmentId FROM employees WHERE EmployeeId = $id";
+                $department = $this->db->query($sql)->getRow()->DepartmentId;
+                $sql = "SELECT WO1, WO2, WO3, WO4, WO5, WO6, WO7 FROM departments WHERE IDPK = $department";
+                $data['WOD'] = $this->db->query($sql)->getRowArray();
+                $WEEKOFF = 0;
+                for ($i = 1; $i < count($data['WOD']); $i++) {
+                    if ($data['WOD']['WO' . $i] == 1) {
+                        $WEEKOFF += $this->checkweekoff($i - 1, $yesdate, $yesdate);
+                    }
+                }
+
+                $sql = "SELECT CASE WHEN SameDate = 1 THEN
+                            CASE
+                                WHEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d') < CURRENT_DATE()
+                                THEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d')
+                                ELSE DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d')  -- If date is in the future or today, use this year
+                            END
+                        ELSE
+                            Date
+                        END AS AdjustedDate
+                FROM holidays 
+                WHERE DepartmentIDFK LIKE '%\"$department\"%'";
+                $holidays = $this->db->query($sql)->getResultArray();
+                $HOLIDAY = 0;
+                foreach ($holidays as $holiday) {
+                    if ($holiday['AdjustedDate'] == 1) {
+                        $HOLIDAY++;
+                    }
+                }
+
+                $sql = "SELECT count(*) as count FROM leaves WHERE EmployeeIDFK = $id AND Status = 1
+                AND TypeIDFK != 6 
+                AND (DATE(Date) = '$yesdate')";
+                $LR = $this->db->query($sql)->getRow()->count;
+
+                if ($WEEKOFF == 0 && $HOLIDAY == 0 && $LR == 0) {
+                    $sql = "INSERT INTO `leaves`(`EmployeeIDFK`, `TypeIDFK`, `Date`, `Reason`, `Status`) 
+                            VALUES (?,?,?,?,?)";
+                    $this->db->query($sql, [$id, 5, $yesdate, "UnProperLeave", 1]);
+                }
+            }
+        }
+        return true;
+    }
+
+
+
+
+
+
+
 
     public function getEmployeeLateEntry($id, $date_start, $date_end)
     {
@@ -679,17 +863,14 @@ class EmployeeModel extends Model
 
     public function getEmployeeTimeLogs($id, $date_start, $date_end)
     {
-        // $date_start = '2025-01-01';
-        // $date_end = '2025-01-15';
         $result = [];
-
         $sql = "SELECT B.LogDate, Min(B.LogDate) as First, Max(B.LogDate) as Last,
                 (CASE WHEN TIME(Min(B.LogDate)) > '09:45:59' THEN 1 ELSE 0 END) AS Late_Login, 
                 (CASE WHEN TIME(Max(B.LogDate)) < '18:30:00' THEN 1 ELSE 0 END) AS Early_Logout,
                 TIMEDIFF( MAX(B.LogDate), MIN(B.LogDate)) as workingHours
                 FROM homes247_backend.employees A 
                 LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode
-                WHERE A.EmployeeId = $id AND B.LogDate BETWEEN '$date_start' AND '$date_end'
+                WHERE A.EmployeeId = $id AND DATE(B.LogDate) BETWEEN '$date_start' AND '$date_end'
                 GROUP BY YEAR(B.LogDate),MONTH(B.LogDate),DAY(B.LogDate)";
         $MinMax = $this->bio->query($sql)->getResultArray();
         foreach ($MinMax as $row) {
@@ -707,7 +888,6 @@ class EmployeeModel extends Model
                 'Early_Logout' => $row['Early_Logout']
             ];
         }
-
         $sql = "SELECT LogDate
                 FROM homes247_backend.employees A 
                 LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode 
@@ -723,8 +903,6 @@ class EmployeeModel extends Model
                 'LogTime' => date('H:i:s', strtotime($row['LogDate'])),
             ];
         }
-
-
         $points = [];
         foreach ($groupedlogs as $date => $bunchs) {
             $points[$date][] = ['time' => '07:00:00', 'auto' => 1];  //Total Time Line Start
@@ -733,7 +911,6 @@ class EmployeeModel extends Model
             }
             $points[$date][] = ['time' => '23:00:00', 'auto' => 1];  //Total Time Line End
         }
-
         $pointresult = [];
         foreach ($points as $date => $point) {
             for ($i = 0; $i < count($point) - 1; $i++) {
@@ -748,11 +925,9 @@ class EmployeeModel extends Model
                 }
             }
         }
-
         foreach ($pointresult as $date => $bunchs) {
             $result[$date]['Points'] = $bunchs;
         }
-
         foreach ($result as $date => $info) {
             for ($key = 0; $key < count($info['Points']); $key++) {
                 if ($key != 0 && $key != count($info['Points']) - 1) {
@@ -764,12 +939,6 @@ class EmployeeModel extends Model
                 }
             }
         }
-
-        // echo '<pre>';
-        // print_r($result);
-        // echo '</pre>';
-        // exit(0);
-
         return $result;
     }
     public function point_distence($start, $sa, $end, $ea)
@@ -804,13 +973,25 @@ class EmployeeModel extends Model
 
     public function getPayslip($id)
     {
-        $sql = "SELECT A.LOP, A.SD1, A.Acc_Type, A.Net_salary, B.EmployeeIDFK, B.BasicSalary, B.HRA, B.FBP, B.PF, B.PT, B.PF_VOL, B.Insurance, B.SD2
+        $sql = "SELECT A.LOP, A.Date, A.SD1, A.Acc_Type, A.Net_salary, A.EmployeeIDFK, B.GrossSalary, B.BasicSalary, B.HRA, B.FBP, B.PF, B.PT, B.PF_VOL, B.TDS, B.Insurance
                 FROM payslips A
                 LEFT JOIN salary_info B ON B.EmployeeIDFK = A.EmployeeIDFK
                 LEFT JOIN emp_bank_details C ON C.EmployeeIDFK = A.EmployeeIDFK
+                LEFT JOIN leaves D ON D.EmployeeIDFK = A.EmployeeIDFK
                 WHERE A.IDPK = $id";
         $data = $this->db->query($sql)->getRowArray();
         $empid = $data['EmployeeIDFK'];
+        $pdate = $data['Date'];
+
+        $sql = "SELECT COUNT(*) as lop FROM leaves 
+                WHERE EmployeeIDFK = $empid
+                AND TypeIDFK = 5
+                AND (MONTH(Date) = MONTH('$pdate') AND YEAR(Date) = YEAR('$pdate'))";
+        $LOP = $this->db->query($sql)->getRow()->lop;
+
+        if ($data['LOP'] == 0) {
+            $data['LOP'] = $LOP;
+        }
 
         $sql = "SELECT BankName, Type FROM emp_bank_details WHERE EmployeeIDFK = $empid";
         $accs = $this->db->query($sql)->getResultArray();
@@ -821,10 +1002,10 @@ class EmployeeModel extends Model
 
     public function UpdatePayslip($id, $data)
     {
-        $sql = "UPDATE `payslips` SET `LOP`=?, `Acc_Type`=?,`Basic`=?,`HRA`=?,`FBP`=?,`SD1`=?,`PF`=?,
+        $sql = "UPDATE `payslips` SET `LOP`=?, `Acc_Type`=?,`Gross`=?,`Basic`=?,`HRA`=?,`FBP`=?,`SD1`=?,`PF`=?,
                                       `PT`=?,`PFVOL`=?,`SD2`=?,`Insurance`=?,`Net_salary`=?,`Status`=? 
                 WHERE IDPK = $id";
-        $this->db->query($sql, [$data['LOP'], $data['Acc_Type'], $data['Basic'], $data['HRA'], $data['FBP'], $data['SD1'], $data['PF'], $data['PT'], $data['PFVOL'], $data['SD2'], $data['Insurance'], $data['Net_salary'], $data['Status']]);
+        $this->db->query($sql, [$data['LOP'], $data['Acc_Type'], $data['Gross'], $data['Basic'], $data['HRA'], $data['FBP'], $data['SD1'], $data['PF'], $data['PT'], $data['PFVOL'], $data['SD2'], $data['Insurance'], $data['Net_salary'], $data['Status']]);
 
         return true;
     }
@@ -833,12 +1014,153 @@ class EmployeeModel extends Model
     {
         $fdate = $data['fdate'];
         $trickId = ($data['trickid'] == 1) ? 'B.Salary_date = 5' : 'B.Salary_date = 10';
-
         $sql = "UPDATE payslips A
                 INNER JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
                 SET A.Status = 2
                 WHERE (YEAR(A.Date) = YEAR('$fdate') AND MONTH(A.Date) = MONTH('$fdate')) AND $trickId";
         $this->db->query($sql);
+        return true;
+    }
+
+    public function DownloadPayslipExcel($data)
+    {
+        $fdate = $data['fdate'];
+        $trick = ($data['trickid'] == 1) ? 'B.Salary_date = 5' : 'B.Salary_date = 10';
+        $sql = "SELECT A.*,
+                        B.EmployeeId, B.EmployeeName, B.DOJ, B.last_working,
+                        C.deptName,
+                        D.designations,
+                        (SELECT COUNT(*) 
+                        FROM leaves 
+                        WHERE EmployeeIDFK = A.EmployeeIDFK 
+                            AND YEAR(Date) = YEAR('$fdate') AND MONTH(Date) = MONTH('$fdate')) 
+                        AS leave_count
+                FROM payslips A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                LEFT JOIN departments C ON C.IDPK = B.DepartmentId
+                LEFT JOIN designation D ON D.IDPK = B.DesignationIDFK  
+                WHERE $trick AND (YEAR(A.Date) = YEAR('$fdate') AND MONTH(A.Date) = MONTH('$fdate'))";
+        $records = $this->db->query($sql)->getResultArray();
+
+        $tempdata = [];
+        $data = [];
+        foreach ($records as $i => $record) {
+            $tempdata[] = $i + 1;
+            $tempdata[] = $record['EmployeeId'] ?? " ";
+            $tempdata[] = $record['EmployeeName'] ?? " ";
+            $tempdata[] = ($record['DOJ']) ? date('Y-m-d', strtotime($record['DOJ'])) : " ";
+            $tempdata[] = ($record['last_working']) ? date('Y-m-d', strtotime($record['last_working'])) : " ";
+            $tempdata[] = $record['deptName'] ?? " ";
+            $tempdata[] = $record['designations'] ?? " ";
+            $date = new DateTime($record['Date']);
+            $date->modify('last day of this month');
+            $lastDay = $date->format('d');
+            $lastDay = (int)$lastDay;
+            $tempdata[] = $lastDay ?? 30;
+            $tempdata[] = $record['leave_count'] ?? 30;
+            $tempdata[] = $record['LOP'] ?? 0;
+            $tempdata[] = $record['Gross'] ?? 0.00;
+            $tempdata[] = $record['Basic'] ?? 0.00;
+            $tempdata[] = $record['HRA'] ?? 0.00;
+            $tempdata[] = $record['FBP'] ?? 0.00;
+            $tempdata[] = $record['SD1'] ?? 0.00;
+            $tempdata[] = ($record['Basic'] + $record['HRA'] + $record['FBP'] + $record['SD1']) ?? 0.00;
+            $tempdata[] = $record['PF'] ?? 0.00;
+            $tempdata[] = $record['PT'] ?? 0.00;
+            $tempdata[] = $record['PFVOL'] ?? 0.00;
+            $tempdata[] = $record['TDS'] ?? 0.00;
+            $tempdata[] = $record['Insurance'] ?? 0.00;
+            $tempdata[] = $record['SD2'] ?? 0.00;
+            $tempdata[] = ($record['PF'] + $record['PT'] + $record['PFVOL'] + $record['TDS'] + $record['Insurance'] + $record['SD2']) ?? 0.00;
+            $tempdata[] = $record['Net_salary'] ?? 0.00;
+            $tempdata[] = " ";
+
+            $data[] = $tempdata;
+            $tempdata = [];
+        }
+
+        // Create a new Spreadsheet
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        // Set column names
+        $sheet->setCellValue('A1', 'VSNAP TECHNOLOGY SOLUTIONS PRIVATE LIMITED');
+        $filedate = date('M/Y', strtotime($fdate));
+        $sheet->setCellValue('A4', 'Salary Sheet Report for the month of '.$filedate);
+
+        $sheet->setCellValue('A5', 'Sl.No');
+        $sheet->setCellValue('B5', 'Emp ID');
+        $sheet->setCellValue('C5', 'Employee Name');
+        $sheet->setCellValue('D5', 'Date of Joining');
+        $sheet->setCellValue('E5', 'Date of Leaving');
+        $sheet->setCellValue('F5', 'Department');
+        $sheet->setCellValue('G5', 'Designation');
+
+        $sheet->setCellValue('H5', 'Calendar Days');
+        $sheet->setCellValue('I5', 'Leave Days');
+        $sheet->setCellValue('J5', 'LOP Days');
+
+        $sheet->setCellValue('K5', 'Gross Salary');
+        $sheet->setCellValue('L5', 'BASIC');
+        $sheet->setCellValue('M5', 'HRA');
+        $sheet->setCellValue('N5', 'FBP');
+        $sheet->setCellValue('O5', 'Special Earning');
+        $sheet->setCellValue('P5', 'Total Earning');
+
+        $sheet->setCellValue('Q5', 'PF');
+        $sheet->setCellValue('R5', 'PT');
+        $sheet->setCellValue('S5', 'PFVOL');
+        $sheet->setCellValue('T5', 'TDS');
+        $sheet->setCellValue('U5', 'Health Insurance');
+        $sheet->setCellValue('V5', 'Special Deduction');
+        $sheet->setCellValue('W5', 'Total Deduction');
+
+        $sheet->setCellValue('X5', 'Net Amount');
+        $sheet->setCellValue('Y5', 'Remarks if any and Signature');
+
+        // Populate data
+        $row = 6;
+        foreach ($data as $rec) {
+            $sheet->setCellValue('A' . $row, $rec[0]);
+            $sheet->setCellValue('B' . $row, $rec[1]);
+            $sheet->setCellValue('C' . $row, $rec[2]);
+            $sheet->setCellValue('D' . $row, $rec[3]);
+            $sheet->setCellValue('E' . $row, $rec[4]);
+            $sheet->setCellValue('F' . $row, $rec[5]);
+            $sheet->setCellValue('G' . $row, $rec[6]);
+            $sheet->setCellValue('H' . $row, $rec[7]);
+            $sheet->setCellValue('I' . $row, $rec[8]);
+            $sheet->setCellValue('J' . $row, $rec[9]);
+            $sheet->setCellValue('K' . $row, $rec[10]);
+            $sheet->setCellValue('L' . $row, $rec[11]);
+            $sheet->setCellValue('M' . $row, $rec[12]);
+            $sheet->setCellValue('N' . $row, $rec[13]);
+            $sheet->setCellValue('O' . $row, $rec[14]);
+            $sheet->setCellValue('P' . $row, $rec[15]);
+            $sheet->setCellValue('Q' . $row, $rec[16]);
+            $sheet->setCellValue('R' . $row, $rec[17]);
+            $sheet->setCellValue('S' . $row, $rec[18]);
+            $sheet->setCellValue('T' . $row, $rec[19]);
+            $sheet->setCellValue('U' . $row, $rec[20]);
+            $sheet->setCellValue('V' . $row, $rec[21]);
+            $sheet->setCellValue('W' . $row, $rec[22]);
+            $sheet->setCellValue('X' . $row, $rec[23]);
+            $sheet->setCellValue('Y' . $row, $rec[24]);
+            $row++;
+        }
+
+        // Create a writer instance
+        $writer = new Xlsx($spreadsheet);
+
+        // Set headers to download the file
+        $filedate = date('M-y', strtotime($fdate));
+        $fileName = "Salary Register_" . $filedate . ".xlsx";
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="' . $fileName . '"');
+        header('Cache-Control: max-age=0');
+
+        // Output the Excel file to the browser
+        $writer->save('php://output');
 
         return true;
     }
@@ -970,7 +1292,7 @@ class EmployeeModel extends Model
 
         // Construct the SQL query
         $employee_table = ["ReportManagerIDFK", "Salary_date", "ContractPeriod", "Aadhar_No", "PAN_No", "UAN_No", "EContactNo", "ESI_No", "PF_No"];
-        $salary_info = ["BasicSalary", "HRA", "FBP", "PF", "PT", "PF_VOL", "Insurance", "Grativity", "GrossSalary", "NetSalary"];
+        $salary_info = ["BasicSalary", "HRA", "FBP", "PF", "PT", "PF_VOL", "Insurance", "Grativity", "GrossSalary", "NetSalary", "TDS"];
         $emp_bank_table = ["AccountHolderName", "BankName", "BankBranch", "AccountNo", "IFSCode", "Mode"];
         $bio_employee_table = ["EmployeeName", "EmployeeCode", "Gender", "DOB", "BLOODGROUP", "FatherName", "MotherName", "PlaceOfBirth", "ResidentialAddress", "PermanentAddress", "ContactNo", "AltContactno", "Email", "PersonalMail", "DepartmentId", "DesignationIDFK", "Status", "EmployementType", "DOJ", "Image"];
 
@@ -991,11 +1313,11 @@ class EmployeeModel extends Model
             $salary = $salary[0];
 
             if ($sal > 0) {
-
                 $Gross = $salary['GrossSalary'] ?? 0.00;
                 $Pf = $salary['PF'] ?? 0.00;
                 $Pt = $salary['PT'] ?? 0.00;
                 $Pfvol = $salary['PF_VOL'] ?? 0.00;
+                $TDS = $salary['TDS'] ?? 0.00;
                 $Ins = $salary['Insurance'] ?? 0.00;
                 $Grati = $salary['Grativity'] ?? 0.00;
                 $Esi = $salary['ESI'] ?? 0;
@@ -1006,6 +1328,8 @@ class EmployeeModel extends Model
                     $Pt = $record;
                 } else if ($column == "PF_VOL") {
                     $Pfvol = $record;
+                } else if ($column == "TDS") {
+                    $TDS = $record;
                 } else if ($column == "Insurance") {
                     $Ins = $record;
                 } else if ($column == "Grativity") {
@@ -1013,19 +1337,19 @@ class EmployeeModel extends Model
                 } else if ($column == "GrossSalary") {
                     $Gross = $record;
                 }
-                $Gross_earn = $Gross - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
+                $Gross_earn = $Gross - ($Pf + $Pfvol + $TDS + $Pt + $Ins + $Grati + $Esi_vol);
                 $Basic = ($Gross / 100) * 40;
                 $Hra   = ($Basic / 100) * 40;
                 $Fbp   = $Gross_earn - ($Basic + $Hra);
-                $Netsal = ($Basic + $Hra + $Fbp) - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
-                $sql4 = "UPDATE `salary_info` SET `BasicSalary`=?,`HRA`=?,`FBP`=?,`PF`=?,`PT`=?,`PF_VOL`=?,
+                $Netsal = ($Basic + $Hra + $Fbp) - ($Pf + $Pfvol + $TDS + $Pt + $Ins + $Grati + $Esi_vol);
+                $sql4 = "UPDATE `salary_info` SET `BasicSalary`=?,`HRA`=?,`FBP`=?,`PF`=?,`PT`=?,`PF_VOL`=?, `TDS`=?,
                                                   `Insurance`=?,`Grativity`=?,`ESI`=?,`GrossSalary`=?,`NetSalary`=? 
                          WHERE `EmployeeIDFK` = ?";
-                $this->db->query($sql4, [$Basic, $Hra, $Fbp, $Pf, $Pt, $Pfvol, $Ins, $Grati, $Esi, $Gross, $Netsal, $id]);
+                $this->db->query($sql4, [$Basic, $Hra, $Fbp, $Pf, $Pt, $Pfvol, $TDS, $Ins, $Grati, $Esi, $Gross, $Netsal, $id]);
             } else {
-                $sql7 = "INSERT INTO `salary_info`(`EmployeeIDFK`, `BasicSalary`, `HRA`, `FBP`, `PF`, `PT`, `PF_VOL`, `Insurance`, `Grativity`, `GrossSalary`, `NetSalary`, `ESI`) 
+                $sql7 = "INSERT INTO `salary_info`(`EmployeeIDFK`, `BasicSalary`, `HRA`, `FBP`, `PF`, `PT`, `PF_VOL`, `TDS`, `Insurance`, `Grativity`, `GrossSalary`, `NetSalary`, `ESI`) 
                          VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-                $this->db->query($sql7, [$id, 0.00, 0.00, 0.00, 1800.00, 200.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0]);
+                $this->db->query($sql7, [$id, 0.00, 0.00, 0.00, 1800.00, 200.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0]);
 
                 $sql6 = "SELECT * FROM salary_info WHERE EmployeeIDFK = ?";
                 $salary = $this->db->query($sql6, $id)->getRowArray();
@@ -1034,6 +1358,7 @@ class EmployeeModel extends Model
                 $Pf = $salary['PF'] ?? 0.00;
                 $Pt = $salary['PT'] ?? 0.00;
                 $Pfvol = $salary['PF_VOL'] ?? 0.00;
+                $TDS = $salary['TDS'] ?? 0.00;
                 $Ins = $salary['Insurance'] ?? 0.00;
                 $Grati = $salary['Grativity'] ?? 0.00;
                 $Esi = $salary['ESI'] ?? 0;
@@ -1044,6 +1369,8 @@ class EmployeeModel extends Model
                     $Pt = $record;
                 } else if ($column == "PF_VOL") {
                     $Pfvol = $record;
+                } else if ($column == "TDS") {
+                    $TDS = $record;
                 } else if ($column == "Insurance") {
                     $Ins = $record;
                 } else if ($column == "Grativity") {
@@ -1051,15 +1378,15 @@ class EmployeeModel extends Model
                 } else if ($column == "GrossSalary") {
                     $Gross = $record;
                 }
-                $Gross_earn = $Gross - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
+                $Gross_earn = $Gross - ($Pf + $Pfvol + $TDS + $Pt + $Ins + $Grati + $Esi_vol);
                 $Basic = ($Gross / 100) * 40;
                 $Hra   = ($Basic / 100) * 40;
                 $Fbp   = $Gross_earn - ($Basic + $Hra);
-                $Netsal = ($Basic + $Hra + $Fbp) - ($Pf + $Pfvol + $Pt + $Ins + $Grati + $Esi_vol);
-                $sql4 = "UPDATE `salary_info` SET `BasicSalary`=?,`HRA`=?,`FBP`=?,`PF`=?,`PT`=?,`PF_VOL`=?,
+                $Netsal = ($Basic + $Hra + $Fbp) - ($Pf + $Pfvol + $TDS + $Pt + $Ins + $Grati + $Esi_vol);
+                $sql4 = "UPDATE `salary_info` SET `BasicSalary`=?,`HRA`=?,`FBP`=?,`PF`=?,`PT`=?,`PF_VOL`=?, `TDS`=?,
                                                   `Insurance`=?,`Grativity`=?,`ESI`=?,`GrossSalary`=?,`NetSalary`=? 
                          WHERE `EmployeeIDFK` = ?";
-                $this->db->query($sql4, [$Basic, $Hra, $Fbp, $Pf, $Pt, $Pfvol, $Ins, $Grati, $Esi, $Gross, $Netsal, $id]);
+                $this->db->query($sql4, [$Basic, $Hra, $Fbp, $Pf, $Pt, $Pfvol, $TDS, $Ins, $Grati, $Esi, $Gross, $Netsal, $id]);
             }
         } else if (in_array($column, $emp_bank_table)) {
             $sql5 = "UPDATE `emp_bank_details` SET $setClause WHERE `EmployeeIDFK`=? AND `Type`= $acctype";
@@ -1077,5 +1404,215 @@ class EmployeeModel extends Model
         $this->db->query($sql3, [$data['last_working'], $data['settlement_day'], $data['final_set_status'], $data['final_set_amound'], $id]);
 
         return true;
+    }
+
+    public function AllTickets($trickid, $data)
+    {
+        $fdate = $data['fdate'];
+        $todate = $data['todate'];
+        if ($trickid == 1) {
+            $trick = "";
+        } else if ($trickid == 2) {
+            $trick = "AND A.Status = 0";
+        } else if ($trickid == 3) {
+            $trick = "AND A.Status = 1";
+        } else if ($trickid == 4) {
+            $trick = "AND A.Status = 2";
+        } else if ($trickid == 5) {
+            $trick = "AND A.Status = 3";
+        }
+
+        $sql = "SELECT A.*, B.Name, C.EmployeeName
+                FROM tickets A 
+                LEFT JOIN ticket_types B ON B.IDPK = A.TypeIDFK
+                LEFT JOIN employees C ON C.EmployeeId = A.EmployeeIDFK
+                WHERE DATE(Raised_On) BETWEEN '$fdate' AND '$todate' $trick";
+        $records = $this->db->query($sql)->getResultArray();
+
+        return $records;
+    }
+
+    public function GetIssueTypes()
+    {
+        $sql = "SELECT * FROM ticket_types";
+        $records = $this->db->query($sql)->getResultArray();
+        return $records;
+    }
+
+    public function CreateTicket($data)
+    {
+        $sql = "INSERT INTO `tickets`(`EmployeeIDFK`, `TypeIDFK`, `Subject`, `Description`, `Priority`) 
+                VALUES (?,?,?,?,?)";
+        $this->db->query($sql, [$data['EmployeeIDFK'], $data['TypeIDFK'], $data['Subject'], $data['Description'], $data['Priority']]);
+        return true;
+    }
+
+    public function EditTicket($id)
+    {
+        $sql = "SELECT A.Subject, A.Description, A.Priority, A.Raised_On, A.Status, B.EmployeeName
+                FROM tickets A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                WHERE A.IDPK = ?";
+        $data = $this->db->query($sql, $id)->getRowArray();
+        return $data;
+    }
+
+    public function StatusChangeTicket($id, $status)
+    {
+        $sql = "UPDATE tickets SET Status=? WHERE IDPK=?";
+        $this->db->query($sql, [$status, $id]);
+        return true;
+    }
+
+    public function UserWeekTimelog($data)
+    {
+        $fdate = date("Y-m-d", strtotime("monday this week"));
+        $todate = date("Y-m-d", strtotime("saturday this week"));
+        $id = $data['EmpId'];
+
+        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
+        $sql_select11 = "CREATE TEMPORARY TABLE temptable
+                SELECT LogDate, MIN(LogDate) as login, MAX(LogDate) as logout, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
+                FROM biometric.`devicelogs_processed` 
+                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
+                WHERE B.EmployeeId = $id AND DATE(LogDate) BETWEEN '$fdate' AND '$todate'
+                GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate)  
+                ORDER BY LogDate asc";
+        $sql_select = "SELECT * FROM `temptable` WHERE workingHours != '00:00:00'";
+
+        $this->db->query($sqltemptable);
+        $this->db->query($sql_select11);
+        $data['selectedemps'] = $this->db->query($sql_select)->getResultArray(); //run the query
+        return $data['selectedemps'];
+    }
+
+    public function UserTodayTimelog($data)
+    {
+        $date = date('Y-m-d');
+        $id = $data['EmpId'];
+
+        $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
+        $sql_select11 = "CREATE TEMPORARY TABLE temptable
+                SELECT MIN(LogDate) as login
+                FROM biometric.`devicelogs_processed` 
+                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId
+                WHERE B.EmployeeId = $id AND DATE(LogDate) = '$date'";
+        $sql_select = "SELECT * FROM `temptable`";
+
+        $this->db->query($sqltemptable);
+        $this->db->query($sql_select11);
+        $data['selectedemps'] = $this->db->query($sql_select)->getRow()->login; //run the query
+
+        return $data['selectedemps'];
+    }
+
+    public function UserTickets($id)
+    {
+        $sql = "SELECT A.*, B.Name, C.EmployeeName
+                FROM tickets A 
+                LEFT JOIN ticket_types B ON B.IDPK = A.TypeIDFK
+                LEFT JOIN employees C ON C.EmployeeId = A.EmployeeIDFK
+                WHERE C.EmployeeId = $id";
+        $records = $this->db->query($sql)->getResultArray();
+
+        return $records;
+    }
+
+    public function selectleaveType()
+    {
+        $sql = "SELECT * FROM `leavetype` ";
+        $data['selectleavetype'] = $this->db->query($sql)->getResultArray();
+        return $data['selectleavetype'];
+    }
+
+    public function GetAllLeaves($trickid, $data, $sac)
+    {
+        $fdate = $data['fdate'];
+        $todate = $data['todate'];
+        if ($trickid == 1) {
+            $trick = "";
+        } else if ($trickid == 2) {
+            $trick = "AND A.Status = 0";
+        } else if ($trickid == 3) {
+            $trick = "AND A.Status = 1";
+        } else if ($trickid == 4) {
+            $trick = "AND A.Status = 2";
+        }
+
+        if ($sac == 1) {
+            $trick2 = "";
+        } else {
+            $trick2 = "AND (B.DesignationIDFK != 2 AND B.DesignationIDFK != 18)";
+        }
+
+        $sql = "SELECT A.*, B.EmployeeName ,C.Name 
+                FROM leaves A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                LEFT JOIN leavetype C ON C.IDPK = A.TypeIDFK
+                WHERE DATE(Date) BETWEEN '$fdate' AND '$todate' $trick $trick2";
+        $leaves = $this->db->query($sql)->getResultArray();
+        return $leaves;
+    }
+
+
+    public function GetLeave($id)
+    {
+        $sql = "SELECT A.*, B.EmployeeName ,C.Name 
+                FROM leaves A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                LEFT JOIN leavetype C ON C.IDPK = A.TypeIDFK
+                WHERE A.IDPK = $id";
+        $leaves = $this->db->query($sql)->getRowArray();
+        return $leaves;
+    }
+
+    public function StatusLeaveUpdate($id, $status)
+    {
+        $sql = "UPDATE `leaves` SET `Status`= $status WHERE IDPK = $id";
+        $this->db->query($sql);
+        return true;
+    }
+
+    public function ApplyLeave($data)
+    {
+        $sql = "INSERT INTO `leaves`(`EmployeeIDFK`, `TypeIDFK`, `Date`, `CompDate`, `Reason`, `Start_time`, `End_time`) 
+                VALUES (?,?,?,?,?,?,?)";
+        $this->db->query($sql, [$data['EmployeeIDFK'], $data['TypeIDFK'], $data['Date'], $data['CompDate'], $data['Reason'], $data['Start_time'], $data['End_time']]);
+        return true;
+    }
+
+    public function GetUserLeaves($id)
+    {
+        $sql = "SELECT A.*, B.Name
+                FROM leaves A
+                LEFT JOIN leavetype B ON B.IDPK = A.TypeIDFK
+                WHERE A.EmployeeIDFK = $id";
+        $leaves = $this->db->query($sql)->getResultArray();
+        return $leaves;
+    }
+
+    public function CasualCheck($id)
+    {
+        $sql = "SELECT A.CLPM, A.SLPM, A.PLPM 
+                FROM departments A
+                LEFT JOIN employees B ON B.DepartmentId = A.IDPK
+                WHERE B.EmployeeId = ?";
+        $limits = $this->db->query($sql, [$id])->getRowArray();
+        $sql = "SELECT TypeIDFK, COUNT(*) AS leave_count 
+                FROM leaves 
+                WHERE EmployeeIDFK = ? 
+                AND DATE(Date) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND LAST_DAY(NOW()) 
+                GROUP BY TypeIDFK";
+        $leaves = $this->db->query($sql, [$id])->getResultArray();
+
+        $leaveCounts = [1 => 0, 2 => 0, 3 => 0]; // Assuming TypeIDFK: 1 = CL, 2 = SL, 3 = PL
+        foreach ($leaves as $leave) {
+            $leaveCounts[$leave['TypeIDFK']] = $leave['leave_count'];
+        }
+        return [
+            'CLPM' => ($leaveCounts[1] < $limits['CLPM']) ? 1 : 0,
+            'SLPM' => ($leaveCounts[2] < $limits['SLPM']) ? 1 : 0,
+            'PLPM' => ($leaveCounts[3] < $limits['PLPM']) ? 1 : 0
+        ];
     }
 }

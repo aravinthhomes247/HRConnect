@@ -17,7 +17,7 @@
     <div class="row ms-1 me-1 mt-3 pt-2 add-holiday">
         <form action="<?php echo site_url('/store-department') ?>" method="post" id="AddDepartmentForm">
             <div class="row ms-5 mt-3">
-                <div class="col col-lg-4">
+                <div class="col col-lg-3">
                     <div class="mb-3">
                         <label for="DepartmentName" class="form-label">Department Name</label>
                         <input type="text" class="form-control" name="DepartmentName" id="DepartmentName" placeholder="HR & Operation" required>
@@ -26,10 +26,47 @@
                         </div>
                     </div>
                 </div>
-                <div class="col col-lg-4 ms-5">
+                <div class="col col-md-3">
                     <div class="mb-3">
                         <label for="CasualLeave" class="form-label">No. of Casual Leave per Month</label>
-                        <select class="form-control" name="CasualLeave" id="CasualLeave">
+                        <select class="form-select" name="CasualLeave" id="CasualLeave">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col col-md-3">
+                    <div class="mb-3">
+                        <label for="SickLeave" class="form-label">No. of Sick Leave per Month</label>
+                        <select class="form-select" name="SickLeave" id="SickLeave">
+                            <option value="0">0</option>    
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                            <option value="6">6</option>
+                            <option value="7">7</option>
+                            <option value="8">8</option>
+                            <option value="9">9</option>
+                            <option value="10">10</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col col-md-3">
+                    <div class="mb-3">
+                        <label for="PaidLeave" class="form-label">No. of Paid Leave per Month</label>
+                        <select class="form-select" name="PaidLeave" id="PaidLeave">
+                            <option value="0">0</option>    
                             <option value="1">1</option>
                             <option value="2">2</option>
                             <option value="3">3</option>

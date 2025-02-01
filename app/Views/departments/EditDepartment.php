@@ -19,7 +19,7 @@
         <form action="<?php echo site_url('/update-department/'.$department[0]['IDPK']) ?>" method="post" id="AddDepartmentForm">
             <input type="hidden" name="IDPK" value="<?= $department[0]['IDPK'] ?>">
             <div class="row ms-5 mt-3">
-                <div class="col col-lg-4">
+                <div class="col col-lg-3">
                     <div class="mb-3">
                         <label for="DepartmentName" class="form-label">Department Name</label>
                         <input type="text" class="form-control" name="DepartmentName" id="DepartmentName" placeholder="HR & Operation" value="<?= $department[0]['deptName'] ?>" required>
@@ -28,10 +28,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="col col-lg-4 ms-5">
+                <div class="col col-md-3">
                     <div class="mb-3">
                         <label for="CasualLeave" class="form-label">No. of Casual Leave per Month</label>
-                        <select class="form-control" name="CasualLeave" id="CasualLeave">
+                        <select class="form-select" name="CasualLeave" id="CasualLeave">
+                            <option value="0" <?= ($department[0]['CLPM'] == 0)? 'selected':'' ?>>0</option>
                             <option value="1" <?= ($department[0]['CLPM'] == 1)? 'selected':'' ?>>1</option>
                             <option value="2" <?= ($department[0]['CLPM'] == 2)? 'selected':'' ?>>2</option>
                             <option value="3" <?= ($department[0]['CLPM'] == 3)? 'selected':'' ?>>3</option>
@@ -42,6 +43,42 @@
                             <option value="8" <?= ($department[0]['CLPM'] == 8)? 'selected':'' ?>>8</option>
                             <option value="9" <?= ($department[0]['CLPM'] == 9)? 'selected':'' ?>>9</option>
                             <option value="10" <?= ($department[0]['CLPM'] == 10)? 'selected':'' ?>>10</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col col-md-3">
+                    <div class="mb-3">
+                        <label for="SickLeave" class="form-label">No. of Sick Leave per Month</label>
+                        <select class="form-select" name="SickLeave" id="SickLeave">
+                            <option value="0" <?= ($department[0]['SLPM'] == 0)? 'selected':'' ?>>0</option>
+                            <option value="1" <?= ($department[0]['SLPM'] == 1)? 'selected':'' ?>>1</option>
+                            <option value="2" <?= ($department[0]['SLPM'] == 2)? 'selected':'' ?>>2</option>
+                            <option value="3" <?= ($department[0]['SLPM'] == 3)? 'selected':'' ?>>3</option>
+                            <option value="4" <?= ($department[0]['SLPM'] == 4)? 'selected':'' ?>>4</option>
+                            <option value="5" <?= ($department[0]['SLPM'] == 5)? 'selected':'' ?>>5</option>
+                            <option value="6" <?= ($department[0]['SLPM'] == 6)? 'selected':'' ?>>6</option>
+                            <option value="7" <?= ($department[0]['SLPM'] == 7)? 'selected':'' ?>>7</option>
+                            <option value="8" <?= ($department[0]['SLPM'] == 8)? 'selected':'' ?>>8</option>
+                            <option value="9" <?= ($department[0]['SLPM'] == 9)? 'selected':'' ?>>9</option>
+                            <option value="10" <?= ($department[0]['SLPM'] == 10)? 'selected':'' ?>>10</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col col-md-3">
+                    <div class="mb-3">
+                        <label for="PaidLeave" class="form-label">No. of Paid Leave per Month</label>
+                        <select class="form-select" name="PaidLeave" id="PaidLeave">
+                            <option value="0" <?= ($department[0]['PLPM'] == 0)? 'selected':'' ?>>0</option>
+                            <option value="1" <?= ($department[0]['PLPM'] == 1)? 'selected':'' ?>>1</option>
+                            <option value="2" <?= ($department[0]['PLPM'] == 2)? 'selected':'' ?>>2</option>
+                            <option value="3" <?= ($department[0]['PLPM'] == 3)? 'selected':'' ?>>3</option>
+                            <option value="4" <?= ($department[0]['PLPM'] == 4)? 'selected':'' ?>>4</option>
+                            <option value="5" <?= ($department[0]['PLPM'] == 5)? 'selected':'' ?>>5</option>
+                            <option value="6" <?= ($department[0]['PLPM'] == 6)? 'selected':'' ?>>6</option>
+                            <option value="7" <?= ($department[0]['PLPM'] == 7)? 'selected':'' ?>>7</option>
+                            <option value="8" <?= ($department[0]['PLPM'] == 8)? 'selected':'' ?>>8</option>
+                            <option value="9" <?= ($department[0]['PLPM'] == 9)? 'selected':'' ?>>9</option>
+                            <option value="10" <?= ($department[0]['PLPM'] == 10)? 'selected':'' ?>>10</option>
                         </select>
                     </div>
                 </div>
@@ -66,7 +103,6 @@
                     <span class="ms-2 <?= ($department[0]['WO7'] == 1)? 'active':'' ?>" data-day="7">Saturday <i class="fa-solid <?= ($department[0]['WO7'] == 1)? 'fa-check':'fa-plus' ?>"></i></span>
                 </div>
             </div>
-
         </form>
     </div>
 </div>

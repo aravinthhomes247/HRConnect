@@ -64,7 +64,7 @@
         </a>
 
         <a href="<?php echo site_url('/presents?&fdate=' . $fdate . '&todate=' . $todate) ?>" class="ms-1">
-          <div class="card count-card-2" >
+          <div class="card count-card-2">
             <div class="card-body">
               <div class="row row-lg-11 ms-0 me-0">
                 <div class="col-md-8 count-card-title ps-2">
@@ -82,7 +82,7 @@
         </a>
 
         <a href="<?php echo site_url('/absents?&LRID=0&fdate=' . $fdate . '&todate=' . $todate . '&trickid=1') ?>" class="ms-1 mt-2">
-          <div class="card count-card-3" >
+          <div class="card count-card-3">
             <div class="card-body">
               <div class="row row-lg-11 ms-0 me-0">
                 <div class="col-md-8 count-card-title ps-2">
@@ -100,7 +100,7 @@
         </a>
 
         <a href="<?php echo site_url('/reportemp?trickid=2&fdate=' . $fdate . '&todate=' . $todate) ?>" class="ms-1 mt-2">
-          <div class="card count-card-4" >
+          <div class="card count-card-4">
             <div class="card-body">
               <div class="row row-lg-11 ms-0 me-0">
                 <div class="col-md-8 count-card-title ps-2" style="padding-bottom: 1.6rem !important;">
@@ -140,11 +140,11 @@
               <tbody>
                 <?php foreach ($holidayGroup as $holiday) { ?>
                   <tr>
-                    <td ><?= date('M d, Y', strtotime($holiday['AdjustedDate'])) ?></td>
-                    <td ><?= date('D', strtotime($holiday['AdjustedDate'])) ?></td>
-                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; max-width: 150px;" 
-                        title="<?= htmlspecialchars($holiday['Name'], ENT_QUOTES, 'UTF-8') ?>">
-                        <?= htmlspecialchars($holiday['Name'], ENT_QUOTES, 'UTF-8') ?>
+                    <td><?= date('M d, Y', strtotime($holiday['AdjustedDate'])) ?></td>
+                    <td><?= date('D', strtotime($holiday['AdjustedDate'])) ?></td>
+                    <td style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size: 12px; max-width: 150px;"
+                      title="<?= htmlspecialchars($holiday['Name'], ENT_QUOTES, 'UTF-8') ?>">
+                      <?= htmlspecialchars($holiday['Name'], ENT_QUOTES, 'UTF-8') ?>
                     </td>
                   </tr>
                 <?php } ?>
@@ -200,12 +200,7 @@
       <div class="col ms-2">
         <span>Abnormal Activities</span>
       </div>
-
-      <div class="mt-5" style="width:100%;text-align: center;">
-        <h2 style="color:red;">Coming Soon</h2>
-      </div>
-
-      <!-- <table class="table table-hover ms-3">
+      <table class="table table-hover ms-3">
         <thead>
           <tr>
             <td>EMPLOYEE CODE</td>
@@ -215,27 +210,35 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>H2345676</td>
-            <td>karthi Karnan</td>
-            <td>TODAY</td>
-            <td style="color: #029008;">APPROVED</td>
-          </tr>
-          <tr>
-            <td>H2345676</td>
-            <td>naveen</td>
-            <td>TODAY</td>
-            <td style="color: #017BB8;">NO INFO</td>
-          </tr>
-          <tr>
-            <td>H2345676</td>
-            <td>jonathan</td>
-            <td>TODAY</td>
-            <td style="color: #971B47;">NOT APPROVED</td>
-          </tr>
+          <?php
+          $i = 1;
+          if ($abnormalDetails): ?>
+            <?php foreach ($abnormalDetails as $row): ?>
+              <tr>
+                <td><?= $row['UserId'] ?></td>
+                <td><?= $row['name'] ?></td>
+                <td><?= date("Y-m-d", strtotime($row['LogDate'])) ?></td>
+                <td>
+                  <?php
+                  if ($row['Miss_Bunch'] == 1) {
+                    echo 'Single Punch';
+                  } else if ($row['Late_Login'] == 1) {
+                    echo 'late Punch In';
+                  } else if ($row['Early_Logout'] == 1) {
+                    echo 'Early Punch Out';
+                  } else if ($row['Low_Wh'] == 1) {
+                    echo 'Insufficient Hours';
+                  } ?>
+                </td>
+              </tr>
+              <?php if ($i++ == 6) {
+                break;
+              }
+              ?>
+            <?php endforeach; ?>
+          <?php endif; ?>
         </tbody>
-      </table> -->
-    
+      </table>
     </div>
   </div>
 </div>
@@ -244,36 +247,35 @@
 <script>
   $(document).ready(function() {
     $('#reportrange').daterangepicker({
-        format: 'YYYY/MM/DD',
-        locale: {
-            format: 'YYYY/MM/DD'
-        },
-        startDate: '<?= date("Y/m/d", strtotime($fdate)) ?>',
-        endDate: '<?= date("Y/m/d", strtotime($todate)) ?>',
-        ranges: {
-            'Today': [moment(), moment()],
-            'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            'This Month': [moment().startOf('month'), moment().endOf('month')],
-            'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-        },
+      format: 'YYYY/MM/DD',
+      locale: {
+        format: 'YYYY/MM/DD'
+      },
+      startDate: '<?= date("Y/m/d", strtotime($fdate)) ?>',
+      endDate: '<?= date("Y/m/d", strtotime($todate)) ?>',
+      ranges: {
+        'Today': [moment(), moment()],
+        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+        'This Month': [moment().startOf('month'), moment().endOf('month')],
+        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+      },
     }, function(start, end, label) {
-        // console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
+      // console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
     });
   });
 
-  function datefilter()
-  {
-      var daterange = document.getElementById("reportrange").value;
-      var temp1 = daterange.split('-').pop();
-      var	dateString1 = temp1.replaceAll('/', "-");	
-      var todateid = moment(dateString1).format('YYYY-MM-DD');	
-      var temp2 = daterange.slice(0,10);
-      var	dateString2 = temp2.replaceAll('/', "-");
-      var fromdateid = moment(dateString2).format('YYYY-MM-DD');
-      // alert(todateid);
-      window.location.href = 'DSdaterangeV?&fdate='+fromdateid+'&todate='+todateid;
+  function datefilter() {
+    var daterange = document.getElementById("reportrange").value;
+    var temp1 = daterange.split('-').pop();
+    var dateString1 = temp1.replaceAll('/', "-");
+    var todateid = moment(dateString1).format('YYYY-MM-DD');
+    var temp2 = daterange.slice(0, 10);
+    var dateString2 = temp2.replaceAll('/', "-");
+    var fromdateid = moment(dateString2).format('YYYY-MM-DD');
+    // alert(todateid);
+    window.location.href = 'DSdaterangeV?&fdate=' + fromdateid + '&todate=' + todateid;
   }
 </script>
 

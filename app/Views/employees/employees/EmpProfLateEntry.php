@@ -2,7 +2,13 @@
 <?php echo ($this->extend("layouts/header-new")) ?>
 <?php echo ($this->section("body")) ?>
 
-
+<style>
+    .dt-column-title,
+    .dt-column-order {
+        background-color: transparent !important;
+        color: black !important;
+    }
+</style>
 
 
 <div class="profile-container mt-2 ms-4 ps-1 pt-1 pe-1">
@@ -36,7 +42,7 @@
         <nav class="nav nav-pills flex-column flex-sm-row">
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId']); ?>">Basic Details</a>
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=2'); ?>">Work Details</a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=3'); ?>">Approvals</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=3'); ?>">Tickets</a>
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=4'); ?>">Attanance</a>
             <a class="flex-sm-fill text-sm-center nav-link active" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=5&fsd='.date('Y/m/d').'&fed='.date('Y/m/d')); ?>">Late Entry</a>
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=6'); ?>">Time Logs</a>
@@ -59,7 +65,7 @@
             </div>
         </div>
     </div>
-    <table class="table table-hover mt-2">
+    <table class="table table-hover mt-2" id="examp">
         <thead class="table-secondary">
             <tr>
                 <td class="ps-3">S.No</td>
@@ -87,12 +93,7 @@
                             ?>
                             <td><?= $diffInMinutes ?> Mins</td>
                         </tr>
-            <?php endforeach;
-                } else{ ?>
-                    <tr>
-                        <td style="text-align:center;" colspan="4">No Data Available</td>
-                    </tr>
-            <?php } ?>
+            <?php endforeach; } ?>
         </tbody>
     </table>
 </div>
@@ -107,17 +108,19 @@
             },
             startDate: '<?= date("Y/m/d", strtotime($fsd)) ?>',
             endDate: '<?= date("Y/m/d", strtotime($fed)) ?>',
-            // ranges: {
-            //             'Today': [moment(), moment()],
-            //             'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
-            //             'Last 7 Days': [moment().subtract(6, 'days'), moment()],
-            //             'Last 30 Days': [moment().subtract(29, 'days'), moment()],
-            //             'This Month': [moment().startOf('month'), moment().endOf('month')],
-            //             'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
-            //         },
+            ranges: {
+                        'Today': [moment(), moment()],
+                        'Yesterday': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                        'Last 7 Days': [moment().subtract(6, 'days'), moment()],
+                        'Last 30 Days': [moment().subtract(29, 'days'), moment()],
+                        'This Month': [moment().startOf('month'), moment().endOf('month')],
+                        'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                    },
         }, function(start, end, label) {
             // console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
+
+        $('#examp').DataTable({});
     });
 
     $('#applyfilter').on('click',function(){

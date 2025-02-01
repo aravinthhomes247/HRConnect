@@ -45,6 +45,8 @@
                     <td>Department</td>
                     <td>Week OFF</td>
                     <td>Casual Leave</td>
+                    <td>Sick Leave</td>
+                    <td>Paid Leave</td>
                     <td>Holidays</td>
                     <td>Action</td>
                 </tr>
@@ -63,6 +65,8 @@
                             <td><?= $department['deptName'] ?></td>
                             <td><?= (count($days) != 0) ? implode(', ', $days) : 'NA' ?></td>
                             <td><?= $department['CLPM'] ?> Day</td>
+                            <td><?= $department['SLPM'] ?> Day</td>
+                            <td><?= $department['PLPM'] ?> Day</td>
                             <td><?= $department['holidayCount'] ?> Days</td>
                             <td>
                                 <a href="javascript:void(0);" class="menu-trigger">

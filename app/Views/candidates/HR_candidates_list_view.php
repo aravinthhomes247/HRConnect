@@ -267,7 +267,7 @@ if (isset($_SESSION['msg'])) {
     }
 </style>
 
-<div class="career ms-4">
+<div class="career ms-4 mt-2">
     <div class="row ms-0 me-0 pt-2">
         <div class="col col-lg-7">
             <div class="d-flex justify-content-start">

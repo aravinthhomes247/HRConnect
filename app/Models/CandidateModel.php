@@ -2520,11 +2520,17 @@ class CandidateModel extends Model
 
     public function UpdateJobExperience($data)
     {
-        $sql = "DELETE FROM `job_experience`";
-        $this->db->query($sql);
-        foreach ($data as $dat) {
-            $sql = "INSERT INTO `job_experience`(`Options`) VALUES (?)";
-            $this->db->query($sql, [$dat]);
+        if($data['remove']){
+            foreach($data['remove'] as $id){
+                $sql = "DELETE FROM `job_experience` WHERE IDPK = $id";
+                $this->db->query($sql);
+            }
+        }
+        if($data['options']){
+            foreach ($data['options'] as $dat) {
+                $sql = "INSERT INTO `job_experience`(`Options`) VALUES (?)";
+                $this->db->query($sql, [$dat]);
+            }
         }
         return true;
     }

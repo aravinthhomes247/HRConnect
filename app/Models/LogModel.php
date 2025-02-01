@@ -341,7 +341,7 @@ class LogModel extends Model
 
         $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
         $sql_select11 = "CREATE TEMPORARY TABLE temptable
-                SELECT UserId, B.EmployeeName as name, LogDate, C.designations, MIN(LogDate) as login, MAX(LogDate) as logout, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
+                SELECT UserId, B.EmployeeName as name, B.EmployeeId, LogDate, C.designations, MIN(LogDate) as login, MAX(LogDate) as logout, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
                 FROM biometric.`devicelogs_processed` 
                 LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
                 LEFT JOIN designation C ON C.IDPK = B.DesignationIDFK

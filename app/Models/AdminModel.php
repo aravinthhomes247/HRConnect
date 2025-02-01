@@ -46,6 +46,34 @@ class AdminModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    public function getTicketTypes(){
+        $sql="SELECT A.*,CASE 
+                            WHEN COUNT(B.TypeIDFK) > 0 THEN 0
+                            ELSE 1
+                        END AS Del
+                FROM ticket_types A
+                LEFT JOIN tickets B ON B.TypeIDFK = A.IDPK
+                GROUP BY A.IDPK, A.Name";
+        $result = $this->db->query($sql)->getResultArray();
+        return $result;
+    }
+
+    public function setTicketTypes($data){
+        if($data['remove']){
+            foreach($data['remove'] as $id){
+                $sql = "DELETE FROM `ticket_types` WHERE IDPK = $id";
+                $this->db->query($sql);
+            }
+        }
+        if($data['Name']){
+            foreach ($data['Name'] as $dat) {
+                $sql = "INSERT INTO `ticket_types`(`Name`) VALUES (?)";
+                $this->db->query($sql, [$dat]);
+            }
+        }
+        return true;
+    }
+
     public function getAllSettings(){
         $sql="SELECT IDPK, Name, Value FROM settings";
         $data['settings'] = $this->db->query($sql)->getResultArray();
@@ -74,7 +102,7 @@ class AdminModel extends Model
         //         GROUP BY A.IDPK, A.deptName, A.CLPM, A.WO1, A.WO2, A.WO3, A.WO4, A.WO5, A.WO6, A.WO7";
 
         // <-------------------  For MariaDB Servers Like XAMPP..... ----------------------->
-        $sql = "SELECT A.IDPK, A.deptName, A.CLPM, A.WO1, A.WO2, A.WO3, A.WO4, A.WO5, A.WO6, A.WO7, COUNT(B.IDPK) AS holidayCount
+        $sql = "SELECT A.IDPK, A.deptName, A.CLPM, A.SLPM, A.PLPM, A.WO1, A.WO2, A.WO3, A.WO4, A.WO5, A.WO6, A.WO7, COUNT(B.IDPK) AS holidayCount
                 FROM departments A
                 LEFT JOIN holidays B ON LOCATE(CONCAT('\"', A.IDPK, '\"'), B.DepartmentIDFK) > 0
                 GROUP BY A.IDPK, A.deptName, A.CLPM, A.WO1, A.WO2, A.WO3, A.WO4, A.WO5, A.WO6, A.WO7";
@@ -86,21 +114,21 @@ class AdminModel extends Model
 
     public function AddDepartment($data){
         $values = "('" . implode("', '", array_values($data)) . "')";
-        $sql = "INSERT INTO `departments`(`deptName`, `CLPM`, `WO1`, `WO2`, `WO3`, `WO4`, `WO5`, `WO6`, `WO7`) VALUES $values";
+        $sql = "INSERT INTO `departments`(`deptName`, `CLPM`, `SLPM`, `PLPM`, `WO1`, `WO2`, `WO3`, `WO4`, `WO5`, `WO6`, `WO7`) VALUES $values";
         $this->db->query($sql);
         $id = $this->db->insertID();
         return true;
     }
 
     public function EditDepartment($id){
-        $sql = "SELECT IDPK, deptName, CLPM, WO1, WO2, WO3, WO4, WO5, WO6, WO7 FROM departments WHERE IDPK = $id";
+        $sql = "SELECT IDPK, deptName, CLPM, SLPM, PLPM, WO1, WO2, WO3, WO4, WO5, WO6, WO7 FROM departments WHERE IDPK = $id";
         $data['department'] = $this->db->query($sql)->getResultArray();
         return $data;
     }
 
     public function UpdateDepartment($data){
-        $sql = "UPDATE `departments` SET `deptName`=?,`CLPM`=?,`WO1`=?,`WO2`=?,`WO3`=?,`WO4`=?,`WO5`=?,`WO6`=?,`WO7`=? WHERE IDPK = ?";
-        $this->db->query($sql, [$data['deptName'], $data['CLPM'], $data['WO1'], $data['WO2'], $data['WO3'], $data['WO4'], $data['WO5'], $data['WO6'], $data['WO7'], $data['IDPK']]);
+        $sql = "UPDATE `departments` SET `deptName`=?,`CLPM`=?,`SLPM`=?,`PLPM`=?,`WO1`=?,`WO2`=?,`WO3`=?,`WO4`=?,`WO5`=?,`WO6`=?,`WO7`=? WHERE IDPK = ?";
+        $this->db->query($sql, [$data['deptName'], $data['CLPM'], $data['SLPM'], $data['PLPM'], $data['WO1'], $data['WO2'], $data['WO3'], $data['WO4'], $data['WO5'], $data['WO6'], $data['WO7'], $data['IDPK']]);
         return $data['IDPK'];
     }
 
@@ -149,10 +177,6 @@ class AdminModel extends Model
 
     public function AttendanceHolidays($badge){
         $start = $badge*5;
-        // $limit = ($badge*5)+10;
-
-        // print_r([$start,$limit]);exit(0);
-
         $sql = "SELECT Name, Date,
                     -- Adjust the date based on the SameDate flag
                     CASE
@@ -169,17 +193,7 @@ class AdminModel extends Model
                     END AS AdjustedDate
                 FROM holidays
                 ORDER BY AdjustedDate LIMIT 10 OFFSET $start";
-        
         $holidays = $this->db->query($sql)->getResultArray();
-
-        // print_r($holidays);exit(0);
-
         return $holidays;
     }
 }
-
-
-
-// ALTER TABLE `designation` CHANGE `IDPK` `IDPK` INT(155) NOT NULL AUTO_INCREMENT;
-
-// ALTER TABLE `employees` CHANGE `EmployeeId` `EmployeeId` INT(155) NOT NULL AUTO_INCREMENT;

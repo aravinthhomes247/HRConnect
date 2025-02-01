@@ -120,6 +120,8 @@ class HRController extends BaseController
         $employee = $this->empModel->where('Email', $user['admin_login_email'])->select('Image, EmployeeName, DesignationIDFK')->first();
         $Desig = $this->empModel->getdesignationM($employee['DesignationIDFK']);
         // print_r($employee);exit(0);
+        $this->empModel->AutoLeaveGenerater();
+        $this->empModel->autopayslipmaker();
 
         if ($user) {
             $pass = $user['admin_login_password'];
@@ -137,15 +139,18 @@ class HRController extends BaseController
                     'EmployeeName' => $employee['EmployeeName'],
                     'Designation' => $Desig[0]['designations'],
                 ];
-                if ($sessionData['user_level'] == 18) {
-                    $this->session->set($sessionData);
-                    return redirect()->to('HRdashboard?fdate=' . $fdate . '&todate=' . $todate);
-                } elseif ($sessionData['user_level'] == 1) {
+                if ($sessionData['user_level'] == 1) {
                     $this->session->set($sessionData);
                     return redirect()->to('dashboard');
+                } elseif ($sessionData['user_level'] == 2 || $sessionData['user_level'] == 18) {
+                    $this->session->set($sessionData);
+                    return redirect()->to('HRdashboard?fdate=' . $fdate . '&todate=' . $todate);
                 } elseif ($sessionData['user_level'] == 24) {
                     $this->session->set($sessionData);
                     return redirect()->to('HRdashboard?fdate=' . $fdate . '&todate=' . $todate);
+                } else if (!empty($sessionData['user_level']) && isset($sessionData['user_level'])) {
+                    $this->session->set($sessionData);
+                    return redirect()->to('user-dashboard?fdate=' . $fdate . '&todate=' . $todate);
                 } else {
                     session()->setFlashdata('failed', 'Failed! User not Allowed');
                     return redirect()->to(site_url('/login'));
@@ -279,6 +284,7 @@ class HRController extends BaseController
         $data['birthdayDetailsTable'] = $this->empModel->birthdayDetails();
         $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
         $data['workAnniversaryDetailsTable'] = $this->empModel->workAnniversaryDetails();
+        $data['abnormalDetails'] = $logModel->AbnormalListM($data1);
 
         // Presents 
         $data['presents'] = count($logModel->selectDRpresentsM($data1));
@@ -638,7 +644,6 @@ class HRController extends BaseController
         $trickId = $_GET['trickId'] ?? 1;
         $date_start = $_GET['fsd'] ?? date('Y-m-d');
         $date_end = $_GET['fed'] ?? date('Y-m-d');
-        $month = $_GET['month'] ?? '';
         $data['id'] = $id;
         $data['BasicDetails'] = $this->empModel->getEmployee($id);
         $data['Designations'] = $this->empModel->selectdesignationM();
@@ -650,10 +655,16 @@ class HRController extends BaseController
             $data['WorkDetails'] = $this->empModel->getEmployeeWorkDetails($id);
             return view('employees/employees/EmpProfWorkDetails', $data);
         } elseif ($trickId == 3) {
+            $data['issuetypes'] = $this->empModel->GetIssueTypes();
             $data['Approvals'] = $this->empModel->getEmployeeApprovals($id);
             return view('employees/employees/EmpProfApprovals', $data);
         } elseif ($trickId == 4) {
-            $data['Attendence'] = $this->empModel->getEmployeeAttendence($id);
+            $data['Attendence'] = $this->empModel->getEmployeeAttendence($id, $date_start, $date_end);
+            $data['TotalDays'] = $this->empModel->getEmployeeTotalWorkDays($id, $date_start, $date_end) ?? 0;
+            $data['TotalAbsend'] = $this->empModel->getEmployeeTotalAbsend($id, $date_start, $date_end) ?? 0;
+
+            $data['fsd'] = $date_start;
+            $data['fed'] = $date_end;
             return view('employees/employees/EmpProfAttendence', $data);
         } elseif ($trickId == 5) {
             $data['LateEntry'] = $this->empModel->getEmployeeLateEntry($id, $date_start, $date_end);
@@ -812,6 +823,13 @@ class HRController extends BaseController
         return $this->response->setJSON(['status' => 'success', 'files' => $data]);
     }
 
+    public function DownloadPayslipExcel(){
+        $data['trickid'] = $_GET['trickid'];
+        $data['fdate'] = $_GET['fdate'];
+        $this->empModel->DownloadPayslipExcel($data);
+        return true;
+    }
+
     public function payroll_update()
     {
         $fdate = $_POST['fdate'] ?? date('Y-m-d');
@@ -821,6 +839,7 @@ class HRController extends BaseController
         $data['LOP'] = $_POST['LOP'];
         $data['Acc_Type'] = $_POST['Acc_Type'];
         $data['Basic'] = $_POST['Basic'];
+        $data['Gross'] = $_POST['Gross'];
         $data['HRA'] = $_POST['HRA'];
         $data['FBP'] = $_POST['FBP'];
         $data['SD1'] = $_POST['SD1'];
@@ -833,10 +852,11 @@ class HRController extends BaseController
         $data['Status'] = 1;
 
         $this->empModel->UpdatePayslip($id, $data);
-        return $this->response->redirect(site_url('/payrolls?trickid='.$trickid.'&fdate='.$fdate));
+        return $this->response->redirect(site_url('/payrolls?trickid=' . $trickid . '&fdate=' . $fdate));
     }
 
-    public function payroll_save(){
+    public function payroll_save()
+    {
         $data['fdate'] = $_GET['fdate'];
         $data['trickid'] = $_GET['trickid'];
         $this->empModel->PayslipManualSave($data);
@@ -1152,6 +1172,37 @@ class HRController extends BaseController
         return view('report/report_view', $data1);
     }
 
+    public function reportSearchAllLogDia()
+    {
+        $id = $_GET['id'];
+        $data = [
+            'fdate' => $_GET['fdate'] ?? date('Y-m-d'),
+            'todate' => $_GET['todate'] ?? date('Y-m-d'),
+            'trickid' => 1,
+        ];
+        $logModel = new LogModel();
+        $data['lateComers'] = count($logModel->lateComersListM($data)) ?? 0;
+        $data['earlylogout'] = count($logModel->EarlyoutListM($data)) ?? 0;
+        $data['abnormal'] = count($logModel->AbnormalListM($data)) ?? 0;
+        $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $data['fdate'], $data['todate']);
+        $data['selectedemps'] = $logModel->getSearchAllLog($data);
+        $userids = [];
+        foreach ($data['selectedemps'] as $user) {
+            if (!in_array($user['EmployeeId'], $userids)) {
+                $userids[] = $user['EmployeeId'];
+            }
+            if ($user['EmployeeId'] == $id) {
+                $data['EmpName'] = $user['name'];
+                $data['EmpDesig'] = $user['designations'];
+            }
+        }
+        $position = array_search($id, $userids);
+        $data['PrevEmp'] = $userids[$position - 1] ?? 0;
+        $data['NextEmp'] = $userids[$position + 1] ?? 0;
+        $data['EmpID'] = $id;
+        return view('report/report_view_dia', $data);
+    }
+
     public function LeaveRequestListC()
     {
         $data = [
@@ -1165,7 +1216,6 @@ class HRController extends BaseController
         $data['approveLrCount'] = $this->empModel->approveLRCountM($data);
         $data['rejectLrCount'] = $this->empModel->rejectLRCountM($data);
         $data['pendingLrCount'] = $this->empModel->pendingLRCountM($data);
-
         return view('employees/leaveRequest_view', $data);
     }
     public function ReadLeaveRequestC($id)
@@ -1179,7 +1229,6 @@ class HRController extends BaseController
     public function storeLeaveRequestReply()
     {
         $LRModel = new LeaveReasonModel();
-
         $data = [
             // 'LeaveRequestDate' => $this->request->getVar('LeaveRequestDate'),               
             'IDPK' => $this->request->getVar('IDPK'),
@@ -1289,25 +1338,18 @@ class HRController extends BaseController
     {
         $data['id'] = $_SESSION['EmpIDFK'];
         $LRModel = new LeaveReasonModel();
-
         $data = [
             'SenderId' => $_SESSION['EmpIDFK'],
             'ReceiverId' => $this->request->getVar('ReceiverId'),
             'Mail_Msg' => $this->request->getVar('replyMsg'),
         ];
         $i = 0;
-
-
         // foreach($data['ReceiverId'] as $key){
         //     print_r($data['ReceiverId']);
         //     $i++;
-
         // }
-
         // exit();
-
         $save = $LRModel->addHRMail($data);
-
         // return view('MailBox/MailBox_View',$data);
         return $this->response->redirect(site_url('/mailBox?fdate=&todate=&trickid=1'));
     }
@@ -1319,23 +1361,16 @@ class HRController extends BaseController
             'mailId' => $_GET['mailId'],
         ];
         $hrId = $_SESSION['EmpIDFK'];
-
-
         if ($data['trickid'] == 1) {
-
             $data['empleaveRequest'] = $this->empModel->getEmpLeaveRequest($data);
             $data['empleaveReply'] = $this->empModel->getEmpLeaveReply($data);
             // print_r($data['empleaveRequest']);exit();
         } elseif ($data['trickid'] == 2) {
-
             $data['HRSentBox'] = $this->empModel->HR_readsent_box($data, $hrId);
-
             // $data['empleaveRequest'] = $this->empModel->getEmpLeaveRequest($data);
             // $data['empleaveReply'] = $this->empModel->getEmpLeaveReply($data);
             // print_r($data['empleaveRequest']);exit();
-
         }
-
         return view('MailBox/ReadMail_View', $data);
     }
 
@@ -4573,6 +4608,7 @@ class HRController extends BaseController
             $data['settings'] += [$result['Name'] => $result['Value']];
         }
         $data['options'] = $this->candidateModel->GetJobExperience();
+        $data['ticket_types'] = $this->admin->getTicketTypes();
         return view('settings', $data);
     }
 
@@ -4611,6 +4647,8 @@ class HRController extends BaseController
         $data1 = [
             "deptName" => $_POST['DepartmentName'],
             "CLPM" => $_POST['CasualLeave'],
+            "SLPM" => $_POST['SickLeave'],
+            "PLPM" => $_POST['PaidLeave'],
             "WO1" => $_POST['wo1'],
             "WO2" => $_POST['wo2'],
             "WO3" => $_POST['wo3'],
@@ -4635,6 +4673,8 @@ class HRController extends BaseController
             "IDPK" => $_POST['IDPK'],
             "deptName" => $_POST['DepartmentName'],
             "CLPM" => $_POST['CasualLeave'],
+            "SLPM" => $_POST['SickLeave'],
+            "PLPM" => $_POST['PaidLeave'],
             "WO1" => $_POST['wo1'],
             "WO2" => $_POST['wo2'],
             "WO3" => $_POST['wo3'],
@@ -4710,8 +4750,17 @@ class HRController extends BaseController
 
     public function UpdateJobExperience()
     {
-        $data = $_POST['options'];
+        $data['options'] = $_POST['options'];
+        $data['remove'] = $_POST['remove'];
         $this->candidateModel->UpdateJobExperience($data);
+        return $this->response->redirect(site_url('/settings'));
+    }
+
+    public function UpdateTicketOptions()
+    {
+        $data['Name'] = $_POST['Name'];
+        $data['remove'] = $_POST['remove'];
+        $this->admin->setTicketTypes($data);
         return $this->response->redirect(site_url('/settings'));
     }
 
@@ -4737,7 +4786,8 @@ class HRController extends BaseController
         return $this->response->setJSON(['status' => 'success']);
     }
 
-    public function UpdateAbsEmployee($id){
+    public function UpdateAbsEmployee($id)
+    {
         $data['last_working'] = $_POST['last_working'] ?? NULL;
         $data['settlement_day'] = $_POST['settlement_day'] ?? NULL;
         $data['final_set_status'] = $_POST['final_set_status'];
@@ -4752,5 +4802,219 @@ class HRController extends BaseController
     {
         $this->candidateModel->ReApproveCandidate($id);
         return $this->response->setJSON(['status' => 'success']);
+    }
+
+    public function Tickets()
+    {
+        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data['todate'] = $_GET['todate'] ?? date('Y-m-d');
+        $trickid = $_GET['trickid'] ?? 1;
+        $data['trickid'] = $trickid;
+
+        $data['All'] = count($this->empModel->AllTickets(1, $data));
+        $data['Pending'] = count($this->empModel->AllTickets(2, $data));
+        $data['In_Progress'] = count($this->empModel->AllTickets(3, $data));
+        $data['Resolved'] = count($this->empModel->AllTickets(4, $data));
+        $data['Escalated'] = count($this->empModel->AllTickets(5, $data));
+
+        $data['tickets'] = $this->empModel->AllTickets($trickid, $data);
+
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+
+        return view('tickets/tickets', $data);
+    }
+
+    public function AddTicket()
+    {
+        $data['EmployeeIDFK'] = $_POST['EmployeeIDFK'];
+        $data['TypeIDFK'] = $_POST['TypeIDFK'];
+        $data['Subject'] = $_POST['Subject'];
+        $data['Description'] = $_POST['Description'];
+        $data['Priority'] = $_POST['Priority'];
+        $this->empModel->CreateTicket($data);
+        return redirect()->back();
+    }
+
+    public function EditTicket($id)
+    {
+        $data = $this->empModel->EditTicket($id);
+        return $this->response->setJSON(['status' => 'success', 'data' => $data]);
+    }
+
+    public function StatusTicketUpdate()
+    {
+        $id = $_POST['Ticid'];
+        $status = $_POST['Status'];
+        $this->empModel->StatusChangeTicket($id, $status);
+        return $this->response->redirect(site_url('/tickets'));
+    }
+
+    public function StatusTicketsUpdate($id, $status)
+    {
+        $this->empModel->StatusChangeTicket($id, $status);
+        return redirect()->back();
+    }
+
+
+    public function UserDashboard()
+    {
+        $data['fdate'] = $_GET['fdate'];
+        $data['todate'] = $_GET['todate'];
+        $data['EmpId'] = session()->get('EmpIDFK');
+        $data['badge'] = $_GET['badge'] ?? 0;
+        $data['badge'] = ($data['badge'] == -1) ? 0 : $data['badge'];
+
+        $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
+        $data['birthdays'] = $this->empModel->birthdayDetails();
+        $data['events'] = $this->empModel->eventsDetails();
+        $data['weeklogs'] = $this->empModel->UserWeekTimelog($data);
+
+        $data['login'] = $this->empModel->UserTodayTimelog($data);
+
+        return view('users/empdashboard', $data);
+    }
+
+    public function UserAttendance()
+    {
+        $id = session()->get('EmpIDFK');
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['EmpId'] = $id;
+
+        return view('users/attendance', $data);
+    }
+
+    public function UserLeave()
+    {
+        $id = session()->get('EmpIDFK');
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['leavetype'] = $this->empModel->selectleaveType();
+        $data['EmpId'] = $id;
+        $data['leaves'] = $this->empModel->GetUserLeaves($id);
+        $data['LeaveFlag'] = $this->empModel->CasualCheck($id);
+        return view('users/leave', $data);
+    }
+
+    public function HRLeave()
+    {
+        $id = session()->get('EmpIDFK');
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['leavetype'] = $this->empModel->selectleaveType();
+        $data['EmpId'] = $id;
+        $data['leaves'] = $this->empModel->GetUserLeaves($id);
+        $data['LeaveFlag'] = $this->empModel->CasualCheck($id);
+        return view('HR/leave', $data);
+    }
+
+    public function UserTimelog()
+    {
+        $id = session()->get('EmpIDFK');
+        $data = [
+            'fdate' => $_GET['fdate'] ?? date('Y-m-d'),
+            'todate' => $_GET['todate'] ?? date('Y-m-d'),
+        ];
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['EmpId'] = $id;
+        $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $data['fdate'], $data['todate']);
+        return view('users/timelog', $data);
+    }
+
+    public function UserTicket()
+    {
+        $id = session()->get('EmpIDFK');
+        $data['tickets'] = $this->empModel->UserTickets($id);
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['EmpId'] = $id;
+        return view('users/tickets', $data);
+    }
+
+    public function UserPayroll()
+    {
+        $id = session()->get('EmpIDFK');
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['EmpId'] = $id;
+        $data['PaySlip'] = $this->empModel->getEmployeePaySlip($id);
+        $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
+        $data['mode'] = $data['mode']['Value'];
+        return view('users/payroll', $data);
+    }
+
+    public function HRPayroll(){
+        $id = session()->get('EmpIDFK');
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['EmpId'] = $id;
+        $data['PaySlip'] = $this->empModel->getEmployeePaySlip($id);
+        $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
+        $data['mode'] = $data['mode']['Value'];
+        return view('HR/payroll', $data);
+    }
+
+    public function UserEvent()
+    {
+        $id = session()->get('EmpIDFK');
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['EmpId'] = $id;
+
+        $data['events'] = $data['events'] = $this->empModel->eventsDetails();
+        return view('users/events', $data);
+    }
+
+    public function HRTickets()
+    {
+        $id = session()->get('EmpIDFK');
+        $data['tickets'] = $this->empModel->UserTickets($id);
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
+        $data['EmpId'] = $id;
+        return view('HR/tickets', $data);
+    }
+
+    public function Leaves()
+    {
+        $data['trickid'] = $_GET['trickid'] ?? 1;
+        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data['todate'] = $_GET['todate'] ?? date('Y-m-d');
+        if (session()->get('user_level') == 1) {
+            $sac = 1;
+        } else {
+            $sac = 0;
+        }
+        $data['All'] = count($this->empModel->GetAllLeaves(1, $data, $sac));
+        $data['Pending'] = count($this->empModel->GetAllLeaves(2, $data, $sac));
+        $data['Approved'] = count($this->empModel->GetAllLeaves(3, $data, $sac));
+        $data['Rejected'] = count($this->empModel->GetAllLeaves(4, $data, $sac));
+        $data['leaves'] = $this->empModel->GetAllLeaves($data['trickid'], $data, $sac);
+        return view('leaves/leave', $data);
+    }
+
+    public function GetLeave($id)
+    {
+        $data = $this->empModel->GetLeave($id);
+        return $this->response->setJSON(['status' => 'success', 'data' => $data]);
+    }
+
+    public function StatusLeaveUpdate()
+    {
+        $id = $_POST['id'];
+        $status = $_POST['Status'];
+        $this->empModel->StatusLeaveUpdate($id, $status);
+        return $this->response->redirect(site_url('/leave'));
+    }
+
+    public function StatusLeavesUpdate($id, $status)
+    {
+        $this->empModel->StatusLeaveUpdate($id, $status);
+        return redirect()->back();
+    }
+
+    public function AddLeave()
+    {
+        $data['EmployeeIDFK'] = $_POST['EmployeeIDFK'];
+        $data['TypeIDFK'] = $_POST['TypeIDFK'];
+        $data['CompDate'] = $_POST['CompDate'] ?? null;
+        $data['Date'] = $_POST['Date'];
+        $data['Start_time'] = $_POST['Start_time'] ?? '00:00:00';
+        $data['End_time'] = $_POST['End_time'] ?? '00:00:00';
+        $data['Reason'] = $_POST['Reason'] ?? '';
+        $this->empModel->ApplyLeave($data);
+        return redirect()->back();
     }
 }

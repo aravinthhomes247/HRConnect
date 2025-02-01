@@ -97,6 +97,7 @@ $routes->post('update_reason', 'HRController::updateLR', ['filter' => 'auth']);
 // $routes->get('delete/(:num)', 'HRController::delete/$1');
 
 $routes->get('/reportemp', 'HRController::reportSearchAllLog', ['filter' => 'auth']);
+$routes->get('/reportempdia', 'HRController::reportSearchAllLogDia', ['filter' => 'auth']);
 $routes->get('logHistory', 'HRController::logHistory',['filter' => 'auth']);
 $routes->get('latecomingHistory', 'HRController::latecomingHistory',['filter' => 'auth']);
 
@@ -234,16 +235,42 @@ $routes->post('/store-holiday', 'HRController::StoreHoliday',['filter' => 'auth'
 $routes->post('/update-holiday/(:any)', 'HRController::UpdateHoliday/$1',['filter' => 'auth']);
 $routes->get('/delete-holiday/(:any)', 'HRController::DeleteHoliday/$1',['filter' => 'auth']);
 $routes->post('/update-settings-options', 'HRController::UpdateJobExperience', ['filter' => 'auth']);
+$routes->post('/update-settings-tikets', 'HRController::UpdateTicketOptions', ['filter' => 'auth']);
 
 $routes->post('/employee-edit/single/(:any)', 'HRController::UpdateEmployee/$1',['filter' => 'auth']);
 $routes->post('/employee-edit/single-abs/(:any)', 'HRController::UpdateAbsEmployee/$1',['filter' => 'auth']);
-
-
 
 $routes->get('/payrolls', 'HRController::payrolls',['filter' => 'auth']);
 $routes->get('/payslip-edit/(:any)', 'HRController::payroll_edit/$1',['filter' => 'auth']);
 $routes->post('/payslip-update', 'HRController::payroll_update',['filter' => 'auth']);
 $routes->get('/payslip-manual-save', 'HRController::payroll_save',['filter' => 'auth']);
+
+$routes->get('/tickets', 'HRController::Tickets',['filter' => 'auth']);
+$routes->post('/add-ticket', 'HRController::AddTicket',['filter' => 'auth']);
+$routes->get('/ticket-edit/(:num)', 'HRController::EditTicket/$1',['filter' => 'auth']);
+$routes->post('/ticket-update-status', 'HRController::StatusTicketUpdate',['filter' => 'auth']);
+$routes->get('/tickets-update-status/(:num)/(:num)', 'HRController::StatusTicketsUpdate/$1/$2',['filter' => 'auth']);
+
+$routes->get('/leave', 'HRController::Leaves',['filter' => 'auth']);
+$routes->get('/leave-edit/(:num)', 'HRController::GetLeave/$1',['filter' => 'auth']);
+$routes->post('/leave-update-status', 'HRController::StatusLeaveUpdate',['filter' => 'auth']);
+$routes->get('/leave-update-status/(:num)/(:num)', 'HRController::StatusLeavesUpdate/$1/$2',['filter' => 'auth']);
+$routes->post('/add-leave', 'HRController::AddLeave',['filter' => 'auth']);
+
+$routes->get('/user-dashboard', 'HRController::UserDashboard',['filter' => 'auth']);
+$routes->get('/user-attendance', 'HRController::UserAttendance',['filter' => 'auth']);
+$routes->get('/user-leave', 'HRController::UserLeave',['filter' => 'auth']);
+$routes->get('/user-timelog', 'HRController::UserTimelog',['filter' => 'auth']);
+$routes->get('/user-ticket', 'HRController::UserTicket',['filter' => 'auth']);
+$routes->get('/user-payroll', 'HRController::UserPayroll',['filter' => 'auth']);
+$routes->get('/user-event', 'HRController::UserEvent',['filter' => 'auth']);
+
+$routes->get('/HRTickets', 'HRController::HRTickets',['filter' => 'auth']);
+$routes->get('/HRpayroll', 'HRController::HRPayroll',['filter' => 'auth']);
+$routes->get('/HRleave', 'HRController::HRLeave',['filter' => 'auth']);
+
+$routes->get('/downloadpayslipexcel', 'HRController::DownloadPayslipExcel',['filter' => 'auth']);
+
 // $routes->get('/HRtodays_activity', 'HRController::HRtodays_candidate_activityC', ['filter' => 'auth']);
 // $routes->get('dashboard', 'HRDashboard::presents');
 // CRUD RESTful Routes

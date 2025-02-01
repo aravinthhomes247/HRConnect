@@ -82,11 +82,11 @@
         <nav class="nav nav-pills flex-column flex-sm-row">
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId']); ?>">Basic Details</a>
             <a class="flex-sm-fill text-sm-center nav-link active" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=2'); ?>">Work Details</a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=3'); ?>">Approvals </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=4'); ?>">Attanance </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=5'); ?>">Late Entry </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=6'); ?>">Time Logs </a>
-            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=7'); ?>">Pay slip </a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=3'); ?>">Tickets</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=4'); ?>">Attanance</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=5'); ?>">Late Entry</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=6'); ?>">Time Logs</a>
+            <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=7'); ?>">Pay slip</a>
             <a class="flex-sm-fill text-sm-center nav-link" href="<?php echo base_url('editEmp-view/' . $BasicDetails['EmployeeId'] . '?trickId=8'); ?>">Files</a>
         </nav>
     </div>
@@ -297,6 +297,17 @@
                 <tr>
                     <th class="red">PF Vol</th>
                     <td class="editable" data-name="PF_VOL" data-type="number"><?= $WorkDetails['Salary']['PF_VOL'] ?? 'NA'  ?></td>
+                    <td>
+                        <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
+                        <div class="action-btns">
+                            <button class="Action-btn"><i class="fa-regular fa-circle-check save-icon" style="color: #01e305; display:none;"></i></button>
+                            <button class="Action-btn"><i class="fa-regular fa-circle-xmark cancel-icon" style="color: #ec0914; display:none;"></i></button>
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th class="red">TDS</th>
+                    <td class="editable" data-name="TDS" data-type="number"><?= $WorkDetails['Salary']['TDS'] ?? 'NA'  ?></td>
                     <td>
                         <i class="fa-solid fa-pencil edit-icon" style="color: #98A2B3;"></i>
                         <div class="action-btns">

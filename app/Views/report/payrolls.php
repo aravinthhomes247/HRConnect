@@ -91,7 +91,7 @@
         <div class="col col-lg-6 justify-content-end">
             <div class="d-flex justify-content-end">
                 <?php if ($mode == 2 && $state0 == 0 && $state1 != 0 && $state2 == 0) { ?><a href="javascript:void(0);" class="download me-1" id="salary_confirmation">Salary Confirmation</a> <?php } ?>
-                <?php if ($state0 == 0 && $state1 == 0 && $state2 != 0) { ?><a href="javascript:void(0);" class="download me-2" id="all_payroll">View All Payrolls</a> <?php } ?>
+                <?php if ($state0 == 0 && $state1 == 0 && $state2 != 0) { ?><a href="<?= base_url('/downloadpayslipexcel?trickid='.$trickid.'&fdate='.$fdate) ?>" class="download me-2" id="all_payroll">Export Payrolls</a> <?php } ?>
                 <div class="action ms-1">
                     <i class="fa-solid fa-calendar-days"></i>
                     <input class="form-control" type="text" style="padding-left: 35px; box-sizing: border-box;" id="reportrange">
@@ -200,10 +200,12 @@
             <input type="hidden" id="FBP">
             <input type="hidden" id="HRA">
             <input type="hidden" id="Basic">
+            <input type="hidden" id="PFF">
             <form action="<?= base_url('/payslip-update') ?>" method="post">
                 <input type="hidden" name="fdate" value="<?= $fdate ?>">
                 <input type="hidden" name="trickid" value="<?= $trickid ?>">
                 <input type="hidden" name="id" id="payslipid">
+                <input type="hidden" name="Gross" id="Gross">
                 <div class="modal-body">
                     <div class="row mt-2">
                         <div class="col-md-4 form-group">
@@ -235,8 +237,8 @@
                     </div>
                     <div class="row mt-4">
                         <div class="col-md-4 form-group">
-                            <label for="SD2Amount">Special Deduction</label>
-                            <input type="text" name="SD2" class="form-control" id="SD2Amount">
+                            <label for="TDS">TDS</label>
+                            <input type="text" name="TDS" class="form-control" id="TDS" readonly>
                         </div>
                         <div class="col-md-4 form-group">
                             <label for="Insurance">Insurance</label>
@@ -250,12 +252,18 @@
                     <div class="row mt-2">
                         <div class="col-md-4 form-group">
                             <label for="SDAmount">Special Earnings</label>
-                            <input type="text" name="SD1" class="form-control" id="SDAmount">
+                            <input type="number" name="SD1" class="form-control" id="SDAmount">
+                        </div>
+                        <div class="col-md-4 form-group">
+                            <label for="SD2Amount">Special Deduction</label>
+                            <input type="number" name="SD2" class="form-control" id="SD2Amount">
                         </div>
                         <div class="col-md-4 form-group">
                             <label for="LOP">No. of Days (LOP)</label>
-                            <input type="text" name="LOP" class="form-control" id="LOP">
+                            <input type="number" name="LOP" class="form-control" id="LOP">
                         </div>
+                    </div>
+                    <div class="row mt-2">
                         <div class="col-md-4 form-group">
                             <label for="BankAccount">Bank Account</label>
                             <select class="form-select" name="Acc_Type" id="BankAccount">
@@ -316,13 +324,16 @@
                 url: '<?= base_url() . '/payslip-edit/' ?>' + id,
                 type: 'GET',
                 success: function(response) {
+                    $('#Gross').val(response.files.GrossSalary);
                     $('#LOP').val(response.files.LOP);
-                    $('#SDAmount').val(response.files.SD1);
+                    $('#SDAmount').val(0);
                     $('#Insurance').val(response.files.Insurance);
-                    $('#SD2Amount').val(response.files.SD);
+                    $('#SD2Amount').val(0);
                     $('#PFVolAmount').val(response.files.PF_VOL);
+                    $('#TDS').val(response.files.TDS);
                     $('#PTAmount').val(response.files.PT);
                     $('#PFAmount').val(response.files.PF);
+                    $('#PFF').val(response.files.PF);
 
                     $('#FBPAmount').val(response.files.FBP);
                     $('#FBP').val(response.files.FBP);
@@ -394,8 +405,7 @@
         const BASIC = parseValue('#Basic');
         const LOP = parseValue('#LOP', 0);
         const SD = parseValue('#SDAmount', 0);
-
-        const PF = parseValue('#PFAmount');
+        const PF = parseValue('#PFF');
         const PT = parseValue('#PTAmount');
         const PFVOL = parseValue('#PFVolAmount');
         const Ins = parseValue('#Insurance');
