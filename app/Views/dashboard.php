@@ -19,6 +19,10 @@
   }
 </style>
 
+<div class="loader-container" id="loader-container">
+  <div class="loader" id="loader"></div>
+</div>
+
 <div class="main-attendence-count-container">
   <div class="row dashboard">
     <div class="col col-lg-8"></div>
@@ -128,8 +132,8 @@
           $firstHalf = array_slice($holidays, 0, 5);
           $secondHalf = array_slice($holidays, 5);
           ?>
-          <span class="me-1" <?= ($badge == 0) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/dashboard?badge=' . ((int)$badge - 1)) ?>"><i class="fa-solid fa-angles-left"></i></a></span>
-          <span class="ms-2" <?= (count($secondHalf) < 5) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/dashboard?badge=' . ((int)$badge + 1)) ?>"><i class="fa-solid fa-angles-right"></i></a></span>
+          <span class="me-1" <?= ($badge == 0) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/dashboard?badge=' . ((int)$badge - 1) . '&fdate=' . $fdate . '&todate=' . $todate) ?>"><i class="fa-solid fa-angles-left"></i></a></span>
+          <span class="ms-2" <?= (count($secondHalf) < 5) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/dashboard?badge=' . ((int)$badge + 1) . '&fdate=' . $fdate . '&todate=' . $todate) ?>"><i class="fa-solid fa-angles-right"></i></a></span>
         </div>
       </div>
 
@@ -163,10 +167,7 @@
       <div class="col ms-2">
         <span>Leave / Permission Requests</span>
       </div>
-      <div class="mt-5" style="width:100%;text-align: center;">
-        <h2 style="color:red;">Coming Soon</h2>
-      </div>
-      <!-- <table class="table table-hover ms-3">
+      <table class="table table-hover ms-3">
         <thead>
           <tr>
             <td>EMPLOYEE CODE</td>
@@ -176,23 +177,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td>HME234565</td>
-            <td>karthick</td>
-            <td>hourly permission</td>
-            <td>26/08/24</td>
-          </tr>
-          <tr>
-            <td>HME234444</td>
-            <td>Gowshik</td>
-            <td>casual leave</td>
-            <td>26/08/24</td>
-          </tr>
+          <?php if ($leaves): ?>
+            <?php foreach ($leaves as $leave): ?>
+              <tr>
+                <td><?= $leave['EmployeeCode'] ?></td>
+                <td><?= $leave['EmployeeName'] ?></td>
+                <td><?= $leave['Name'] ?></td>
+                <td><?= $leave['Date'] ?></td>
+              </tr>
+              <?php if ($i++ == 5) {
+                break;
+              }
+              ?>
+            <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="4" class="text-center">No data available in table</td>
+            </tr>
+          <?php endif; ?>
         </tbody>
       </table>
-      <div class="viewmore">
-        <a href="#" class="btn btn-viewmore p-1"><i class="fa-solid fa-angles-down"></i> View More</a>
-      </div> -->
+      <?php if ($leaves): ?>
+        <div class="viewmore">
+          <a href="#" class="btn btn-viewmore p-1"><i class="fa-solid fa-angles-down"></i> View More</a>
+        </div>
+      <?php endif; ?>
     </div>
   </div>
   <div class="col col-lg-6">
@@ -236,6 +245,10 @@
               }
               ?>
             <?php endforeach; ?>
+          <?php else: ?>
+            <tr>
+              <td colspan="4" class="text-center">No data available in table</td>
+            </tr>
           <?php endif; ?>
         </tbody>
       </table>
@@ -246,6 +259,22 @@
 
 <script>
   $(document).ready(function() {
+
+    $('#loader-container').show();
+    $('.layout').css('pointer-events', 'none');
+    $.ajax({
+      url: '<?= base_url('checkcrone') ?>',
+      type: 'GET',
+      success: function(response) {
+        $('.layout').css('pointer-events', 'auto');
+        $('#loader-container').hide();
+      },
+      error: function(xhr, status, error) {
+        console.log(error);
+      }
+    });
+
+
     $('#reportrange').daterangepicker({
       format: 'YYYY/MM/DD',
       locale: {

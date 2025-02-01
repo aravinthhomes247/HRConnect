@@ -224,7 +224,9 @@
                 contentType: false,
                 success: function(response) {
                     console.log('Updated successfully:', response);
-                    location.reload();
+                    Swal.fire("Profile Updated!").then((result) => {
+                            location.reload();
+                        });
                 },
                 error: function(xhr, status, error) {
                     console.log('Failed to update:', error);

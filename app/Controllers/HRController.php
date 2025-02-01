@@ -120,8 +120,6 @@ class HRController extends BaseController
         $employee = $this->empModel->where('Email', $user['admin_login_email'])->select('Image, EmployeeName, DesignationIDFK')->first();
         $Desig = $this->empModel->getdesignationM($employee['DesignationIDFK']);
         // print_r($employee);exit(0);
-        $this->empModel->AutoLeaveGenerater();
-        $this->empModel->autopayslipmaker();
 
         if ($user) {
             $pass = $user['admin_login_password'];
@@ -224,9 +222,12 @@ class HRController extends BaseController
     // DashBoard Page Controllers 
     public function dashboard()
     {
+        $date['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $date['todate'] = $_GET['todate'] ?? date('Y-m-d');
         $data['badge'] = $_GET['badge'] ?? 0;
         $data['badge'] = ($data['badge'] == -1) ? 0 : $data['badge'];
         $data['count'] = count($this->empModel->allEmpsCountM());
+
         $logModel = new LogModel();
         $data['presents'] = count($logModel->presentslog());
         $data['absent'] = $data['count'] - $data['presents'];
@@ -235,10 +236,21 @@ class HRController extends BaseController
         $data['workAnniversaryDetailsTable'] = $this->empModel->workAnniversaryDetails();
         $data['birthdayDetailsTable'] = $this->empModel->birthdayDetails();
         $data['eventsDetailsTable'] = $this->empModel->eventsDetails();
-        $this->admin->AutoRemoveHolidays();
+        $data['abnormalDetails'] = $logModel->AbnormalListM($data);
+        $data['leaves'] = $this->empModel->leaveDetails($data);
+       
         $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
-
         return view('dashboard', $data);
+    }
+
+    public function cronjobs(){
+        $cron = $this->admin->cronjobs();
+        if(!$cron){
+            $this->admin->AutoRemoveHolidays();
+            $this->empModel->autopayslipmaker();
+            $this->empModel->AutoLeaveGenerater();
+        }
+        return $this->response->setJSON(['status' => 'success']);
     }
 
     function HRBasedDashboard()
@@ -823,7 +835,8 @@ class HRController extends BaseController
         return $this->response->setJSON(['status' => 'success', 'files' => $data]);
     }
 
-    public function DownloadPayslipExcel(){
+    public function DownloadPayslipExcel()
+    {
         $data['trickid'] = $_GET['trickid'];
         $data['fdate'] = $_GET['fdate'];
         $this->empModel->DownloadPayslipExcel($data);
@@ -4938,7 +4951,8 @@ class HRController extends BaseController
         return view('users/payroll', $data);
     }
 
-    public function HRPayroll(){
+    public function HRPayroll()
+    {
         $id = session()->get('EmpIDFK');
         $data['issuetypes'] = $this->empModel->GetIssueTypes();
         $data['EmpId'] = $id;

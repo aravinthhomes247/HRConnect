@@ -381,7 +381,9 @@
                     'fdate': fdate,
                 },
                 success: function(response) {
-                    location.reload();
+                    Swal.fire("Payrolls Confirmed!").then((result) => {
+                            location.reload();
+                        });
                 },
                 error: function(xhr, status, error) {
                     console.log('Failed to update:', error);

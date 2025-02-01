@@ -127,9 +127,9 @@
                                         <img src="<?= base_url('../public/images/img/allnotverified.png') ?>" alt="All Not Verified" class="highlight-index"
                                             title="<?= $one . $two . $three . $four ?>">
                                     <?php } ?>
-                                    <?php if($emp['GrossSalary'] != 0 && $emp['GrossSalary'] != NULL){ ?>
+                                    <?php if ($emp['GrossSalary'] != 0 && $emp['GrossSalary'] != NULL) { ?>
                                         <span class="salstate-p">Salary <i class="fa-solid fa-check icon-p"></i></span>
-                                    <?php }else{ ?>
+                                    <?php } else { ?>
                                         <span class="salstate-f">Salary <i class="fa-solid fa-exclamation icon-f"></i></span>
                                     <?php } ?>
                                 <?php } ?>
@@ -317,8 +317,10 @@
                     type: 'POST',
                     data: data,
                     success: function(response) {
-                        console.log('Updated successfully:', response);
-                        location.reload();
+                        // console.log('Updated successfully:', response);
+                        Swal.fire("Employee Updated!").then((result) => {
+                            location.reload();
+                        });
                     },
                     error: function(xhr, status, error) {
                         console.log('Failed to update:', error);

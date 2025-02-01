@@ -703,6 +703,9 @@
                     data: data,
                     success: function(response) {
                         console.log('Updated successfully:', response);
+                        // Swal.fire("Employee Updated!").then((result) => {
+                        //     location.reload();
+                        // });
                     },
                     error: function(xhr, status, error) {
                         console.log('Failed to update:', error);
@@ -787,7 +790,9 @@
                         data: data,
                         success: function(response) {
                             console.log('Updated successfully:', response);
+                            Swal.fire("Employee Updated!").then((result) => {
                             location.reload();
+                        });
                         },
                         error: function(xhr, status, error) {
                             console.log('Failed to update:', error);
@@ -821,7 +826,9 @@
                 contentType: false,
                 success: function(response) {
                     console.log('Updated successfully:', response);
-                    location.reload();
+                    Swal.fire("Employee Updated!").then((result) => {
+                            location.reload();
+                        });
                 },
                 error: function(xhr, status, error) {
                     console.log('Failed to update:', error);

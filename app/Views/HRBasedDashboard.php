@@ -201,7 +201,7 @@
                 <tbody>
                     <?php if (!empty($allCareerList)): ?>
                         <?php foreach ($allCareerList as $index => $career): ?>
-                            <?php if ($index >= 7) break; ?>
+                            <?php if ($index >= 12) break; ?>
                             <tr>
                                 <td><?= $career['job_Title']; ?></td>
                                 <td><?= $CAREER->NofApplicants($career['job_IDPK'], ['fdate' => '2020-01-01', 'todate' => date('Y-m-d')]); ?> Applied</td>

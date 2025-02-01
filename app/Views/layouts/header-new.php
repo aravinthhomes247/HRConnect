@@ -45,6 +45,10 @@
         <link rel="stylesheet" href="https://cdn.datatables.net/buttons/2.4.1/css/buttons.dataTables.min.css">
         <link href="https://cdn.datatables.net/v/dt/jszip-3.10.1/b-3.2.0/b-html5-3.2.0/datatables.min.css" rel="stylesheet">
 
+        <!-- Sweet Alerts -->
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.all.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11.15.10/dist/sweetalert2.min.css">
+
     </head>
 
     <body>

@@ -771,75 +771,79 @@ class EmployeeModel extends Model
                 AND TypeIDFK != 6 
                 AND (DATE(Date) BETWEEN '$date_start' AND '$date_end')";
         $leaves = $this->db->query($sql)->getRow()->count;
-        $this->AutoLeaveGenerater();
+        // $this->AutoLeaveGenerater();
         return $leaves;
     }
 
-
     public function AutoLeaveGenerater()
     {
-        $yesdate = date('Y-m-d', strtotime("-1 day"));
-        $sql = "SELECT EmployeeId,EmployeeCode FROM employees Where Status= 'Working' ";
-        $emps = $this->bio->query($sql)->getResultArray();
+        $yesdate = date('Y-m-d', strtotime('-1 day'));
 
-        foreach ($emps as $emp) {
-            $code = $emp['EmployeeCode'];
+        // Check biometric logs
+        $logCount = $this->bio->query("SELECT COUNT(*) AS count FROM biometric.devicelogs_processed WHERE DATE(LogDate) = ?", [$yesdate])->getRow()->count;
+        if ($logCount == 0){
+            return true;
+        }
+
+        // Check for holidays
+        $holidays = $this->db->query("SELECT CASE WHEN SameDate = 1 THEN 
+                                                                    DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d') 
+                                                                ELSE 
+                                                                    Date 
+                                                                END AS AdjustedDate 
+                                            FROM holidays 
+                                            WHERE AllDept = 1")->getResultArray();
+        $isHoliday = in_array($yesdate, array_column($holidays, 'AdjustedDate'));
+        if(!$isHoliday){
+            return true;
+        }
+
+        $sql = "SELECT A.EmployeeId, A.EmployeeCode, A.DepartmentId
+                FROM employees A
+                LEFT JOIN biometric.devicelogs_processed B 
+                    ON B.UserId = A.EmployeeCode AND DATE(B.LogDate) = '$yesdate'
+                WHERE A.Status = 'Working' AND B.UserId IS NULL";
+        $employees = $this->bio->query($sql)->getResultArray();
+
+        foreach ($employees as $emp) {
             $id = $emp['EmployeeId'];
-            $sql = "SELECT count(*) as count FROM biometric.devicelogs_processed WHERE UserId = '$code' AND DATE(LogDate) = '$yesdate'";
-            $count = $this->bio->query($sql)->getRow()->count;
+            $code = $emp['EmployeeCode'];
+            $department = $emp['DepartmentId'];
+            
+            // Check biometric logs
+            // $logCount = $this->bio->query("SELECT COUNT(*) AS count FROM biometric.devicelogs_processed WHERE UserId = ? AND DATE(LogDate) = ?", [$code, $yesdate])->getRow()->count;
+            // if ($logCount > 0) continue;
+            
+            // Check if leave already exists
+            $existingLeave = $this->db->query("SELECT COUNT(*) AS flag FROM leaves WHERE EmployeeIDFK = ? AND Status = 1 AND TypeIDFK = 5 AND DATE(Date) = ?", [$id, $yesdate])->getRow()->flag;
+            if ($existingLeave > 0) continue;
+            
+            // Check for other leaves
+            $otherLeave = $this->db->query("SELECT COUNT(*) AS count FROM leaves WHERE EmployeeIDFK = ? AND Status = 1 AND TypeIDFK != 6 AND DATE(Date) = ?", [$id, $yesdate])->getRow()->count;
+            if ($otherLeave > 0) continue;
+            
+            // Check for holidays
+            $holidays = $this->db->query("SELECT CASE WHEN SameDate = 1 THEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d') ELSE Date END AS AdjustedDate FROM holidays WHERE DepartmentIDFK LIKE ?", ["%\"$department\"%"])->getResultArray();
+            $isHoliday = in_array($yesdate, array_column($holidays, 'AdjustedDate'));
+            if (!$isHoliday) continue;
 
-            if ($count == 0) {
-                $sql = "SELECT DepartmentId FROM employees WHERE EmployeeId = $id";
-                $department = $this->db->query($sql)->getRow()->DepartmentId;
-                $sql = "SELECT WO1, WO2, WO3, WO4, WO5, WO6, WO7 FROM departments WHERE IDPK = $department";
-                $data['WOD'] = $this->db->query($sql)->getRowArray();
-                $WEEKOFF = 0;
-                for ($i = 1; $i < count($data['WOD']); $i++) {
-                    if ($data['WOD']['WO' . $i] == 1) {
-                        $WEEKOFF += $this->checkweekoff($i - 1, $yesdate, $yesdate);
-                    }
+            // Check for week-off
+            $weekOffDays = $this->db->query("SELECT WO1, WO2, WO3, WO4, WO5, WO6, WO7 FROM departments WHERE IDPK = ?", [$department])->getRowArray();
+            $weekOff = 0;
+            foreach ($weekOffDays as $index => $isWeekOff) {
+                if ($isWeekOff) {
+                    $weekOff += $this->checkweekoff($index, $yesdate, $yesdate);
                 }
+            }
+            if ($weekOff > 0) continue;
 
-                $sql = "SELECT CASE WHEN SameDate = 1 THEN
-                            CASE
-                                WHEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d') < CURRENT_DATE()
-                                THEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d')
-                                ELSE DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d')  -- If date is in the future or today, use this year
-                            END
-                        ELSE
-                            Date
-                        END AS AdjustedDate
-                FROM holidays 
-                WHERE DepartmentIDFK LIKE '%\"$department\"%'";
-                $holidays = $this->db->query($sql)->getResultArray();
-                $HOLIDAY = 0;
-                foreach ($holidays as $holiday) {
-                    if ($holiday['AdjustedDate'] == 1) {
-                        $HOLIDAY++;
-                    }
-                }
-
-                $sql = "SELECT count(*) as count FROM leaves WHERE EmployeeIDFK = $id AND Status = 1
-                AND TypeIDFK != 6 
-                AND (DATE(Date) = '$yesdate')";
-                $LR = $this->db->query($sql)->getRow()->count;
-
-                if ($WEEKOFF == 0 && $HOLIDAY == 0 && $LR == 0) {
-                    $sql = "INSERT INTO `leaves`(`EmployeeIDFK`, `TypeIDFK`, `Date`, `Reason`, `Status`) 
-                            VALUES (?,?,?,?,?)";
-                    $this->db->query($sql, [$id, 5, $yesdate, "UnProperLeave", 1]);
-                }
+            // Insert UnProperLeave if conditions are met
+            if ($weekOff == 0 && !$isHoliday && $otherLeave == 0) {
+                $this->db->query("INSERT INTO leaves (EmployeeIDFK, TypeIDFK, Date, Reason, Status) VALUES (?, ?, ?, ?, ?)", [$id, 5, $yesdate, 'UnProperLeave', 1]);
             }
         }
         return true;
     }
-
-
-
-
-
-
-
 
     public function getEmployeeLateEntry($id, $date_start, $date_end)
     {
@@ -1086,7 +1090,7 @@ class EmployeeModel extends Model
         // Set column names
         $sheet->setCellValue('A1', 'VSNAP TECHNOLOGY SOLUTIONS PRIVATE LIMITED');
         $filedate = date('M/Y', strtotime($fdate));
-        $sheet->setCellValue('A4', 'Salary Sheet Report for the month of '.$filedate);
+        $sheet->setCellValue('A4', 'Salary Sheet Report for the month of ' . $filedate);
 
         $sheet->setCellValue('A5', 'Sl.No');
         $sheet->setCellValue('B5', 'Emp ID');
@@ -1550,6 +1554,20 @@ class EmployeeModel extends Model
                 LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
                 LEFT JOIN leavetype C ON C.IDPK = A.TypeIDFK
                 WHERE DATE(Date) BETWEEN '$fdate' AND '$todate' $trick $trick2";
+        $leaves = $this->db->query($sql)->getResultArray();
+        return $leaves;
+    }
+
+    public function leaveDetails($data)
+    {
+        $fdate = $data['fdate'];
+        $todate = $data['todate'];
+
+        $sql = "SELECT A.Date, B.EmployeeCode, B.EmployeeName, C.Name 
+                FROM leaves A
+                LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
+                LEFT JOIN leavetype C ON C.IDPK = A.TypeIDFK
+                WHERE DATE(Date) BETWEEN '$fdate' AND '$todate' AND A.Status != 2";
         $leaves = $this->db->query($sql)->getResultArray();
         return $leaves;
     }

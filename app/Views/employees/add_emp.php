@@ -43,7 +43,7 @@ if (isset($_SESSION['msg'])) {
     color: #8146D4;
     border: 1px solid #8146D4;
     border-radius: 50%;
-    padding: 0px 9px;
+    padding: 4px 9px;
     width: 30px;
     height: 30px;
   }
@@ -53,7 +53,7 @@ if (isset($_SESSION['msg'])) {
     background-color: #8146D4;
     border: 1px solid #8146D4;
     border-radius: 50%;
-    padding: 0px 7px;
+    padding: 4px 7px;
     width: 30px;
     height: 30px;
   }

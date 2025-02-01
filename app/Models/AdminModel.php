@@ -46,6 +46,17 @@ class AdminModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
+    public function cronjobs(){
+        $date = date('Y-m-d');
+        $sql="SELECT count(*) as count FROM cronjobs WHERE DATE(Date) = '$date'";
+        $cron = $this->db->query($sql)->getRow()->count;
+        if($cron){
+            return true;
+        }
+        $sql="INSERT INTO `cronjobs`(`Flag`) VALUES (1)";
+        $cron = $this->db->query($sql);
+        return true;
+    }
     public function getTicketTypes(){
         $sql="SELECT A.*,CASE 
                             WHEN COUNT(B.TypeIDFK) > 0 THEN 0
@@ -57,7 +68,6 @@ class AdminModel extends Model
         $result = $this->db->query($sql)->getResultArray();
         return $result;
     }
-
     public function setTicketTypes($data){
         if($data['remove']){
             foreach($data['remove'] as $id){
