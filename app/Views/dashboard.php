@@ -185,7 +185,7 @@
                 <td><?= $leave['Name'] ?></td>
                 <td><?= $leave['Date'] ?></td>
               </tr>
-              <?php if ($i++ == 5) {
+              <?php if ($i++ == 6) {
                 break;
               }
               ?>
