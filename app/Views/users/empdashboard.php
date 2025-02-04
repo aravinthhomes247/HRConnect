@@ -109,8 +109,8 @@
           $firstHalf = array_slice($holidays, 0, 5);
           $secondHalf = array_slice($holidays, 5);
           ?>
-          <span class="me-1" <?= ($badge == 0) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/user-dashboard?badge=' . ((int)$badge - 1)) ?>"><i class="fa-solid fa-angles-left"></i></a></span>
-          <span class="ms-2" <?= (count($secondHalf) < 5) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/user-dashboard?badge=' . ((int)$badge + 1)) ?>"><i class="fa-solid fa-angles-right"></i></a></span>
+          <span class="me-1" <?= ($badge == 0) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/user-dashboard?badge=' . ((int)$badge - 1). '&fdate=' . $fdate . '&todate=' . $todate) ?>"><i class="fa-solid fa-angles-left"></i></a></span>
+          <span class="ms-2" <?= (count($secondHalf) < 5) ? 'style="pointer-events: none;"' : '' ?>><a href="<?= site_url('/user-dashboard?badge=' . ((int)$badge + 1). '&fdate=' . $fdate . '&todate=' . $todate) ?>"><i class="fa-solid fa-angles-right"></i></a></span>
         </div>
       </div>
       <div class="row row-lg-12">

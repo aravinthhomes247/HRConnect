@@ -83,13 +83,11 @@ class LogModel extends Model
     // }
     public function presentslog()
     {
-        // $date = date('Y-m-d');
-        // print_r($date);exit();
-        // $data['logtime'] =  $this->db->distinct();
-        $sql = "SELECT distinct(UserId) FROM developement_biometric.`devicelogs_processed` 
-            LEFT JOIN employees B on B.EmployeeCode = developement_biometric.devicelogs_processed.UserId 
-           WHERE B.Status='Working' AND DATE(LogDate) = CURRENT_DATE()";
-
+        $date = date('Y-m-d');
+        $sql = "SELECT distinct(UserId) 
+                FROM developement_biometric.`devicelogs_processed` 
+                LEFT JOIN employees ON EmployeeCode = developement_biometric.devicelogs_processed.UserId 
+                WHERE Status='Working' AND DATE(LogDate) = '$date'";
         $data['presents'] = $this->db->query($sql)->getResultArray();
         // print_r($data['presents']);exit();
         return $data['presents'];

@@ -239,6 +239,9 @@ class HRController extends BaseController
         $data['abnormalDetails'] = $logModel->AbnormalListM($data);
         $data['leaves'] = $this->empModel->leaveDetails($data);
         $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
+
+        // print_r($data['presents']);exit(0);
+
         return view('dashboard', $data);
     }
 
