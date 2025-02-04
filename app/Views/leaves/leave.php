@@ -177,7 +177,7 @@
                             }
                             ?>
                             <td style="color:<?= $color ?>;"><?= $text ?></td>
-                            <td><?= date('d/m/y, h:mA', strtotime($leave['Date'])) ?></td>
+                            <td><?= date('d/m/y, h:mA', strtotime($leave['Created_at'])) ?></td>
                             <td>
                                 <a href="javascript:void(0);" class="menu-trigger">
                                     <img src="<?php echo base_url('../public/images/img/Group.png') ?>" alt="menu" id="menu-icon">
@@ -420,8 +420,11 @@
                     $('#LeaveEmpName').html(response.data.EmployeeName);
                     $('#Leavetype').html(response.data.Name);
                     let dateStr = response.data.Date;
-                    let dateObj = new Date(dateStr);
-                    let formattedDate = dateObj.toISOString().split('T')[0];
+                    let dateObj = new Date(dateStr.replace(' ', 'T'));
+                    let year = dateObj.getFullYear();
+                    let month = String(dateObj.getMonth() + 1).padStart(2, '0');
+                    let day = String(dateObj.getDate()).padStart(2, '0');
+                    let formattedDate = `${year}-${month}-${day}`;
                     $('#leaveRais').html(formattedDate);
                     if(response.data.TypeIDFK == 6){
                         $('#HPERN').show();

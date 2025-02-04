@@ -2052,6 +2052,8 @@ class CandidateModel extends Model
         }
         if ($HRid != null && $HRid != '') {
             $HR = "AND A.AssignTo = $HRid";
+        }else{
+            $HR = "";
         }
 
         if ($trickid == 2) {

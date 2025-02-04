@@ -238,7 +238,6 @@ class HRController extends BaseController
         $data['eventsDetailsTable'] = $this->empModel->eventsDetails();
         $data['abnormalDetails'] = $logModel->AbnormalListM($data);
         $data['leaves'] = $this->empModel->leaveDetails($data);
-       
         $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
         return view('dashboard', $data);
     }
@@ -287,7 +286,7 @@ class HRController extends BaseController
         $logModel = new LogModel();
         $data['badge'] = $_GET['badge'] ?? 0;
         $data['badge'] = ($data['badge'] == -1) ? 0 : $data['badge'];
-        $data1 = ['fdate' => $_GET['fdate'], 'todate' => $_GET['todate']];
+        $data1 = ['fdate' => $_GET['fdate'] ?? date('Y-m-d'), 'todate' => $_GET['todate'] ?? date('Y-m-d')];
 
         $this->admin->AutoRemoveHolidays();
         $data['showHR'] = $this->empModel->getHR();
@@ -297,6 +296,7 @@ class HRController extends BaseController
         $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
         $data['workAnniversaryDetailsTable'] = $this->empModel->workAnniversaryDetails();
         $data['abnormalDetails'] = $logModel->AbnormalListM($data1);
+        $data['leaves'] = $this->empModel->leaveDetails($data);
 
         // Presents 
         $data['presents'] = count($logModel->selectDRpresentsM($data1));
@@ -569,16 +569,16 @@ class HRController extends BaseController
 
         $data['salary'] = [
             'EmployeeIDFK' => $EmployeeId,
-            'PF' => $_POST['PF'],
-            'PT' => $_POST['PT'],
-            'Grativity' => $_POST['Grativity'],
-            'HRA' => $_POST['HRA'],
-            'FBP' => $_POST['FBP'],
-            'PF_VOL' => $_POST['PF_VOL'],
-            'Insurance' => $_POST['Insurance'],
-            'NetSalary' => $_POST['NetSalary'],
-            'BasicSalary' => $_POST['BasicSalary'],
-            'GrossSalary' => $_POST['GrossSalary']
+            'PF' => $_POST['PF'] ?? 0,
+            'PT' => $_POST['PT'] ?? 0,
+            'Grativity' => $_POST['Grativity'] ?? 0,
+            'HRA' => $_POST['HRA'] ?? 0,
+            'FBP' => $_POST['FBP'] ?? 0,
+            'PF_VOL' => $_POST['PF_VOL'] ?? 0,
+            'Insurance' => $_POST['Insurance'] ?? 0,
+            'NetSalary' => $_POST['NetSalary'] ?? 0,
+            'BasicSalary' => $_POST['BasicSalary'] ?? 0,
+            'GrossSalary' => $_POST['GrossSalary'] ?? 0
         ];
         $this->empModel->insertsalaryinfo($data['salary']);
         $data['official'] = [
@@ -642,7 +642,7 @@ class HRController extends BaseController
                 }
                 $j++;
             }
-            if ($imagedata) {
+            if (isset($imagedata)) {
                 $this->empModel->getEmployeeProFilesStore($imagedata);
             }
         }
@@ -904,6 +904,7 @@ class HRController extends BaseController
         $data['PF'] = $Res['PF'] ?? 0.00;
         $data['PT'] = $Res['PT'] ?? 0.00;
         $data['PFVoluntary'] = $Res['PFVOL'] ?? 0.00;
+        $data['TDS'] = $Res['TDS'] ?? 0.00;
         $data['Insurance'] = $Res['Insurance'] ?? 0.00;
         $data['SpecialDeductions'] = $Res['SD2'] ?? 0.00;
         $data['Credited_Salary'] = $Res['Net_salary'] ?? '-';
@@ -3688,6 +3689,7 @@ class HRController extends BaseController
         $candidateModel = new CandidateModel();
         $session = session();
         $HRid = $session->get('EmpIDFK');
+        $data['HRid'] = $HRid;
 
         $data = [
             'fdate' => $_GET['fdate'],
@@ -4991,6 +4993,7 @@ class HRController extends BaseController
         } else {
             $sac = 0;
         }
+        $data['issuetypes'] = $this->empModel->GetIssueTypes();
         $data['All'] = count($this->empModel->GetAllLeaves(1, $data, $sac));
         $data['Pending'] = count($this->empModel->GetAllLeaves(2, $data, $sac));
         $data['Approved'] = count($this->empModel->GetAllLeaves(3, $data, $sac));

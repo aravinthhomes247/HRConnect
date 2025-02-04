@@ -126,7 +126,7 @@
             <?php if ($NextEmp != 0) { ?>
                 <a href="<?= base_url('/reportempdia?id=' . $NextEmp . '&trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>"><i class="fa-solid fa-arrow-right"></i></a>
             <?php } else { ?>
-                <a href="javascript:void(0);"><i class="fa-solid fa-arrow-right" style="color: #DEDEDE;"></i>></i></a>
+                <a href="javascript:void(0);"><i class="fa-solid fa-arrow-right" style="color: #DEDEDE;"></i></a>
             <?php } ?>
         </div>
         <table class="table table-hover time-log mb-2">

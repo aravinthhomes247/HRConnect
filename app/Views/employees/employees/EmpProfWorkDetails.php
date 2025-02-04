@@ -418,6 +418,7 @@
                 <tr>
                     <th>Payment Mode</th>
                     <td class="editable" data-name="Mode" data-type="select-paymode" data-actype="2">
+                        <?php $WorkDetails['Personal']['Mode'] = $WorkDetails['Personal']['Mode'] ?? 1; ?>
                         <?php switch ($WorkDetails['Personal']['Mode']) {
                             case 1:
                                 echo ('Bank Transfer');
@@ -510,6 +511,7 @@
                 <tr>
                     <th>Payment Mode</th>
                     <td class="editable" data-name="Mode" data-type="select-paymode" data-actype="1">
+                        <?php $WorkDetails['Official']['Mode'] = $WorkDetails['Official']['Mode'] ?? 1; ?>
                         <?php switch ($WorkDetails['Official']['Mode']) {
                             case 1:
                                 echo ('Bank Transfer');

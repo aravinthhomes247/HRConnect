@@ -55,7 +55,7 @@ class AdminModel extends Model
         }
         $sql="INSERT INTO `cronjobs`(`Flag`) VALUES (1)";
         $cron = $this->db->query($sql);
-        return true;
+        return false;
     }
     public function getTicketTypes(){
         $sql="SELECT A.*,CASE 

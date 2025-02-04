@@ -94,7 +94,7 @@
                             $color = '#F94343';
                         } ?>
                         <td style="color:<?= $color ?>"><?= $text ?></td>
-                        <td><?= date('d-M-Y', strtotime($leave['Date'])) ?></td>
+                        <td><?= date('d-M-Y', strtotime($leave['Created_at'])) ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>

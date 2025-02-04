@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?= $EmployeeCode.'-'.date('F-Y', strtotime($Updated_on)) ?></title>
+    <title><?= $EmpID.'-'.date('F-Y', strtotime($Date)) ?></title>
 </head>
 <style>
     *{
@@ -182,6 +182,12 @@
                     <td style="text-align:right;border-bottom: hidden;"><?= ($Insurance != 0)? (number_format($Insurance,2) ?? '0.00') : '' ?></td>
                 </tr>
                 <tr>
+                    <td style="text-align:left;border-bottom: hidden;"></td>
+                    <td style="text-align:right;padding-right:5%;border-bottom: hidden;"></td>
+                    <td style="text-align:left;padding-left:8%;border-bottom: hidden;"><?= ($TDS != 0)? 'TDS':'' ?></td>
+                    <td style="text-align:right;border-bottom: hidden;"><?= ($TDS != 0)? (number_format($TDS,2) ?? '0.00') : '' ?></td>
+                </tr>
+                <tr>
                     <td style="padding-top: 10%;"></td>
                     <td></td>
                     <td></td>
@@ -192,7 +198,7 @@
                     <?php $TOT1 = $BASIC+$HRA+$FBP+$SpecialEarnings; ?>
                     <th style="text-align:right;padding-right:5%;"><?= number_format($TOT1,2) ?? '0.00' ?></th>
                     <th style="text-align:left;padding-left:8%;">Total</th>
-                    <?php $TOT2 = $PF+$PT+$PFVoluntary+$Insurance+$SpecialDeductions; ?>
+                    <?php $TOT2 = $PF+$PT+$PFVoluntary+$TDS+$Insurance+$SpecialDeductions; ?>
                     <th style="text-align:right"><?= number_format($TOT2,2) ?? '0.00' ?></th>
                 </tr>
                 <tr style="border-bottom: hidden;">

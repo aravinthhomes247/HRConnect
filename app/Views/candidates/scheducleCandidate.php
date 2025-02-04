@@ -215,7 +215,7 @@ if (isset($_SESSION['msg'])) {
                             <label for="T-Experience" class="form-label">Total Experience</label>
                             <div class="input-group">
                                 <!-- Year Dropdown -->
-                                <select class="form-control" name="T-year" id="T-year" required>
+                                <select class="form-control" name="T-year" id="T-year" >
                                     <option value="">Select Year</option>
                                     <?php for ($i = 1; $i <= 10; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($a == $i) ? 'selected' : '' ?>>
@@ -225,7 +225,7 @@ if (isset($_SESSION['msg'])) {
                                     <option value="11" <?= ($a > 10) ? 'selected' : '' ?>>10+</option>
                                 </select>
                                 <!-- Month Dropdown -->
-                                <select class="form-control" name="T-month" id="T-month" required>
+                                <select class="form-control" name="T-month" id="T-month" >
                                     <option value="">Select Month</option>
                                     <?php for ($i = 0; $i <= 11; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($b == $i) ? 'selected' : '' ?>>
@@ -239,18 +239,18 @@ if (isset($_SESSION['msg'])) {
 
                         <div class="col-6 mb-3 EXP">
                             <label class="form-label">Last Company</label>
-                            <input type="text" class="form-control" name="LastCompany" value="<?php echo $candidate_details[0]['LastCompany']; ?>" placeholder="Enter Last Company" required>
+                            <input type="text" class="form-control" name="LastCompany" value="<?php echo $candidate_details[0]['LastCompany']; ?>" placeholder="Enter Last Company" >
                         </div>
                         <div class="col-6 mb-3 EXP">
                             <label class="form-label">Notice Period (in Days)</label>
-                            <input type="number" step="any" min="0" class="form-control" name="NoticePeroid" value="<?php echo $candidate_details[0]['NoticePeroid']; ?>" placeholder="Enter Notice Period" required>
+                            <input type="number" step="any" min="0" class="form-control" name="NoticePeroid" value="<?php echo $candidate_details[0]['NoticePeroid']; ?>" placeholder="Enter Notice Period" >
                         </div>
 
                         <div class="col-6 mb-3 EXP">
                             <label for="CurrentSalary" class="form-label">Current Salary</label>
                             <div class="input-group">
                                 <span class="input-group-text">₹</span>
-                                <input type="number" step="any" min="0" class="form-control" name="CandidateCurrentCTC" value="<?php echo $candidate_details[0]['CandidateCurrentCTC'] ?>" required>
+                                <input type="number" step="any" min="0" class="form-control" name="CandidateCurrentCTC" value="<?php echo $candidate_details[0]['CandidateCurrentCTC'] ?>" >
                             </div>
                         </div>
                         <div class="col-6 mb-3">
@@ -276,7 +276,7 @@ if (isset($_SESSION['msg'])) {
                                 </div>
                                 <div class="col-6 mb-3" id="daysreq">
                                     <label for="DaysRequired" class="form-label">Days Required to Join</label>
-                                    <input type="text" class="form-control" name="DaysRequired" placeholder="Enter No. of Days" value="<?= $candidate_details[0]['DaysRequired'] ?>" required>
+                                    <input type="text" class="form-control" name="DaysRequired" placeholder="Enter No. of Days" value="<?= $candidate_details[0]['DaysRequired'] ?>" >
                                 </div>
                             </div>
                         </div>

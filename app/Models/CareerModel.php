@@ -113,7 +113,10 @@ class CareerModel extends Model
         $s = $data['fdate'];
         $e = $data['todate'];
         $date = "AND DATE(date_created) BETWEEN '$s' and '$e'";
-        $sql = "SELECT candname, candmail, candnumber, ctc, comments, designation, date_created FROM career_details WHERE job_list_IDFK = $id $date GROUP BY candnumber ORDER BY date_created";
+        $sql = "SELECT candname, candmail, candnumber, ctc, comments, designation, date_created, pdf_file
+                FROM career_details 
+                WHERE job_list_IDFK = $id $date 
+                GROUP BY candnumber ORDER BY date_created";
         $data['applicants'] = $this->db->query($sql)->getResultArray(); //run the query
         // print_r($data['applicants']);exit(0);
         return $data['applicants'];

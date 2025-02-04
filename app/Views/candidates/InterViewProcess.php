@@ -41,7 +41,7 @@ if (isset($_SESSION['msg'])) {
         background-color: #925EDD14;
     }
 
-    .modal-footer{
+    .modal-footer {
         justify-content: center;
     }
 </style>
@@ -93,7 +93,7 @@ if (isset($_SESSION['msg'])) {
                 <a href="javascript:void(0);" data-bs-toggle="modal" data-bs-target="#EditCandidate" class="ProfileEditBtn mb-3"><i class="fa-regular fa-pen-to-square"></i> Edit Details</a>
             </div>
             <div class="row mb-3 resume">
-                <a href="<?= site_url('/public/Uploads/candidates/' . $candidate_details[0]['CandidateId'] . '/' . $candidate_details[0]['CandidateResume']) ?>" target="_blank" class="<?= ($candidate_details[0]['CandidateResume']) ? '':'disabled'?>"><span class="resume"><i class="fa-regular fa-eye"></i> View Resume</span></a>
+                <a href="<?= site_url('/public/Uploads/candidates/' . $candidate_details[0]['CandidateId'] . '/' . $candidate_details[0]['CandidateResume']) ?>" target="_blank" class="<?= ($candidate_details[0]['CandidateResume']) ? '' : 'disabled' ?>"><span class="resume"><i class="fa-regular fa-eye"></i> View Resume</span></a>
             </div>
             <div class="row mt-4 resume">
                 <a href="javascript:void(0);"><span class="mt-3 history" data-bs-toggle="modal" data-bs-target="#candidate_history"><i class="fa-solid fa-list"></i> View History</span></a>
@@ -171,8 +171,7 @@ if (isset($_SESSION['msg'])) {
             <?php
             $ACTIVE = array_fill(0, 9, 0);
             $STYLE = array_fill(0, 9, 0);
-            if (isset($roundDetails[0])) {
-                // $STYLE = array_fill(0, 9, 0);
+            if (!empty($roundDetails) && is_array($roundDetails)) {
                 foreach ($roundDetails as $index => $round) {
                     $ACTIVE = array_fill(0, 9, 0);
                     switch ($round['InterviewStatus']) {
@@ -226,8 +225,10 @@ if (isset($_SESSION['msg'])) {
                 }
             } else {
                 $ACTIVE[0] = 1;
+                $STYLE[0] = 1;
                 $STYLE = array_fill(1, 8, 1);
             }
+            $STYLE = array_replace(array_fill(0, 9, 0), $STYLE);
             ?>
             <button type="button" class="btn tab ms-0 me-0 <?= ($ACTIVE[0] == 1) ? 'active' : '' ?>" <?= ($STYLE[0] == 1) ? 'style="display:none"' : '' ?> data-target="tab-round-1">Round 1 <?= ($Max_round > 0) ? '<i class="fa-regular fa-circle-check ms-2"></i>' : '' ?></button>
             <button type="button" class="btn tab ms-0 me-0 <?= ($ACTIVE[1] == 1) ? 'active' : '' ?>" <?= ($STYLE[1] == 1) ? 'style="display:none"' : '' ?> data-target="tab-round-2">Round 2 <?= ($Max_round > 1) ? '<i class="fa-regular fa-circle-check ms-2"></i>' : '' ?></button>
@@ -2329,7 +2330,7 @@ if (isset($_SESSION['msg'])) {
                     <button type="submit" class="btn mt-3 mb-3">Send</button>
                 </form>
             </div>
-            <div class="files ms-3 me-3" id="doc_files" <?= ((empty($documents) && $document_mail_verification != 0) || $documents[0]['DVStatus'] == 2) ? '' : 'style="display:none"' ?>>
+            <div class="files ms-3 me-3" id="doc_files" <?= ((empty($documents) && $document_mail_verification != 0) || (isset($documents[0]['DVStatus']) && $documents[0]['DVStatus'] == 2)) ? '' : 'style="display:none"' ?>>
                 <div class="row mt-4">
                     <input type="file" id="fileUploader" multiple style="display: none;" />
                     <input type="file" id="fileReplacer" style="display: none;" />
@@ -2487,7 +2488,7 @@ if (isset($_SESSION['msg'])) {
                     </div>
                 </div>
                 <div class="row mt-4">
-                    <?php if ($documents[0]['DVStatus'] != 2) { ?>
+                    <?php if (!isset($documents[0]['DVStatus']) || (isset($documents[0]['DVStatus']) && $documents[0]['DVStatus'] != 2)) { ?>
                         <div class="row">
                             <div class="col docresend">
                                 <button type="button" class="btn" id="doc_resend_mail"><i class="fa-solid fa-arrow-rotate-right fa-flip-horizontal" style="color: #8146d4;"></i> Resend Mail</button>
@@ -2504,12 +2505,12 @@ if (isset($_SESSION['msg'])) {
                     <?php } ?>
                 </div>
             </div>
-            <div class="docreject mt-3 mb-3 ms-3 me-3" id="doc_reject" <?= ($documents[0]['DVStatus'] == 1) ? '' : 'style="display:none"' ?>>
+            <div class="docreject mt-3 mb-3 ms-3 me-3" id="doc_reject" <?= (isset($documents[0]['DVStatus']) && $documents[0]['DVStatus'] == 1) ? '' : 'style="display:none"' ?>>
                 <div class="row">
                     <div class="col col-lg-4"></div>
                     <div class="col col-lg-4">
                         <span><i class="fa-solid fa-circle-xmark"></i> REJECTED</span>
-                        <textarea class="form-control mt-3" name="reason" id="rej_reason"><?= $documents[0]['DVRemarks'] ?? '' ?></textarea>
+                        <textarea class="form-control mt-3" name="reason" id="rej_reason"><?= (isset($documents[0]['DVRemarks'])) ? $documents[0]['DVRemarks'] : '' ?></textarea>
                         <div class="mt-3">
                             <button type="button" class="btn" id="doc_resend_mail"><i class="fa-solid fa-arrow-rotate-right fa-flip-horizontal" style="color: #8146d4;"></i> Resend Mail</button>
                             <button type="button" class="btn ms-2 upload" id="reapprovecandidate_btn"><i class="fa-solid fa-arrow-up-from-bracket" style="color: white;"></i> Upload files</button>
@@ -2603,7 +2604,7 @@ if (isset($_SESSION['msg'])) {
 
         <div class="col col-lg-12 round" id="tab-round-9">
             <div class="row mt-5 ms-4">
-                <?php if ($offerLetter[0]['OL_Status'] == 1) { ?>
+                <?php if (isset($offerLetter[0]['OL_Status']) && $offerLetter[0]['OL_Status'] == 1) { ?>
                     <?php if ($offerLetter[0]['CandidateConfirmation'] == 2) { ?>
                         <div class="col col-4 mb-3 pt-3 pb-3 confirm">
                             <h4>Candidate Confirmation Status</h4>
@@ -3009,7 +3010,7 @@ if (isset($_SESSION['msg'])) {
                             <label for="T-Experience" class="form-label">Total Experience</label>
                             <div class="input-group">
                                 <!-- Year Dropdown -->
-                                <select class="form-control" name="T-year" id="T-year" required>
+                                <select class="form-control" name="T-year" id="T-year">
                                     <option value="">Select Year</option>
                                     <?php for ($i = 1; $i <= 10; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($a == $i) ? 'selected' : '' ?>>
@@ -3019,7 +3020,7 @@ if (isset($_SESSION['msg'])) {
                                     <option value="11" <?= ($a > 10) ? 'selected' : '' ?>>10+</option>
                                 </select>
                                 <!-- Month Dropdown -->
-                                <select class="form-control" name="T-month" id="T-month" required>
+                                <select class="form-control" name="T-month" id="T-month">
                                     <option value="">Select Month</option>
                                     <?php for ($i = 0; $i <= 11; $i++): ?>
                                         <option value="<?= $i ?>" <?= ($b == $i) ? 'selected' : '' ?>>
@@ -3031,17 +3032,17 @@ if (isset($_SESSION['msg'])) {
                         </div>
                         <div class="col-6 mb-3 EXP">
                             <label class="form-label">Last Company</label>
-                            <input type="text" class="form-control" name="LastCompany" value="<?php echo $candidate_details[0]['LastCompany']; ?>" placeholder="Enter Last Company" required>
+                            <input type="text" class="form-control" name="LastCompany" value="<?php echo $candidate_details[0]['LastCompany']; ?>" placeholder="Enter Last Company">
                         </div>
                         <div class="col-6 mb-3 EXP">
                             <label class="form-label">Notice Period (in Days)</label>
-                            <input type="number" step="any" min="0" class="form-control" name="NoticePeroid" value="<?php echo $candidate_details[0]['NoticePeroid']; ?>" placeholder="Enter Notice Period" required>
+                            <input type="number" step="any" min="0" class="form-control" name="NoticePeroid" value="<?php echo $candidate_details[0]['NoticePeroid']; ?>" placeholder="Enter Notice Period">
                         </div>
                         <div class="col-6 mb-3 EXP">
                             <label for="CurrentSalary" class="form-label">Current Salary</label>
                             <div class="input-group">
                                 <span class="input-group-text">₹</span>
-                                <input type="number" step="any" min="0" class="form-control" name="CandidateCurrentCTC" value="<?php echo $candidate_details[0]['CandidateCurrentCTC'] ?>" required>
+                                <input type="number" step="any" min="0" class="form-control" name="CandidateCurrentCTC" value="<?php echo $candidate_details[0]['CandidateCurrentCTC'] ?>">
                             </div>
                         </div>
                         <div class="col-6 mb-3">
@@ -3066,7 +3067,7 @@ if (isset($_SESSION['msg'])) {
                                 </div>
                                 <div class="col-6 mb-3" id="daysreq">
                                     <label for="DaysRequired" class="form-label">Days Required to Join</label>
-                                    <input type="text" class="form-control" name="DaysRequired" placeholder="Enter No. of Days" value="<?= $candidate_details[0]['DaysRequired'] ?>" required>
+                                    <input type="text" class="form-control" name="DaysRequired" placeholder="Enter No. of Days" value="<?= $candidate_details[0]['DaysRequired'] ?>">
                                 </div>
                             </div>
                         </div>
@@ -3076,7 +3077,7 @@ if (isset($_SESSION['msg'])) {
                         </div>
                         <div class="col-6 mb-3">
                             <label class="form-label">Upload Resume</label>
-                            <input class="form-control" type="file" name="CandidateResume" id="customFile" value="<?= $candidate_details[0]['CandidateResume'] ?>" <?= ($candidate_details[0]['CandidateResume']) ? '':'required' ?>>
+                            <input class="form-control" type="file" name="CandidateResume" id="customFile" value="<?= $candidate_details[0]['CandidateResume'] ?>" <?= ($candidate_details[0]['CandidateResume']) ? '' : 'required' ?>>
                             <?php if ($candidate_details[0]['CandidateResume']) { ?>
                                 <span style="font-size:smaller;">Current file: <?= $candidate_details[0]['CandidateResume'] ?></span>
                             <?php } ?>
@@ -3270,13 +3271,13 @@ if (isset($_SESSION['msg'])) {
             const formId = $(this).attr('id'); // Get form ID dynamically
             const roundId = formId.replace('RoundForm', ''); // Extract RoundID from form ID
             let isValid = true;
-            isValid &= validateField('#Communication'+roundId, '#star-container-1-warning');
-            isValid &= validateField('#Attitude'+roundId, '#star-container-2-warning');
-            isValid &= validateField('#Discipline'+roundId, '#star-container-3-warning');
-            isValid &= validateField('#DressCode'+roundId, '#star-container-4-warning');
-            isValid &= validateField('#Knowledge'+roundId, '#star-container-5-warning');
+            isValid &= validateField('#Communication' + roundId, '#star-container-1-warning');
+            isValid &= validateField('#Attitude' + roundId, '#star-container-2-warning');
+            isValid &= validateField('#Discipline' + roundId, '#star-container-3-warning');
+            isValid &= validateField('#DressCode' + roundId, '#star-container-4-warning');
+            isValid &= validateField('#Knowledge' + roundId, '#star-container-5-warning');
 
-            console.log("form submit "+isValid+"rid "+roundId);
+            console.log("form submit " + isValid + "rid " + roundId);
             if (isValid) {
                 $(`#RoundForm${roundId}`).off("submit").submit(); // Submit the form dynamically
             }
@@ -3387,31 +3388,31 @@ if (isset($_SESSION['msg'])) {
 
         $('.com').on('click', function() {
             var val = $(this).data('val');
-            $('#Communication'+RoundID).val(val);
+            $('#Communication' + RoundID).val(val);
             AverageRating();
         });
 
         $('.att').on('click', function() {
             var val = $(this).data('val');
-            $('#Attitude'+RoundID).val(val);
+            $('#Attitude' + RoundID).val(val);
             AverageRating();
         });
 
         $('.dis').on('click', function() {
             var val = $(this).data('val');
-            $('#Discipline'+RoundID).val(val);
+            $('#Discipline' + RoundID).val(val);
             AverageRating();
         });
 
         $('.dre').on('click', function() {
             var val = $(this).data('val');
-            $('#DressCode'+RoundID).val(val);
+            $('#DressCode' + RoundID).val(val);
             AverageRating();
         });
 
         $('.kno').on('click', function() {
             var val = $(this).data('val');
-            $('#Knowledge'+RoundID).val(val);
+            $('#Knowledge' + RoundID).val(val);
             AverageRating();
         });
 
@@ -3545,7 +3546,7 @@ if (isset($_SESSION['msg'])) {
 
         $('.round').on('click', '#reapprovecandidate_btn', function() {
             $.ajax({
-                url: '<?php echo base_url('reapprovecandidate/'.$candidate_details[0]['CandidateId']) ?>',
+                url: '<?php echo base_url('reapprovecandidate/' . $candidate_details[0]['CandidateId']) ?>',
                 type: 'GET',
                 success: function(response) {
                     location.reload(true);

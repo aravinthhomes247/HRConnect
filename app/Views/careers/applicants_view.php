@@ -3,10 +3,18 @@
 <?= $this->section("body") ?>
 
 <?php
-    use App\Models\CareerModel;
-    $CAREER = new CareerModel();
+
+use App\Models\CareerModel;
+
+$CAREER = new CareerModel();
 ?>
 
+<style>
+    a.btn.disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+</style>
 
 <div class="applicant ms-4 mt-3">
     <div class="row ms-0 me-0 mt-3 pt-2">
@@ -25,14 +33,14 @@
             <div class="action">
                 <i class="fa-solid fa-calendar-days"></i>
                 <?php
-                    if (empty($fdate)) {
-                        $fdate = date("2020-01-01");
-                    }
+                if (empty($fdate)) {
+                    $fdate = date("2020-01-01");
+                }
                 ?>
                 <?php
-                    if (empty($todate)) {
-                        $todate = date("Y-m-d");
-                    }
+                if (empty($todate)) {
+                    $todate = date("Y-m-d");
+                }
                 ?>
                 <input class="form-control" type="text" style="padding-left: 35px; box-sizing: border-box;" id="reportrange">
                 <button class="btn btn-primary" style="margin-left: 10px;" onclick="datefilter()">Check</button>
@@ -66,22 +74,23 @@
                             <td><?php echo $applicant['candnumber']; ?></td>
                             <td>₹ <?php echo $applicant['ctc']; ?></td>
                             <!-- <td><a href="https://superadmin.right2shout.in/images/resume/1733777079-inbound6036311708275517864.pdf" download="1733777079-inbound6036311708275517864.pdf" class="btn"><i class="fa-solid fa-file-arrow-down"></i> Download</a></td> -->
-                            <!-- <td>
-                                <?php if (!empty($applicant['pdf_file'])) { ?>
-                                   
-                                <?php } else {  ?>
-                                    No File
-                                <?php } ?>
-                            </td> -->
                             <?php
-                                if ($applicant['pdf_file'] != null || !empty($applicant['pdf_file'])) {
+                                if ($applicant['pdf_file'] != NULL && !empty($applicant['pdf_file'])) {
                                     $PDFPATH = "https://superadmin.right2shout.in/images/resume/" . $applicant['pdf_file'];
+                                    $style = "";
                                 } else {
                                     $PDFPATH = "javascript:void(0);";
+                                    $style = "disabled";
                                 }
                             ?>
-                            <td><a href="<?= $PDFPATH ?>" download="<?= $applicant['pdf_file'] ?? '' ?>" class="btn"><i class="fa-solid fa-file-arrow-down"></i> Download</a></td>
-                            <td><?php echo date("h:iA, m/d/y", strtotime($applicant['date_created'])); ?></td>
+                            <td>
+                                <a href="<?= $PDFPATH ?>" download="<?= $applicant['pdf_file'] ?? '' ?>" class="btn <?= $style ?>">
+                                    <i class="fa-solid fa-file-arrow-down"></i> Download
+                                </a>
+                            </td>
+                            <td>
+                                <?php echo date("h:iA, m/d/y", strtotime($applicant['date_created'])); ?>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>

@@ -254,7 +254,7 @@
                             if (empty($session->get('Image')) || $session->get('Image') == null) { ?>
                                 <img class="circular--landscape" src="<?php echo base_url('public/images/default-profile.png') ?>">
                             <?php } else { ?>
-                                <img class="circular--landscape" src="<?php echo base_url('public/Uploads/ProfilePhotosuploads/' . $session->get('Image')); ?>" alt="<?php echo $BasicDetails['EmployeeName']; ?>">
+                                <img class="circular--landscape" src="<?php echo base_url('public/Uploads/ProfilePhotosuploads/' . $session->get('Image')); ?>" alt="demo">
                             <?php } ?>
 
                             <div class="dropdown-container">

@@ -63,14 +63,14 @@ if (isset($_SESSION['msg'])) {
                 <div class="col-sm-6">
                   <div class="description-block">
                     <span class="description-text">Employee Type</span>
-                    <h5 class="description-header"><?= $emp_obj['EmployeeTypeName']; ?></h5>
+                    <h5 class="description-header"><?= $emp_obj['EmployeeTypeName'] ?? 'NA' ?></h5>
                   </div>
                   <!-- /.description-block -->
                 </div>
                 <div class="col-sm-6 border-left border-bottom">
                   <div class="description-block">
                     <span class="description-text">Employee Code</span>
-                    <h5 class="description-header"><?php echo $emp_obj['EmployeeCode']; ?></h5>
+                    <h5 class="description-header"><?php echo $emp_obj['EmployeeCode'] ?? 'NA' ?></h5>
                   </div>
                   <!-- /.description-block -->
                 </div>
@@ -78,7 +78,7 @@ if (isset($_SESSION['msg'])) {
                 <div class="col-sm-6 border-right border-top">
                   <div class="description-block">
                     <span class="description-text">Phone No</span>
-                    <h5 class="description-header"><?php echo $emp_obj['ContactNo']; ?></h5>
+                    <h5 class="description-header"><?php echo $emp_obj['ContactNo'] ?? 'NA' ?></h5>
                   </div>
                   <!-- /.description-block -->
                 </div>
@@ -86,7 +86,7 @@ if (isset($_SESSION['msg'])) {
                 <div class="col-sm-6">
                   <div class="description-block">
                     <span class="description-text">Email Id</span>
-                    <h5 class="description-header"><?php echo $emp_obj['Email']; ?></h5>
+                    <h5 class="description-header"><?php echo $emp_obj['Email'] ?? 'NA' ?></h5>
                   </div>
                   <!-- /.description-block -->
                 </div>
@@ -180,15 +180,15 @@ if (isset($_SESSION['msg'])) {
                     <tbody>
                       <tr>
                         <td><b>Employee Name</b></td>
-                        <td><?php echo $emp_obj['EmployeeName']; ?></td>
+                        <td><?php echo $emp_obj['EmployeeName'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Employee Code</b></td>
-                        <td><?php echo $emp_obj['EmployeeCode']; ?></td>
+                        <td><?php echo $emp_obj['EmployeeCode'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Gender</b></td>
-                        <td><?php echo $emp_obj['Gender']; ?></td>
+                        <td><?php echo $emp_obj['Gender'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>DOB</b></td>
@@ -199,27 +199,27 @@ if (isset($_SESSION['msg'])) {
                       </tr>
                       <tr>
                         <td><b>Contact No</b></td>
-                        <td><?php echo $emp_obj['ContactNo']; ?></td>
+                        <td><?php echo $emp_obj['ContactNo'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Emergency Contact No</b></td>
-                        <td><?php echo $emp_obj['AltContactno']; ?></td>
+                        <td><?php echo $emp_obj['AltContactno'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Official Email Id </b></td>
-                        <td><?php echo $emp_obj['Email']; ?></td>
+                        <td><?php echo $emp_obj['Email'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Personal Email Id </b></td>
-                        <td><?php echo $emp_obj['PersonalMail']; ?></td>
+                        <td><?php echo $emp_obj['PersonalMail'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Place Of Birth</b></td>
-                        <td><?php echo $emp_obj['PlaceOfBirth']; ?></td>
+                        <td><?php echo $emp_obj['PlaceOfBirth'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Blood Group</b></td>
-                        <td><?php echo $emp_obj['BLOODGROUP']; ?></td>
+                        <td><?php echo $emp_obj['BLOODGROUP'] ?? 'NA' ?></td>
                       </tr>
                     </tbody>
                   </table>
@@ -229,20 +229,20 @@ if (isset($_SESSION['msg'])) {
                     <tbody>
                       <tr>
                         <td><b>Mother Name</b></td>
-                        <td><?php echo $emp_obj['MotherName']; ?></td>
+                        <td><?php echo $emp_obj['MotherName'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Father Name</b></td>
-                        <td><?php echo $emp_obj['FatherName']; ?></td>
+                        <td><?php echo $emp_obj['FatherName'] ?? 'NA' ?></td>
                       </tr>
 
                       <tr>
                         <td><b>Residential Address</b></td>
-                        <td><?php echo $emp_obj['ResidentialAddress']; ?></td>
+                        <td><?php echo $emp_obj['ResidentialAddress'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Permanent Address</b></td>
-                        <td><?php echo $emp_obj['PermanentAddress']; ?></td>
+                        <td><?php echo $emp_obj['PermanentAddress'] ?? 'NA' ?></td>
                       </tr>
                     </tbody>
                   </table>
@@ -256,7 +256,7 @@ if (isset($_SESSION['msg'])) {
                         <td
                           <?php foreach ($selectdepart as $row): ?>
                           <?php if ($row['IDPK'] == $emp_obj['DepartmentId']) { ?>>
-                        <?php echo $row['deptName'];
+                          <?php echo $row['deptName'];
                             } ?>
                       <?php endforeach; ?></td>
 
@@ -266,7 +266,7 @@ if (isset($_SESSION['msg'])) {
                         <td
                           <?php foreach ($selectdesignation as $row): ?>
                           <?php if ($row['IDPK'] == $emp_obj['DesignationIDFK']) { ?>>
-                        <?php echo $row['designations'];
+                          <?php echo $row['designations'];
                             } ?>
                       <?php endforeach; ?></td>
                       </tr>
@@ -282,7 +282,7 @@ if (isset($_SESSION['msg'])) {
                       </tr>
                       <tr>
                         <td><b>Employement Type</b></td>
-                        <td><?php echo $emp_obj['EmployeeTypeName']; ?></td>
+                        <td><?php echo $emp_obj['EmployeeTypeName'] ?? 'NA' ?></td>
                       </tr>
                       <tr>
                         <td><b>Date of Joining</b></td>
@@ -295,7 +295,7 @@ if (isset($_SESSION['msg'])) {
                       <?php if ($emp_obj['Status'] == 'InActive') { ?>
                         <tr>
                           <td><b>Date of Resign</b></td>
-                          <td><?php echo $emp_obj['DOR']; ?></td>
+                          <td><?php echo $emp_obj['DOR'] ?? 'NA' ?></td>
                         </tr>
                       <?php } ?>
                     </tbody>
@@ -307,7 +307,7 @@ if (isset($_SESSION['msg'])) {
                       <tr>
                         <td><b>Account Holder Name</b></td>
                         <td><?php if (!empty($empBank)) {
-                              echo $empBank['AccountHolderName'];
+                              echo $empBank['AccountHolderName'] ?? 'NA';
                             } ?>
                         </td>
 
@@ -315,25 +315,25 @@ if (isset($_SESSION['msg'])) {
                       <tr>
                         <td><b>Bank Name</b></td>
                         <td><?php if (!empty($empBank)) {
-                              echo $empBank['BankName'];
+                              echo $empBank['BankName'] ?? 'NA';
                             } ?></td>
                       </tr>
                       <tr>
                         <td><b>Account No</b></td>
                         <td><?php if (!empty($empBank)) {
-                              echo $empBank['AccountNo'];
+                              echo $empBank['AccountNo'] ?? 'NA';
                             } ?></td>
                       </tr>
                       <tr>
                         <td><b>IFSCode</b></td>
                         <td><?php if (!empty($empBank)) {
-                              echo $empBank['IFSCode'];
+                              echo $empBank['IFSCode'] ?? 'NA';
                             } ?></td>
                       </tr>
                       <tr>
                         <td><b>Bank Branch</b></td>
                         <td><?php if (!empty($empBank)) {
-                              echo $empBank['BankBranch'];
+                              echo $empBank['BankBranch'] ?? 'NA';
                             } ?></td>
                       </tr>
                     </tbody>

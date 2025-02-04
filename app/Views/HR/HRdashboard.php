@@ -14,7 +14,6 @@
 <div class="row Hrbased row-lg-12 mt-1">
     <div class="col col-lg-8"></div>
     <div class="col col-lg-4 ps-5 d-flex">
-        <input type="hidden" value="<?php echo $HRid; ?>" id="HRid">
         <input type="hidden" value="<?php echo $session->get('EmpIDFK'); ?>" id="HRid">
         <input type="hidden" value="<?php echo $session->get('user_name'); ?>" id="HRNAME">
 

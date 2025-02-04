@@ -151,14 +151,16 @@ if (isset($_SESSION['msg'])) {
         success: function(response) {
           console.log(response);
           $('#EventId').val(response.files.EventId);
-          if(response.files.Type == 1){
-            $('#type1').attr('checked','checked');
-          }else if(response.files.Type == 2){
-            $('#type2').attr('checked','checked');
+          if (response.files.Type == 1) {
+            $('#type1').attr('checked', 'checked');
+          } else if (response.files.Type == 2) {
+            $('#type2').attr('checked', 'checked');
           }
           $('#evt-title').val(response.files.EventName);
           $('#evt-description').val(response.files.EventDescription);
-          $('#EventDate').val(response.files.EventDate);
+          var dateTime = response.files.EventDate;
+          var dateTime = dateTime.replace(' ', 'T').substring(0, 16);
+          $('#EventDate').val(dateTime);
           $('#exampleModal').modal('show');
         },
         error: function(xhr, status, error) {
@@ -166,7 +168,7 @@ if (isset($_SESSION['msg'])) {
         }
       });
     });
-    
+
   });
 </script>
 

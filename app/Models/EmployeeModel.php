@@ -130,7 +130,7 @@ class EmployeeModel extends Model
         $DOC = '1900-01-01 00:00:00';
         $EContactNo = $data['EContactNo'];
 
-        $sql = "INSERT INTO biometric.employees(`EmployeeName`, `EmployeeCode`, `EmployeeCodeInDevice`, `StringCode`, `NumericCode`, `Gender`, `DepartmentId`,  
+        $sql = "INSERT INTO developement_biometric.employees(`EmployeeName`, `EmployeeCode`, `EmployeeCodeInDevice`, `StringCode`, `NumericCode`, `Gender`, `DepartmentId`,  
                                                 `DesignationIDFK`, `DOJ` , `DOR` , `EmployementType` , `Status`, `FatherName`, `MotherName`, `ResidentialAddress`, 
                                                 `PermanentAddress`, `ContactNo`,`AltContactno`, `Email` ,`PersonalMail`, `DOB`, `PlaceOfBirth` ,  `BLOODGROUP`, `Image`,
                                                 `RecordStatus`,`CompanyId`, `CategoryId`, `EmployeeDeviceGroup`,`DOC`)  
@@ -211,7 +211,7 @@ class EmployeeModel extends Model
         $PAN_No = $data['PAN_No'] ?? null;
         $UAN_No = $data['UAN_No'] ?? null;
 
-        $sql = "UPDATE  biometric.employees SET `EmployeeName` = '$EmployeeName', `EmployeeCode` = '$EmployeeCode', `EmployeeCodeInDevice`='$EmployeeCodeInDevice', `StringCode`='$StringCode', `NumericCode`='$NumericCode', `Gender`='$Gender', `DepartmentId`='$DepartmentId',  `DesignationIDFK`='$DesignationIDFK', `DOJ`='$DOJ' , `DOR`='$DOR' , `EmployementType`='$EmployementType' , `Status`='$Status', `FatherName`='$FatherName', `MotherName`='$MotherName', `ResidentialAddress`='$ResidentialAddress', `PermanentAddress`='$PermanentAddress', `ContactNo`='$ContactNo',`AltContactno`='$AltContactno', `Email` ='$Email',`PersonalMail`='$PersonalMail', `DOB`='$DOB', `PlaceOfBirth`='$PlaceOfBirth' ,  `BLOODGROUP`='$BLOODGROUP', `Image`='$Image',`DOC`='$DOC',`RecordStatus`='1',`CompanyId`='1', `CategoryId`='1', `EmployeeDeviceGroup`='1', `Salary_date` = $Salary_date,`ContractPeriod` = '$ContractPeriod',`Aadhar_No` = '$Aadhar_No',`PAN_No` = '$PAN_No',`UAN_No`='$UAN_No' WHERE `employees`.`EmployeeId` = '$EmployeeId' ";
+        $sql = "UPDATE  developement_biometric.employees SET `EmployeeName` = '$EmployeeName', `EmployeeCode` = '$EmployeeCode', `EmployeeCodeInDevice`='$EmployeeCodeInDevice', `StringCode`='$StringCode', `NumericCode`='$NumericCode', `Gender`='$Gender', `DepartmentId`='$DepartmentId',  `DesignationIDFK`='$DesignationIDFK', `DOJ`='$DOJ' , `DOR`='$DOR' , `EmployementType`='$EmployementType' , `Status`='$Status', `FatherName`='$FatherName', `MotherName`='$MotherName', `ResidentialAddress`='$ResidentialAddress', `PermanentAddress`='$PermanentAddress', `ContactNo`='$ContactNo',`AltContactno`='$AltContactno', `Email` ='$Email',`PersonalMail`='$PersonalMail', `DOB`='$DOB', `PlaceOfBirth`='$PlaceOfBirth' ,  `BLOODGROUP`='$BLOODGROUP', `Image`='$Image',`DOC`='$DOC',`RecordStatus`='1',`CompanyId`='1', `CategoryId`='1', `EmployeeDeviceGroup`='1', `Salary_date` = $Salary_date,`ContractPeriod` = '$ContractPeriod',`Aadhar_No` = '$Aadhar_No',`PAN_No` = '$PAN_No',`UAN_No`='$UAN_No' WHERE `employees`.`EmployeeId` = '$EmployeeId' ";
 
 
         // print_r($sql);exit();
@@ -247,14 +247,15 @@ class EmployeeModel extends Model
         $sql = "SELECT D.CandidateId ,A.EmployeeId ,A.EmployeeName, A.EmployeeCode, A.Gender, B.designations, 
                        C.EmployeeTypeName,E.DV_IDPK,E.DVStatus, E.OfferLetterImage , E.INT_CON_Letter, F.EBD_IDPK,
                        F.EmployeeIDFK, A.last_working, A.settlement_day, A.final_set_status, A.final_set_amound, G.GrossSalary 
-                FROM `employees` A 
-                LEFT JOIN `designation` B ON B.IDPK=A.DesignationIDFK 
-                LEFT JOIN employement_type C ON C.IDPK= A.EmployementType 
+                FROM employees A 
+                LEFT JOIN designation B ON B.IDPK = A.DesignationIDFK 
+                LEFT JOIN employement_type C ON C.IDPK = A.EmployementType 
                 LEFT JOIN candidates D ON D.EmployeeIDFK = A.EmployeeID
                 LEFT JOIN document_verification E ON E.CandidateIDFK = D.CandidateId
                 LEFT JOIN emp_bank_details F ON F.EmployeeIDFK = A.EmployeeId
                 LEFT JOIN salary_info G ON G.EmployeeIDFK = A.EmployeeId
-                $trick ORDER BY A.`EmployeeName` ASC";
+                $trick 
+                ORDER BY A.EmployeeName ASC";
 
         $data['allEmpsList'] = $this->db->query($sql)->getResultArray(); //run the query
 
@@ -794,13 +795,13 @@ class EmployeeModel extends Model
                                             FROM holidays 
                                             WHERE AllDept = 1")->getResultArray();
         $isHoliday = in_array($yesdate, array_column($holidays, 'AdjustedDate'));
-        if(!$isHoliday){
+        if ($isHoliday) {
             return true;
         }
 
         $sql = "SELECT A.EmployeeId, A.EmployeeCode, A.DepartmentId
                 FROM employees A
-                LEFT JOIN biometric.devicelogs_processed B 
+                LEFT JOIN developement_biometric.devicelogs_processed B 
                     ON B.UserId = A.EmployeeCode AND DATE(B.LogDate) = '$yesdate'
                 WHERE A.Status = 'Working' AND B.UserId IS NULL";
         $employees = $this->bio->query($sql)->getResultArray();
@@ -811,7 +812,7 @@ class EmployeeModel extends Model
             $department = $emp['DepartmentId'];
             
             // Check biometric logs
-            // $logCount = $this->bio->query("SELECT COUNT(*) AS count FROM biometric.devicelogs_processed WHERE UserId = ? AND DATE(LogDate) = ?", [$code, $yesdate])->getRow()->count;
+            // $logCount = $this->bio->query("SELECT COUNT(*) AS count FROM developement_biometric.devicelogs_processed WHERE UserId = ? AND DATE(LogDate) = ?", [$code, $yesdate])->getRow()->count;
             // if ($logCount > 0) continue;
             
             // Check if leave already exists
@@ -825,7 +826,7 @@ class EmployeeModel extends Model
             // Check for holidays
             $holidays = $this->db->query("SELECT CASE WHEN SameDate = 1 THEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d') ELSE Date END AS AdjustedDate FROM holidays WHERE DepartmentIDFK LIKE ?", ["%\"$department\"%"])->getResultArray();
             $isHoliday = in_array($yesdate, array_column($holidays, 'AdjustedDate'));
-            if (!$isHoliday) continue;
+            if ($isHoliday) continue;
 
             // Check for week-off
             $weekOffDays = $this->db->query("SELECT WO1, WO2, WO3, WO4, WO5, WO6, WO7 FROM departments WHERE IDPK = ?", [$department])->getRowArray();
@@ -839,7 +840,8 @@ class EmployeeModel extends Model
 
             // Insert UnProperLeave if conditions are met
             if ($weekOff == 0 && !$isHoliday && $otherLeave == 0) {
-                $this->db->query("INSERT INTO leaves (EmployeeIDFK, TypeIDFK, Date, Reason, Status) VALUES (?, ?, ?, ?, ?)", [$id, 5, $yesdate, 'UnProperLeave', 1]);
+                $created_at = $yesdate." 23:59:59";
+                $this->db->query("INSERT INTO leaves (EmployeeIDFK, TypeIDFK, Date, Reason, Status, Created_at) VALUES (?, ?, ?, ?, ?, ?)", [$id, 5, $yesdate, 'UnProperLeave', 1, $created_at]);
             }
         }
         return true;
@@ -873,7 +875,7 @@ class EmployeeModel extends Model
                 (CASE WHEN TIME(Max(B.LogDate)) < '18:30:00' THEN 1 ELSE 0 END) AS Early_Logout,
                 TIMEDIFF( MAX(B.LogDate), MIN(B.LogDate)) as workingHours
                 FROM homes247_backend.employees A 
-                LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode
+                LEFT JOIN developement_biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode
                 WHERE A.EmployeeId = $id AND DATE(B.LogDate) BETWEEN '$date_start' AND '$date_end'
                 GROUP BY YEAR(B.LogDate),MONTH(B.LogDate),DAY(B.LogDate)";
         $MinMax = $this->bio->query($sql)->getResultArray();
@@ -894,7 +896,7 @@ class EmployeeModel extends Model
         }
         $sql = "SELECT LogDate
                 FROM homes247_backend.employees A 
-                LEFT JOIN biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode 
+                LEFT JOIN developement_biometric.devicelogs_processed B ON B.UserId = A.EmployeeCode 
                 WHERE A.EmployeeId = $id AND DATE(B.LogDate) BETWEEN '$date_start' AND '$date_end'
                 GROUP BY DATE_FORMAT(B.LogDate, '%Y-%m-%d %H:%i')
                 ORDER BY LogDate";
@@ -1230,7 +1232,7 @@ class EmployeeModel extends Model
 
     public function getEmployeePaySlipSpecific($id)
     {
-        $sql = "SELECT A.Basic, A.HRA, A.FBP, A.PF, A.PT, A.PFVOL, A.SD2, A.SD1, A.Insurance, A.Net_salary, A.Date, A.LOP, A.Net_salary,
+        $sql = "SELECT A.Basic, A.HRA, A.FBP, A.PF, A.PT, A.PFVOL, A.TDS, A.SD2, A.SD1, A.Insurance, A.Net_salary, A.Date, A.LOP, A.Net_salary,
                        B.PF_No, B.ESI_No, B.DOJ, B.EmployeeCode, B.EmployeeName, B.PAN_No, B.UAN_No,
                        C.designations,
                        D.deptName,
@@ -1301,7 +1303,7 @@ class EmployeeModel extends Model
         $bio_employee_table = ["EmployeeName", "EmployeeCode", "Gender", "DOB", "BLOODGROUP", "FatherName", "MotherName", "PlaceOfBirth", "ResidentialAddress", "PermanentAddress", "ContactNo", "AltContactno", "Email", "PersonalMail", "DepartmentId", "DesignationIDFK", "Status", "EmployementType", "DOJ", "Image"];
 
         if (in_array($column, $bio_employee_table)) {
-            $sql1 = "UPDATE biometric.employees SET $setClause WHERE `EmployeeId` = ?";
+            $sql1 = "UPDATE developement_biometric.employees SET $setClause WHERE `EmployeeId` = ?";
             $sql2 = "UPDATE `employees` SET $setClause WHERE `EmployeeId` = ?";
             $this->db->query($sql1, $id);
             $this->db->query($sql2, $id);
@@ -1312,9 +1314,8 @@ class EmployeeModel extends Model
             $this->db->query($sql3, $id);
         } else if (in_array($column, $salary_info)) {
             $sql6 = "SELECT * FROM salary_info WHERE EmployeeIDFK = ?";
-            $salary = $this->db->query($sql6, $id)->getResultArray();
+            $salary = $this->db->query($sql6, $id)->getRowArray();
             $sal = count($salary);
-            $salary = $salary[0];
 
             if ($sal > 0) {
                 $Gross = $salary['GrossSalary'] ?? 0.00;
@@ -1352,7 +1353,7 @@ class EmployeeModel extends Model
                 $this->db->query($sql4, [$Basic, $Hra, $Fbp, $Pf, $Pt, $Pfvol, $TDS, $Ins, $Grati, $Esi, $Gross, $Netsal, $id]);
             } else {
                 $sql7 = "INSERT INTO `salary_info`(`EmployeeIDFK`, `BasicSalary`, `HRA`, `FBP`, `PF`, `PT`, `PF_VOL`, `TDS`, `Insurance`, `Grativity`, `GrossSalary`, `NetSalary`, `ESI`) 
-                         VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
+                            VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?)";
                 $this->db->query($sql7, [$id, 0.00, 0.00, 0.00, 1800.00, 200.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0.00, 0]);
 
                 $sql6 = "SELECT * FROM salary_info WHERE EmployeeIDFK = ?";
@@ -1477,8 +1478,8 @@ class EmployeeModel extends Model
         $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
         $sql_select11 = "CREATE TEMPORARY TABLE temptable
                 SELECT LogDate, MIN(LogDate) as login, MAX(LogDate) as logout, TIMEDIFF( MAX(LogDate), MIN(LogDate)) as workingHours
-                FROM biometric.`devicelogs_processed` 
-                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId 
+                FROM developement_biometric.`devicelogs_processed` 
+                LEFT JOIN employees B ON B.EmployeeCode = developement_biometric.devicelogs_processed.UserId 
                 WHERE B.EmployeeId = $id AND DATE(LogDate) BETWEEN '$fdate' AND '$todate'
                 GROUP BY UserId, YEAR(LogDate), MONTH(LogDate), DAY(LogDate)  
                 ORDER BY LogDate asc";
@@ -1498,8 +1499,8 @@ class EmployeeModel extends Model
         $sqltemptable = "DROP TEMPORARY TABLE if exists `temptable`";
         $sql_select11 = "CREATE TEMPORARY TABLE temptable
                 SELECT MIN(LogDate) as login
-                FROM biometric.`devicelogs_processed` 
-                LEFT JOIN employees B ON B.EmployeeCode = biometric.devicelogs_processed.UserId
+                FROM developement_biometric.`devicelogs_processed` 
+                LEFT JOIN employees B ON B.EmployeeCode = developement_biometric.devicelogs_processed.UserId
                 WHERE B.EmployeeId = $id AND DATE(LogDate) = '$date'";
         $sql_select = "SELECT * FROM `temptable`";
 
@@ -1560,8 +1561,8 @@ class EmployeeModel extends Model
 
     public function leaveDetails($data)
     {
-        $fdate = $data['fdate'];
-        $todate = $data['todate'];
+        $fdate = $data['fdate'] ?? date('Y-m-d');
+        $todate = $data['todate'] ?? date('Y-m-d');
 
         $sql = "SELECT A.Date, B.EmployeeCode, B.EmployeeName, C.Name 
                 FROM leaves A

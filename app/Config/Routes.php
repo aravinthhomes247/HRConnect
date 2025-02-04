@@ -271,8 +271,6 @@ $routes->get('/HRleave', 'HRController::HRLeave',['filter' => 'auth']);
 
 $routes->get('/downloadpayslipexcel', 'HRController::DownloadPayslipExcel',['filter' => 'auth']);
 
-$routes->get('/leave/runAutoLeave', 'HRController::runAutoLeave',['filter' => 'auth']);
-
 $routes->get('/checkcrone', 'HRController::cronjobs',['filter' => 'auth']);
 
 // $routes->get('/HRtodays_activity', 'HRController::HRtodays_candidate_activityC', ['filter' => 'auth']);
