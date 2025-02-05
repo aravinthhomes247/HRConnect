@@ -245,21 +245,26 @@ class EmployeeModel extends Model
         }
 
         $sql = "SELECT D.CandidateId ,A.EmployeeId ,A.EmployeeName, A.EmployeeCode, A.Gender, B.designations, 
-                       C.EmployeeTypeName,E.DV_IDPK,E.DVStatus, E.OfferLetterImage , E.INT_CON_Letter, F.EBD_IDPK,
-                       F.EmployeeIDFK, A.last_working, A.settlement_day, A.final_set_status, A.final_set_amound, G.GrossSalary 
+                       C.EmployeeTypeName,E.DV_IDPK,E.DVStatus, H.Document_Name as Offerletter , H.Document_Name as InternLetter, 
+                       F.EBD_IDPK,F.EmployeeIDFK as bankdetails, A.last_working, A.settlement_day, A.final_set_status, A.final_set_amound, 
+                       G.GrossSalary 
                 FROM employees A 
                 LEFT JOIN designation B ON B.IDPK = A.DesignationIDFK 
                 LEFT JOIN employement_type C ON C.IDPK = A.EmployementType 
                 LEFT JOIN candidates D ON D.EmployeeIDFK = A.EmployeeID
-                LEFT JOIN document_verification E ON E.CandidateIDFK = D.CandidateId
+                LEFT JOIN document_verification E ON E.EmployeeIDFK = A.EmployeeId
                 LEFT JOIN emp_bank_details F ON F.EmployeeIDFK = A.EmployeeId
                 LEFT JOIN salary_info G ON G.EmployeeIDFK = A.EmployeeId
+                LEFT JOIN documents H ON H.EmployeeIDFK = A.EmployeeId AND H.Doc_CategoryIDFK = 11
+                LEFT JOIN documents I ON I.EmployeeIDFK = A.EmployeeId AND I.Doc_CategoryIDFK = 12
                 $trick 
                 ORDER BY A.EmployeeName ASC";
 
         $data['allEmpsList'] = $this->db->query($sql)->getResultArray(); //run the query
 
+        // echo '<pre>';
         // print_r($data['allEmpsList']);exit;
+        // echo '</pre>';
         return $data['allEmpsList'];
     }
 
@@ -1246,9 +1251,13 @@ class EmployeeModel extends Model
         return $data;
     }
 
-    public function getEmployeeFiles($id)
+    public function getEmployeeFiles($id,$type)
     {
-        $sql = "SELECT IDPK, Doc_CategoryIDFK, Document_Name FROM documents WHERE CandidateIDFK = $id";
+        if($type == 1){
+            $sql = "SELECT IDPK, Doc_CategoryIDFK, Document_Name FROM documents WHERE CandidateIDFK = $id";
+        }else{
+            $sql = "SELECT IDPK, Doc_CategoryIDFK, Document_Name FROM documents WHERE EmployeeIDFK = $id";
+        }
         $data = $this->db->query($sql)->getResultArray();
         // print_r($data);exit(0);
         return $data;
@@ -1256,16 +1265,12 @@ class EmployeeModel extends Model
 
     public function getEmployeeProFilesStore($data)
     {
-        if($data['Type'] == 1){
-            $type = `EmployeeIDFK`;
-        }else{
-            $type = `CandidateIDFK`;
-        }
         foreach ($data as $record) {
-            $EmployeeIDFK = $record['EmployeeIDFK'];
+            $EmployeeIDFK = ($record['Type'] == 2) ? $record['EmployeeIDFK'] : NULL;
+            $CandidateIDFK = ($record['Type'] == 1) ? $record['EmployeeIDFK'] : NULL;
             $Doc_CategoryIDFK = $record['Doc_CategoryIDFK'];
             $Document_Name = $record['Document_Name'];
-            $sql = "INSERT INTO documents($type, `Doc_CategoryIDFK`, `Document_Name`) VALUES('$EmployeeIDFK', '$Doc_CategoryIDFK', '$Document_Name')";
+            $sql = "INSERT INTO documents(`EmployeeIDFK`, `CandidateIDFK`, `Doc_CategoryIDFK`, `Document_Name`) VALUES('$EmployeeIDFK', '$CandidateIDFK', '$Doc_CategoryIDFK', '$Document_Name')";
             $this->db->query($sql);
         }
     }

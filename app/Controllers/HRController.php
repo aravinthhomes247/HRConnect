@@ -635,7 +635,8 @@ class HRController extends BaseController
                                     'CandidateIDFK' => null,
                                     'EmployeeIDFK' => $EmployeeId,
                                     'Doc_CategoryIDFK' => $j,
-                                    'Document_Name' => $fileName
+                                    'Document_Name' => $fileName,
+                                    'Type' => 2
                                 ];
                             }
                         }
@@ -695,7 +696,7 @@ class HRController extends BaseController
             $data['mode'] = $data['mode']['Value'];
             return view('employees/employees/EmpProfPaySlip', $data);
         } elseif ($trickId == 8) {
-            $data['Files'] = $this->empModel->getEmployeeFiles($id);
+            $data['Files'] = $this->empModel->getEmployeeFiles($id,2);
             return view('employees/employees/EmpProfFiles', $data);
         } else {
             return view('employees/employees/EmpProfBasicProfile', $data);
@@ -802,7 +803,8 @@ class HRController extends BaseController
                 $data[$i++] = [
                     'EmployeeIDFK' => $canId,
                     'Doc_CategoryIDFK' => $cat,
-                    'Document_Name' => $fileName
+                    'Document_Name' => $fileName,
+                    'Type' => $type
                 ];
             } else {
                 echo "Error uploading file: " . $file->getErrorString();
@@ -2099,7 +2101,7 @@ class HRController extends BaseController
         $data['offerLetter'] = $this->candidateModel->getOfferLetterM($data);
         $data['CanHistory'] = $this->candidateModel->getCanHistoryM($data);
 
-        $data['Files'] = $this->empModel->getEmployeeFiles($_GET['canId']);
+        $data['Files'] = $this->empModel->getEmployeeFiles($_GET['canId'],1);
         $data['File_counts'] = [1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0, 7 => 0, 8 => 0, 9 => 0, 10 => 0];
         foreach ($data['Files'] as $file) {
             $category = $file['Doc_CategoryIDFK'];

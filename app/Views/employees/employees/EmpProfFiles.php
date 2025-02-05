@@ -189,9 +189,29 @@
                     endforeach; ?>
                 </div>
                 <div class="col upload">
-                    <div class="file-list" id="fileList"></div>
+                    <span>Offer Letter <a href="javascript:void(0);" class="addfile" data-cat="11"><i class="fa-solid fa-circle-plus"></i></a></span>
+                    <?php foreach ($Files as $file): ?>
+                        <?php if ($file['Doc_CategoryIDFK'] == 11): ?>
+                            <div class="file">
+                                <div class="name"><span><?= $file['Document_Name'] ?></span></div>
+                                <a href="javascript:void(0);" class="replacefile" data-id="<?= $file['IDPK'] ?>" data-cat="11"><i class="fa-solid fa-arrows-rotate"></i></a>
+                                <a href="javascript:void(0);" class="x removefile" data-id="<?= $file['IDPK'] ?>"><i class="fa-solid fa-xmark"></i></a>
+                            </div>
+                    <?php endif;
+                    endforeach; ?>
                 </div>
-                <div class="col upload"></div>
+                <div class="col upload">
+                    <span>Intern/contract Letter <a href="javascript:void(0);" class="addfile" data-cat="12"><i class="fa-solid fa-circle-plus"></i></a></span>
+                    <?php foreach ($Files as $file): ?>
+                        <?php if ($file['Doc_CategoryIDFK'] == 12): ?>
+                            <div class="file">
+                                <div class="name"><span><?= $file['Document_Name'] ?></span></div>
+                                <a href="javascript:void(0);" class="replacefile" data-id="<?= $file['IDPK'] ?>" data-cat="12"><i class="fa-solid fa-arrows-rotate"></i></a>
+                                <a href="javascript:void(0);" class="x removefile" data-id="<?= $file['IDPK'] ?>"><i class="fa-solid fa-xmark"></i></a>
+                            </div>
+                    <?php endif;
+                    endforeach; ?>
+                </div>
             </div>
         </div>
     </div>
