@@ -47,7 +47,7 @@
 <div class="container mt-3">
     <div class="row">
         <div class="col text-start"><h4>Payrolls</h4></div>
-        <div class="col text-end"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TicketAddModel"><i class="fa-solid fa-plus"></i> Raised a Ticket</button></div>
+        <div class="col text-end"><button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TicketAddModel"><i class="fa-solid fa-plus"></i> Raise a Ticket</button></div>
     </div>
 </div>
 <div class="container mt-3">

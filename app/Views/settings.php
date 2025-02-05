@@ -109,7 +109,7 @@ if (isset($_SESSION['msg'])) {
         <div class="col-12 col-lg-3">
           <div class="card mt-2">
             <div class="card-header">
-              <h6 class="card-title">Tiket Types</h6>
+              <h6 class="card-title">Ticket Types</h6>
             </div>
             <form method="post" action="<?= site_url('update-settings-tikets') ?>" autocomplete="off">
               <div class="del-list-ticket"></div>

@@ -111,11 +111,11 @@
                         <tr>
                             <td><?= $index + 1; ?></td>
                             <?php
-                                $one = ($emp['DVStatus'] == 2) ? '' : '[Documents Verified] ';
+                                $one = (!empty($emp['DVStatus']) && $emp['DVStatus'] == 2) ? '' : '[Documents Verified] ';
                                 $two = (!empty($emp['OfferLetterImage'])) ? '' : ' [Offer letter] ';
                                 $three = (!empty($emp['INT_CON_Letter'])) ? '' : ' [Intern/Contract Letter] ';
                                 $four = (!empty($emp['EmployeeIDFK'])) ? '' : ' [Bank Details]';
-                                $st = ($one == '' || $two == '' || $three == '' || $four == '') ? 1 : 0;
+                                $st = ($one == '' && $two == '' && $three == '' && $four == '') ? 1 : 0;
 
                                 // print_r([$emp['DVStatus'],$emp['OfferLetterImage'],$emp['INT_CON_Letter'],$emp['EmployeeIDFK']]);exit(0);
                             ?>

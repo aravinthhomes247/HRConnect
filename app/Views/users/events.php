@@ -29,7 +29,7 @@
 </style>
 
 <div class="container mt-3 text-end">
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TicketAddModel"><i class="fa-solid fa-plus"></i> Raised a Ticket</button>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TicketAddModel"><i class="fa-solid fa-plus"></i> Raise a Ticket</button>
 </div>
 <div class="container mt-3">
     <table class="table table-hover">

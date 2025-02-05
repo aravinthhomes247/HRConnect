@@ -35,7 +35,7 @@
         </div>
         <div class="col text-end">
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#LeaveAddModel"><i class="fa-solid fa-plus"></i> Apply Leave</button>
-            <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TicketAddModel"><i class="fa-solid fa-plus"></i> Raised a Ticket</button> -->
+            <!-- <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#TicketAddModel"><i class="fa-solid fa-plus"></i> Raise a Ticket</button> -->
         </div>
     </div>
 </div>

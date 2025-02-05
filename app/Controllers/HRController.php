@@ -738,7 +738,8 @@ class HRController extends BaseController
                     $data[$i++] = [
                         'EmployeeIDFK' => $canId,
                         'Doc_CategoryIDFK' => $cat,
-                        'Document_Name' => $fileName
+                        'Document_Name' => $fileName,
+                        'Type' => $type
                     ];
                 } else {
                     echo "Error uploading file: " . $file->getErrorString();

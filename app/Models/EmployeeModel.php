@@ -1248,7 +1248,7 @@ class EmployeeModel extends Model
 
     public function getEmployeeFiles($id)
     {
-        $sql = "SELECT IDPK, Doc_CategoryIDFK, Document_Name FROM documents WHERE EmployeeIDFK = $id";
+        $sql = "SELECT IDPK, Doc_CategoryIDFK, Document_Name FROM documents WHERE CandidateIDFK = $id";
         $data = $this->db->query($sql)->getResultArray();
         // print_r($data);exit(0);
         return $data;
@@ -1256,11 +1256,16 @@ class EmployeeModel extends Model
 
     public function getEmployeeProFilesStore($data)
     {
+        if($data['Type'] == 1){
+            $type = `EmployeeIDFK`;
+        }else{
+            $type = `CandidateIDFK`;
+        }
         foreach ($data as $record) {
             $EmployeeIDFK = $record['EmployeeIDFK'];
             $Doc_CategoryIDFK = $record['Doc_CategoryIDFK'];
             $Document_Name = $record['Document_Name'];
-            $sql = "INSERT INTO documents(`EmployeeIDFK`, `Doc_CategoryIDFK`, `Document_Name`) VALUES('$EmployeeIDFK', '$Doc_CategoryIDFK', '$Document_Name')";
+            $sql = "INSERT INTO documents($type, `Doc_CategoryIDFK`, `Document_Name`) VALUES('$EmployeeIDFK', '$Doc_CategoryIDFK', '$Document_Name')";
             $this->db->query($sql);
         }
     }
