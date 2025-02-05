@@ -60,7 +60,7 @@
             $currentpage = preg_replace('/\/\d+$/', '', $currentpage)
             // print_r($currentpage);exit(0);
             ?>
-            <?php if ($session->get('user_level') == 1) { ?>
+            <?php if ($session->get('user_level') == 42) { ?>
                 <div class="sidebar">
                     <img src="<?php echo base_url('../public/images/hr-connect.png'); ?>">
                     <ul class="list-group">
@@ -119,7 +119,7 @@
                         </a>
                     </ul>
                 </div>
-            <?php } else if ($session->get('user_level') == 2 || $session->get('user_level') == 18) { ?>
+            <?php } else if ($session->get('user_level') == 1 || $session->get('user_level') == 18) { ?>
                 <div class="sidebar">
                     <img src="<?php echo base_url('../public/images/hr-connect.png'); ?>">
                     <ul class="list-group">
@@ -265,7 +265,7 @@
                                     <ul>
                                         <a href="#">Notifications <i class="fa-regular fa-bell nav-bar-icon"></i></a>
                                     </ul>
-                                    <?php if ($session->get('user_level') == 1) { ?>
+                                    <?php if ($session->get('user_level') == 42) { ?>
                                         <ul>  
                                             <a href="<?php echo base_url('/settings') ?>">Settings <i class="fa-solid fa-gear nav-bar-icon"></i></a>
                                         </ul>

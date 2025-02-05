@@ -103,7 +103,7 @@ class CandidateModel extends Model
             // $text = preg_replace('/&nbsp;/', ' ', $source);
             // $text2 = preg_replace('/&nbsp;/', ' ', $candidatePosition);
             // $interviewDate = $filesop['InterviewDate'];
-            if ($filesop['user_level'] == 1) {
+            if ($filesop['user_level'] == 42) {
                 $UploadBy = $filesop['HR_IDFK'];
                 $AssignTo = null;
             } else {

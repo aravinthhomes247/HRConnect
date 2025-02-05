@@ -177,7 +177,9 @@
           </tr>
         </thead>
         <tbody>
-          <?php if ($leaves): ?>
+          <?php 
+          $i=1;
+          if ($leaves): ?>
             <?php foreach ($leaves as $leave): ?>
               <tr>
                 <td><?= $leave['EmployeeCode'] ?></td>
@@ -199,7 +201,7 @@
       </table>
       <?php if ($leaves): ?>
         <div class="viewmore">
-          <a href="#" class="btn btn-viewmore p-1"><i class="fa-solid fa-angles-down"></i> View More</a>
+          <a href="<?= site_url('/leave?trickid=1&fdate='.$fdate.'&todate='.$todate)?>" class="btn btn-viewmore p-1"><i class="fa-solid fa-angles-down"></i> View More</a>
         </div>
       <?php endif; ?>
     </div>

@@ -371,14 +371,13 @@ class EmployeeModel extends Model
         // print_r($data['selectdesignation']); exit();
         return $data['selectdesignation'];
     }
-    public function getdesignationM($desname)
+    public function getdesignationM($empid)
     {
-
-        $sql = "SELECT A.EmployeeCode, A.EmployeeName, designation.IDPK, designations FROM `employees` A 
-                LEFT JOIN designation ON designation.IDPK = A.DesignationIDFK 
-                Where IDPK='$desname' ";
-        $data['showdesignation'] = $this->db->query($sql)->getResultArray(); //run the query
-        // print_r($data['showdesignation']); exit();
+        $sql = "SELECT A.EmployeeCode, A.EmployeeName, B.IDPK, B.designations 
+                    FROM employees A 
+                    LEFT JOIN designation B ON B.IDPK = A.DesignationIDFK 
+                    WHERE A.EmployeeId = ?";
+        $data['showdesignation'] = $this->db->query($sql, [$empid])->getResultArray();
         return $data['showdesignation'];
     }
 
@@ -782,7 +781,7 @@ class EmployeeModel extends Model
 
         // Check biometric logs
         $logCount = $this->bio->query("SELECT COUNT(*) AS count FROM biometric.devicelogs_processed WHERE DATE(LogDate) = ?", [$yesdate])->getRow()->count;
-        if ($logCount == 0){
+        if ($logCount == 0) {
             return true;
         }
 
@@ -810,19 +809,19 @@ class EmployeeModel extends Model
             $id = $emp['EmployeeId'];
             $code = $emp['EmployeeCode'];
             $department = $emp['DepartmentId'];
-            
+
             // Check biometric logs
             // $logCount = $this->bio->query("SELECT COUNT(*) AS count FROM developement_biometric.devicelogs_processed WHERE UserId = ? AND DATE(LogDate) = ?", [$code, $yesdate])->getRow()->count;
             // if ($logCount > 0) continue;
-            
+
             // Check if leave already exists
             $existingLeave = $this->db->query("SELECT COUNT(*) AS flag FROM leaves WHERE EmployeeIDFK = ? AND Status = 1 AND TypeIDFK = 5 AND DATE(Date) = ?", [$id, $yesdate])->getRow()->flag;
             if ($existingLeave > 0) continue;
-            
+
             // Check for other leaves
             $otherLeave = $this->db->query("SELECT COUNT(*) AS count FROM leaves WHERE EmployeeIDFK = ? AND Status = 1 AND TypeIDFK != 6 AND DATE(Date) = ?", [$id, $yesdate])->getRow()->count;
             if ($otherLeave > 0) continue;
-            
+
             // Check for holidays
             $holidays = $this->db->query("SELECT CASE WHEN SameDate = 1 THEN DATE_FORMAT(CONCAT(YEAR(CURRENT_DATE()), '-', MONTH(Date), '-', DAY(Date)), '%Y-%m-%d') ELSE Date END AS AdjustedDate FROM holidays WHERE DepartmentIDFK LIKE ?", ["%\"$department\"%"])->getResultArray();
             $isHoliday = in_array($yesdate, array_column($holidays, 'AdjustedDate'));
@@ -840,7 +839,7 @@ class EmployeeModel extends Model
 
             // Insert UnProperLeave if conditions are met
             if ($weekOff == 0 && !$isHoliday && $otherLeave == 0) {
-                $created_at = $yesdate." 23:59:59";
+                $created_at = $yesdate . " 23:59:59";
                 $this->db->query("INSERT INTO leaves (EmployeeIDFK, TypeIDFK, Date, Reason, Status, Created_at) VALUES (?, ?, ?, ?, ?, ?)", [$id, 5, $yesdate, 'UnProperLeave', 1, $created_at]);
             }
         }

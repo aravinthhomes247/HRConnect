@@ -117,14 +117,12 @@ class HRController extends BaseController
         $password = $this->request->getVar('admin_login_password');
         $user = $this->admin->where('admin_login_email', $email)->first();
 
-        $employee = $this->empModel->where('Email', $user['admin_login_email'])->select('Image, EmployeeName, DesignationIDFK')->first();
-        $Desig = $this->empModel->getdesignationM($employee['DesignationIDFK']);
-        // print_r($employee);exit(0);
+        $employee = $this->empModel->where('Email', $user['admin_login_email'])->select('Image, EmployeeName, EmployeeId')->first();
+        $Desig = $this->empModel->getdesignationM($user['EmpIDFK']);
+        // print_r([$user,$employee,$Desig]);exit(0);
 
         if ($user) {
             $pass = $user['admin_login_password'];
-            $level = $user['user_level'];
-            $authPassword = password_verify($password, $pass);
             if ($password == $pass) {
                 $sessionData = [
                     'admin_login_IDPK' => $user['admin_login_IDPK'],
@@ -137,10 +135,10 @@ class HRController extends BaseController
                     'EmployeeName' => $employee['EmployeeName'],
                     'Designation' => $Desig[0]['designations'],
                 ];
-                if ($sessionData['user_level'] == 1) {
+                if ($sessionData['user_level'] == 42) {
                     $this->session->set($sessionData);
                     return redirect()->to('dashboard');
-                } elseif ($sessionData['user_level'] == 2 || $sessionData['user_level'] == 18) {
+                } elseif ($sessionData['user_level'] == 1 || $sessionData['user_level'] == 18) {
                     $this->session->set($sessionData);
                     return redirect()->to('HRdashboard?fdate=' . $fdate . '&todate=' . $todate);
                 } elseif ($sessionData['user_level'] == 24) {
@@ -1569,7 +1567,7 @@ class HRController extends BaseController
         $userLevel = $session->get('user_level');
         // print_r($data['user_level']); exit();
         if ($data['save'] == 1) {
-            if ($userLevel == 1) {
+            if ($userLevel == 42) {
                 return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
             } else {
                 return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
@@ -1781,9 +1779,9 @@ class HRController extends BaseController
 
 
         $userLevel = $session->get('user_level');
-        if ($userLevel == 1) {
+        if ($userLevel == 42) {
             return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
-        } elseif ($userLevel == 18) {
+        } elseif ($userLevel == 18 || $userLevel == 1) {
             return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
         }
     }
@@ -1812,9 +1810,9 @@ class HRController extends BaseController
 
 
         $userLevel = $session->get('user_level');
-        if ($userLevel == 1) {
+        if ($userLevel == 42) {
             return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
-        } elseif ($userLevel == 18) {
+        } elseif ($userLevel == 18 || $userLevel == 1) {
             return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
         }
     }
@@ -2040,9 +2038,9 @@ class HRController extends BaseController
         $save = $this->candidateModel->update_candidate_rescheduleM($data1);
         $session = session();
         $userLevel = $session->get('user_level');
-        if ($userLevel == 1) {
+        if ($userLevel == 42) {
             return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
-        } elseif ($userLevel == 18) {
+        } elseif ($userLevel == 18 || $userLevel == 1) {
             return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
         }
     }
@@ -2077,9 +2075,9 @@ class HRController extends BaseController
 
         $session = session();
         $userLevel = $session->get('user_level');
-        if ($userLevel == 1) {
+        if ($userLevel == 42) {
             return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
-        } elseif ($userLevel == 18) {
+        } elseif ($userLevel == 18 || $userLevel == 1) {
             return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
         }
     }
@@ -3568,9 +3566,9 @@ class HRController extends BaseController
         // return $this->response->redirect(site_url('/candidate?fdate='.$fdate.'&todate='.$todate.'&trickid=4'));
         $session = session();
         $userLevel = $session->get('user_level');
-        if ($userLevel == 1) {
+        if ($userLevel == 42) {
             return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
-        } elseif ($userLevel == 18) {
+        } elseif ($userLevel == 18 || $userLevel == 1) {
             return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=4'));
         }
     }
@@ -3625,13 +3623,13 @@ class HRController extends BaseController
 
         $session = session();
         $userLevel = $session->get('user_level');
-        if ($userLevel == 1) {
+        if ($userLevel == 42) {
             if ($data['JoiningStatus'] == 2) {
                 return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
             } else {
                 return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
             }
-        } elseif ($userLevel == 18) {
+        } elseif ($userLevel == 18 || $userLevel == 1) {
             // return $this->response->redirect(site_url('/HRcandidate_List?fdate='.$fdate.'&todate='.$todate.'&trickid=1'));
             if ($data['JoiningStatus'] == 2) {
                 return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=4'));
@@ -3662,9 +3660,9 @@ class HRController extends BaseController
         // return $this->response->redirect(site_url('/candidate?fdate='.$fdate.'&todate='.$todate.'&trickid=8'));
         $session = session();
         $userLevel = $session->get('user_level');
-        if ($userLevel == 1) {
+        if ($userLevel == 42) {
             return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
-        } elseif ($userLevel == 18) {
+        } elseif ($userLevel == 18 || $userLevel == 1) {
             return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=8'));
         }
     }
