@@ -1251,11 +1251,11 @@ class EmployeeModel extends Model
         return $data;
     }
 
-    public function getEmployeeFiles($id,$type)
+    public function getEmployeeFiles($id, $type)
     {
-        if($type == 1){
+        if ($type == 1) {
             $sql = "SELECT IDPK, Doc_CategoryIDFK, Document_Name FROM documents WHERE CandidateIDFK = $id";
-        }else{
+        } else {
             $sql = "SELECT IDPK, Doc_CategoryIDFK, Document_Name FROM documents WHERE EmployeeIDFK = $id";
         }
         $data = $this->db->query($sql)->getResultArray();
@@ -1324,7 +1324,7 @@ class EmployeeModel extends Model
         } else if (in_array($column, $salary_info)) {
             $sql6 = "SELECT * FROM salary_info WHERE EmployeeIDFK = ?";
             $salary = $this->db->query($sql6, $id)->getRowArray();
-            $sal = count($salary);
+            $sal = (!empty($salary)) ? count($salary) : 0;
 
             if ($sal > 0) {
                 $Gross = $salary['GrossSalary'] ?? 0.00;
@@ -1644,8 +1644,9 @@ class EmployeeModel extends Model
         ];
     }
 
-    public function getAllEmpWiOutLog(){
-        $sql ="SELECT A.EmployeeId, A.EmployeeName 
+    public function getAllEmpWiOutLog()
+    {
+        $sql = "SELECT A.EmployeeId, A.EmployeeName 
                 FROM employees A
                 LEFT JOIN admin_login B ON B.EmpIDFK = A.EmployeeId
                 WHERE A.Status = 'Working' AND B.EmpIDFK IS NULL";
