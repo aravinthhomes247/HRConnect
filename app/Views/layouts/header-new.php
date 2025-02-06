@@ -235,9 +235,9 @@
                         <a href="<?php echo base_url('/user-payroll?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'user-payroll') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Payroll</span></li>
                         </a>
-                        <!-- <a href="<?php echo base_url('/user-event?fdate=' . $fdate . '&todate=' . $todate) ?>">
+                        <a href="<?php echo base_url('/user-event?fdate=' . $fdate . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'user-event') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Events</span></li>
-                        </a> -->
+                        </a>
                     </ul>
                 </div>
             <?php } ?>
