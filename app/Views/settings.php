@@ -69,6 +69,25 @@ if (isset($_SESSION['msg'])) {
         <div class="col-12 col-lg-3">
           <div class="card mt-2">
             <div class="card-header">
+              <h6 class="card-title">TinyMCE key</h6>
+            </div>
+            <form method="post" action="<?= site_url('update-settings') ?>" autocomplete="off">
+              <input type="hidden" name="name" value="tinyMCE-key">
+              <div class="card-body">
+                <div class="tickets">
+                  <div class="d-flex align-items-center mt-2">
+                    <input name="value" class="form-control" placeholder="Tiny MCE Key" value="<?= $tinyMCEkey ?>" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn update mt-4">Update Settings</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <div class="col-12 col-lg-3">
+          <div class="card mt-2">
+            <div class="card-header">
               <h6 class="card-title">Job Experiance Options</h6>
             </div>
             <form method="post" action="<?= site_url('update-settings-options') ?>" autocomplete="off">
@@ -90,9 +109,9 @@ if (isset($_SESSION['msg'])) {
                     <?php } else { ?>
                       <div class="d-flex align-items-center mt-2">
                         <input class="form-control" style="margin-right: 10px;" placeholder="1 - 2 years" value="<?= $option['Options'] ?>" readonly>
-                        <?php if($option['Del']){ ?>
+                        <?php if ($option['Del']) { ?>
                           <button type="button" class="btn remove-button" data-id="<?= $option['IDPK'] ?>">-</button>
-                        <?php }else{ ?>
+                        <?php } else { ?>
                           <button type="button" class="btn perremove-button">-</button>
                         <?php } ?>
                       </div>
@@ -130,9 +149,9 @@ if (isset($_SESSION['msg'])) {
                     <?php } else { ?>
                       <div class="d-flex align-items-center mt-2">
                         <input class="form-control" style="margin-right: 10px;" placeholder="1 - 2 years" value="<?= $types['Name'] ?>" readonly>
-                        <?php if($types['Del']){ ?>
+                        <?php if ($types['Del']) { ?>
                           <button type="button" class="btn remove-button" data-id="<?= $types['IDPK'] ?>">-</button>
-                        <?php }else{ ?>
+                        <?php } else { ?>
                           <button type="button" class="btn perremove-button">-</button>
                         <?php } ?>
                       </div>
@@ -146,6 +165,8 @@ if (isset($_SESSION['msg'])) {
           </div>
         </div>
 
+
+        
 
       </div>
     </div>
@@ -162,8 +183,8 @@ if (isset($_SESSION['msg'])) {
   });
   $('.options').on('click', '.remove-button', function() {
     var IDPK = $(this).data('id');
-    if(IDPK != 0){
-      var HTML =`<input type="hidden" name="remove[]" value="`+IDPK+`">`;
+    if (IDPK != 0) {
+      var HTML = `<input type="hidden" name="remove[]" value="` + IDPK + `">`;
       $('.del-list-option').append(HTML);
     }
     $(this).closest('.d-flex').remove();
@@ -171,7 +192,7 @@ if (isset($_SESSION['msg'])) {
   $('.options').on('click', '.perremove-button', function() {
     $('#option_error').show();
     setTimeout(function() {
-        $('#option_error').hide(); // Hide the error message after 3 seconds
+      $('#option_error').hide(); // Hide the error message after 3 seconds
     }, 3000);
   });
 
@@ -186,8 +207,8 @@ if (isset($_SESSION['msg'])) {
   });
   $('.tickets').on('click', '.remove-button', function() {
     var IDPK = $(this).data('id');
-    if(IDPK != 0){
-      var HTML =`<input type="hidden" name="remove[]" value="`+IDPK+`">`;
+    if (IDPK != 0) {
+      var HTML = `<input type="hidden" name="remove[]" value="` + IDPK + `">`;
       $('.del-list-ticket').append(HTML);
     }
     $(this).closest('.d-flex').remove();
@@ -195,7 +216,7 @@ if (isset($_SESSION['msg'])) {
   $('.tickets').on('click', '.perremove-button', function() {
     $('#type_error').show();
     setTimeout(function() {
-        $('#type_error').hide(); // Hide the error message after 3 seconds
+      $('#type_error').hide(); // Hide the error message after 3 seconds
     }, 3000);
   });
 </script>

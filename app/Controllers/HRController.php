@@ -4628,13 +4628,20 @@ class HRController extends BaseController
         }
         $data['options'] = $this->candidateModel->GetJobExperience();
         $data['ticket_types'] = $this->admin->getTicketTypes();
+
+        $ret_arr = $this->careerModel->get_tinyMCE_code();
+        $data['tinyMCEkey'] = $ret_arr['tinyMCE_API'];
         return view('settings', $data);
     }
 
     public function UpdateSettings()
     {
-        $data = [$_POST['name'] => $_POST['value']];
-        $this->admin->updateSettings($data);
+        if($_POST['name'] == "tinyMCE-key"){
+            $this->admin->updateTinyMCEKey($_POST['value']);
+        }else{
+            $data = [$_POST['name'] => $_POST['value']];
+            $this->admin->updateSettings($data);
+        }
         return $this->response->redirect(site_url('/settings'));
     }
 

@@ -123,14 +123,14 @@ class CareerModel extends Model
     }
 
     public function TinyHrEditorKey(){
-        $sql = "SELECT tiny_mce_hrpanel FROM homes247.tinymce WHERE IDPK = 1";
+        $sql = "SELECT tiny_mce_hrpanel FROM developement_homes247.tinymce WHERE IDPK = 1";
         $data['key'] = $this->db->query($sql)->getResultArray(); //run the query
         // print_r($data['key'][0]['tiny_mce_hrpanel']);exit(0);
         return $data['key'][0]['tiny_mce_hrpanel'];
     }
 
     function get_tinyMCE_code() {
-		$sql_select = "SELECT tiny_mce_hrpanel as tinyMCE_API FROM homes247.tinymce ORDER BY IDPK DESC limit 1";
+		$sql_select = "SELECT tiny_mce_hrpanel as tinyMCE_API FROM developement_homes247.tinymce ORDER BY IDPK DESC limit 1";
 		$query_select = $this->db->query($sql_select)->getResultArray();
         // print_r($query_select[0]);exit();
 		return $query_select[0];

@@ -252,4 +252,12 @@ class AdminModel extends Model
         $this->db->query($sql,$login_access);
         return true;
     }
+
+    public function updateTinyMCEKey($key){
+        $sql = "UPDATE developement_homes247.`tinymce` 
+                SET tiny_mce_homes247=?,tiny_mce_backendpanel=?,tiny_mce_hrpanel=?
+                WHERE IDPK=1";
+        $this->db->query($sql,[$key,$key,$key]);
+        return true;
+    }
 }
