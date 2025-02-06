@@ -115,9 +115,9 @@ class HRController extends BaseController
 
         $email = $this->request->getVar('admin_login_email');
         $password = $this->request->getVar('admin_login_password');
-        $user = $this->admin->where('admin_login_email', $email)->first();
+        $user = $this->admin->where('admin_login_email', $email)->where('login_access', 1)->first();
 
-        $employee = $this->empModel->where('Email', $user['admin_login_email'])->select('Image, EmployeeName, EmployeeId')->first();
+        $employee = $this->empModel->where('EmployeeId', $user['EmpIDFK'])->select('Image, EmployeeName, EmployeeId')->first();
         $Desig = $this->empModel->getdesignationM($user['EmpIDFK']);
         // print_r([$user,$employee,$Desig]);exit(0);
 
@@ -5037,5 +5037,55 @@ class HRController extends BaseController
         $data['Reason'] = $_POST['Reason'] ?? '';
         $this->empModel->ApplyLeave($data);
         return redirect()->back();
+    }
+
+    public function Accounts(){
+        $data['accounts'] = $this->admin->AllAccounts();
+        return view('account/accounts',$data);
+    }
+
+    public function AddAccount(){
+        $data['designations'] = $this->candidateModel->getDesignationList();
+        $data['employees'] = $this->empModel->getAllEmpWiOutLog(); 
+        return view('account/addaccount',$data);
+    }
+
+    public function StoreAccount(){
+        $data = [
+            'EmpIDFK' => $_POST['EmpIDFK'],
+            'user_name' => $_POST['user_name'],
+            'admin_login_email'=> $_POST['admin_login_email'],
+            'admin_login_password'=> $_POST['admin_login_password'],
+            'user_level' => $_POST['user_level'],
+            'active_status' => $_POST['active_status'],
+            'login_access' => $_POST['login_access']
+        ];
+        $this->admin->StoreAccounts($data);
+        return $this->response->redirect(site_url('/login-accounts'));
+    }
+
+    public function EditAccount($id){
+        $data['designations'] = $this->candidateModel->getDesignationList();
+        $data['account'] = $this->admin->GetAccount($id);
+        return view('account/editaccount',$data);
+    }
+
+    public function UpdateAccount($id){
+        $data = [
+            'EmpIDFK' => $_POST['EmpIDFK'],
+            'user_name' => $_POST['user_name'],
+            'admin_login_email'=> $_POST['admin_login_email'],
+            'admin_login_password'=> $_POST['admin_login_password'],
+            'user_level' => $_POST['user_level'],
+            'active_status' => $_POST['active_status'],
+            'login_access' => $_POST['login_access']
+        ];
+        $this->admin->UpdateAccount($id,$data);
+        return $this->response->redirect(site_url('/login-accounts'));
+    }
+
+    public function ActDactAccount($id){
+        $this->admin->ActDactAccount($id);
+        return $this->response->redirect(site_url('/login-accounts'));
     }
 }

@@ -117,6 +117,9 @@
                         <a href="<?php echo base_url('/settings') ?>">
                             <li class="list-group-item <?= ($currentpage == 'settings') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/setting.ico'); ?>" class="sidemenu-img-11"><span>Settings</span></li>
                         </a>
+                        <a href="<?php echo base_url('/login-accounts') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
+                        </a>
                     </ul>
                 </div>
             <?php } else if ($session->get('user_level') == 1 || $session->get('user_level') == 18) { ?>
@@ -163,6 +166,9 @@
                         </a>
                         <a href="<?php echo base_url('/HRleave?fdate=' . $fdate . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'HRleave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leave</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/login-accounts') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
                         </a>
                     </ul>
                 </div>

@@ -273,6 +273,13 @@ $routes->get('/downloadpayslipexcel', 'HRController::DownloadPayslipExcel',['fil
 
 $routes->get('/checkcrone', 'HRController::cronjobs',['filter' => 'auth']);
 
+$routes->get('/login-accounts', 'HRController::Accounts',['filter' => 'auth']);
+$routes->get('/add-account', 'HRController::AddAccount',['filter' => 'auth']);
+$routes->post('/store-account', 'HRController::StoreAccount',['filter' => 'auth']);
+$routes->get('/edit-account/(:num)', 'HRController::EditAccount/$1',['filter' => 'auth']);
+$routes->post('/update-account/(:num)', 'HRController::UpdateAccount/$1',['filter' => 'auth']);
+$routes->get('/deactactaccount/(:any)', 'HRController::ActDactAccount/$1',['filter' => 'auth']);
+
 // $routes->get('/HRtodays_activity', 'HRController::HRtodays_candidate_activityC', ['filter' => 'auth']);
 // $routes->get('dashboard', 'HRDashboard::presents');
 // CRUD RESTful Routes

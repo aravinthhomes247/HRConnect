@@ -1643,4 +1643,13 @@ class EmployeeModel extends Model
             'PLPM' => ($leaveCounts[3] < $limits['PLPM']) ? 1 : 0
         ];
     }
+
+    public function getAllEmpWiOutLog(){
+        $sql ="SELECT A.EmployeeId, A.EmployeeName 
+                FROM employees A
+                LEFT JOIN admin_login B ON B.EmpIDFK = A.EmployeeId
+                WHERE A.Status = 'Working' AND B.EmpIDFK IS NULL";
+        $employees = $this->db->query($sql)->getResultArray();
+        return $employees;
+    }
 }

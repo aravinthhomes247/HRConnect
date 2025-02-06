@@ -206,4 +206,50 @@ class AdminModel extends Model
         $holidays = $this->db->query($sql)->getResultArray();
         return $holidays;
     }
+
+    public function AllAccounts(){
+        $sql ="SELECT * FROM admin_login ORDER BY admin_login_email";
+        $data = $this->db->query($sql)->getResultArray();
+        return $data;
+    }
+
+    public function StoreAccounts($data){
+        $sql = "INSERT INTO `admin_login`(`EmpIDFK`, `user_name`, `admin_login_email`, `admin_login_password`, `user_level`, `active_status`, `login_access`) 
+                VALUES (?,?,?,?,?,?,?)";
+        $data = $this->db->query($sql,[$data['EmpIDFK'],$data['user_name'],$data['admin_login_email'],$data['admin_login_password'],$data['user_level'],$data['active_status'],$data['login_access']]);
+
+        return true;
+    }
+
+    public function GetAccount($id){
+        $sql ="SELECT * FROM admin_login WHERE admin_login_IDPK = $id";
+        $data = $this->db->query($sql)->getRowArray(); 
+        $sql="SELECT EmployeeName FROM employees WHERE EmployeeId =?";
+        $data['EmployeeName'] = $this->db->query($sql,$data['EmpIDFK'])->getRow()->EmployeeName;
+        return $data;
+    }
+
+    public function UpdateAccount($id,$data){
+        $sql = "UPDATE `admin_login` 
+                SET `EmpIDFK`=?,`user_name`=?,`admin_login_email`=?,`admin_login_password`=?,`user_level`=?,
+                    `active_status`=?,`login_access`=? 
+                WHERE admin_login_IDPK = $id";
+        $data = $this->db->query($sql,[$data['EmpIDFK'],$data['user_name'],$data['admin_login_email'],$data['admin_login_password'],$data['user_level'],$data['active_status'],$data['login_access']]);
+        return true;
+    }
+
+    public function ActDactAccount($id){
+        $sql ="SELECT login_access FROM admin_login WHERE admin_login_IDPK = $id";
+        $login_access = $this->db->query($sql)->getRow()->login_access;
+        
+        if($login_access == 1){
+            $login_access = 0;
+        }else{
+            $login_access = 1;
+        }
+        
+        $sql = "UPDATE `admin_login` SET `login_access`=? WHERE admin_login_IDPK = $id";
+        $this->db->query($sql,$login_access);
+        return true;
+    }
 }
