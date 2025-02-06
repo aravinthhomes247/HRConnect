@@ -73,9 +73,6 @@
                         <a href="<?php echo base_url('/departments') ?>">
                             <li class="list-group-item <?= ($currentpage == 'departments' || $currentpage == 'add-department' || $currentpage == 'edit-department') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/corporate.png'); ?>" class="sidemenu-img-10"><span>Departments</span></li>
                         </a>
-                        <a href="<?php echo base_url('/login-accounts') ?>">
-                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
-                        </a>
                         <a href="<?php echo base_url('/totalEmps?trickid=1') ?>">
                             <li class="list-group-item <?= ($currentpage == 'totalEmps' || $currentpage == 'editEmp-view' || $currentpage == 'add_emp') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Employees</span></li>
                         </a>
@@ -119,6 +116,9 @@
                         </ul>
                         <a href="<?php echo base_url('/settings') ?>">
                             <li class="list-group-item <?= ($currentpage == 'settings') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/setting.ico'); ?>" class="sidemenu-img-11"><span>Settings</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/login-accounts') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Login Credentials</span></li>
                         </a>
                     </ul>
                 </div>
@@ -167,7 +167,7 @@
                                 <li class="list-group-item <?= ($currentpage == 'HRtodays_activity') ? 'active' : '' ?>">Track Activities</li>
                             </a>
                         </ul>
-                        <a href="<?php echo base_url('HRTickets') ?>">
+                        <!-- <a href="<?php echo base_url('HRTickets') ?>">
                             <li class="list-group-item <?= ($currentpage == 'HRTickets') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>My Tickets</span></li>
                         </a>
                         <a href="<?php echo base_url('/HRpayroll?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
@@ -175,7 +175,7 @@
                         </a>
                         <a href="<?php echo base_url('/HRleave?fdate=' . $fdate . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'HRleave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>My Leaves</span></li>
-                        </a>
+                        </a> -->
                     </ul>
                 </div>
             <?php } else if ($session->get('user_level') == 24) { ?>
@@ -272,17 +272,26 @@
                                 <span><?= $session->get('Designation') ?? 'NA'; ?></span>
                                 <ul class="dropdown-item" id="dropdownItem">
                                     <ul>
-                                        <a href="#">Notifications <i class="fa-regular fa-bell nav-bar-icon"></i></a>
+                                        <a href="#">Notifications</a>
                                     </ul>
                                     <?php if ($session->get('user_level') == 42) { ?>
                                         <ul>
                                             <a href="<?php echo base_url('/settings') ?>">Settings <i class="fa-solid fa-gear nav-bar-icon"></i></a>
                                         </ul>
                                     <?php } ?>
+                                    <?php if ($session->get('user_level') == 1 || $session->get('user_level') == 18) { ?>
+                                        <ul>
+                                            <a href="<?php echo base_url('HRTickets') ?>">My Tickets </a>
+                                        </ul>
+                                        <ul>
+                                            <a href="<?php echo base_url('/HRpayroll?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">My Payrolls </a>
+                                        </ul>
+                                        <ul>
+                                            <a href="<?php echo base_url('/HRleave?fdate=' . $fdate . '&todate=' . $todate) ?>">My Leaves </a>
+                                        </ul>
+                                    <?php } ?>
                                     <ul>
-                                        <a href="<?php echo (base_url('logout')) ?>">
-                                            Logout <i class="fa-solid fa-arrow-right-from-bracket"></i>
-                                        </a>
+                                        <a href="<?php echo (base_url('logout')) ?>">Logout <i class="fa-solid fa-arrow-right-from-bracket"></i></a>
                                     </ul>
                                 </ul>
                             </div>
