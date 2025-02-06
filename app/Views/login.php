@@ -53,10 +53,16 @@
       width: 75% !important;
     }
 
-    input.inp{
+    input.inp {
       border-right: none !important;
     }
 
+    i.passeye {
+      vertical-align: middle;
+      margin-right: 15px;
+      padding-left: 1px;
+      width: 22px;
+    }
   </style>
 </head>
 
@@ -85,7 +91,7 @@
             <div class="input-group-append">
               <div class="input-group-text">
                 <!-- <span class="fas fa-envelope"></span> -->
-                 <img src="<?= base_url('public/images/img/mail.png') ?>" class="w-100" alt="mail">
+                <img src="<?= base_url('public/images/img/mail.png') ?>" class="w-100" alt="mail">
               </div>
             </div>
             <?php if ($validation->getError('admin_login_email')) : ?>
@@ -96,11 +102,10 @@
           </div>
 
           <div class="input-group mb-3">
-            <input type="password" class="form-control inp <?php if ($validation->getError('admin_login_password')) : ?>is-invalid <?php endif ?>" name="admin_login_password" placeholder="Password" value="<?php echo set_value('admin_login_email'); ?>" />
+            <input type="password" id="admin_login_password" class="form-control inp <?php if ($validation->getError('admin_login_password')) : ?>is-invalid <?php endif ?>" name="admin_login_password" placeholder="Password" value="<?php echo set_value('admin_login_email'); ?>" />
             <div class="input-group-append">
-              <div class="input-group-text">
-                <!-- <span class="fas fa-lock"></span> -->
-                <img src="<?= base_url('public/images/img/padlock.png') ?>" class="w-100" alt="lock">
+              <div class="input-group-text" id="togglePassword">
+                <i class="fa fa-eye passeye"></i>
               </div>
             </div>
             <?php if ($validation->getError('admin_login_password')) : ?>
@@ -134,6 +139,23 @@
   <script src="https://duzblbyuf5ibr.cloudfront.net/hrpanel/js/bootstrap.bundle.min.js"></script>
   <!-- AdminLTE App -->
   <script src="https://duzblbyuf5ibr.cloudfront.net/hrpanel/js/adminlte.min.js"></script>
+
+  <script>
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      var passwordInput = document.getElementById('admin_login_password');
+      var icon = this.querySelector('i');
+
+      if (passwordInput.type === "password") {
+        passwordInput.type = "text";
+        icon.classList.remove("fa-eye");
+        icon.classList.add("fa-eye-slash");
+      } else {
+        passwordInput.type = "password";
+        icon.classList.remove("fa-eye-slash");
+        icon.classList.add("fa-eye");
+      }
+    });
+  </script>
 </body>
 
 </html>
