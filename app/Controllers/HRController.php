@@ -4992,7 +4992,7 @@ class HRController extends BaseController
         $data['trickid'] = $_GET['trickid'] ?? 1;
         $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
         $data['todate'] = $_GET['todate'] ?? date('Y-m-d');
-        if (session()->get('user_level') == 1) {
+        if (session()->get('user_level') == 42) {
             $sac = 1;
         } else {
             $sac = 0;

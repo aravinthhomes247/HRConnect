@@ -1563,7 +1563,7 @@ class EmployeeModel extends Model
                 FROM leaves A
                 LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
                 LEFT JOIN leavetype C ON C.IDPK = A.TypeIDFK
-                WHERE DATE(Date) BETWEEN '$fdate' AND '$todate' $trick $trick2";
+                WHERE DATE(Created_at) BETWEEN '$fdate' AND '$todate' $trick $trick2";
         $leaves = $this->db->query($sql)->getResultArray();
         return $leaves;
     }

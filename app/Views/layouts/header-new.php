@@ -73,6 +73,9 @@
                         <a href="<?php echo base_url('/departments') ?>">
                             <li class="list-group-item <?= ($currentpage == 'departments' || $currentpage == 'add-department' || $currentpage == 'edit-department') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/corporate.png'); ?>" class="sidemenu-img-10"><span>Departments</span></li>
                         </a>
+                        <a href="<?php echo base_url('/login-accounts') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
+                        </a>
                         <a href="<?php echo base_url('/totalEmps?trickid=1') ?>">
                             <li class="list-group-item <?= ($currentpage == 'totalEmps' || $currentpage == 'editEmp-view' || $currentpage == 'add_emp') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Employees</span></li>
                         </a>
@@ -117,9 +120,6 @@
                         <a href="<?php echo base_url('/settings') ?>">
                             <li class="list-group-item <?= ($currentpage == 'settings') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/setting.ico'); ?>" class="sidemenu-img-11"><span>Settings</span></li>
                         </a>
-                        <a href="<?php echo base_url('/login-accounts') ?>">
-                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
-                        </a>
                     </ul>
                 </div>
             <?php } else if ($session->get('user_level') == 1 || $session->get('user_level') == 18) { ?>
@@ -132,11 +132,20 @@
                         <a href="<?php echo base_url('/HRdashboard?fdate=' . $fdate . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'HRdashboard' || $currentpage == 'allevents') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/hr-group.ico'); ?>" class="sidemenu-img-2"><span>Dashboard</span></li>
                         </a>
+                        <a href="<?php echo base_url('/departments') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'departments' || $currentpage == 'add-department' || $currentpage == 'edit-department') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/corporate.png'); ?>" class="sidemenu-img-10"><span>Departments</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/login-accounts') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
+                        </a>
                         <a href="<?php echo base_url('/totalEmps?trickid=1') ?>">
                             <li class="list-group-item <?= ($currentpage == 'totalEmps' || $currentpage == 'editEmp-view' || $currentpage == 'add_emp') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Employees</span></li>
                         </a>
                         <a href="<?php echo base_url('careers?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'careers' || $currentpage == 'applicants' || $currentpage == 'add-career' || $currentpage == 'edit-career') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/career.ico'); ?>" class="sidemenu-img-7"><span>Careers</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/leave?trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>">
+                            <li class="list-group-item <?= ($currentpage == 'leave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leaves</span></li>
                         </a>
                         <a href="javascript:void(0);">
                             <li class="list-group-item candidates-menu"> <img src="<?php echo base_url('../public/images/img/candi.ico'); ?>" class="sidemenu-img-9"><span>Candidates<i class="fa-solid fa-angle-down down-icon"></i><i class="fa-solid fa-angle-up up-icon hidden"></i></span></li>
@@ -159,16 +168,13 @@
                             </a>
                         </ul>
                         <a href="<?php echo base_url('HRTickets') ?>">
-                            <li class="list-group-item <?= ($currentpage == 'HRTickets') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>Tickets</span></li>
+                            <li class="list-group-item <?= ($currentpage == 'HRTickets') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>My Tickets</span></li>
                         </a>
                         <a href="<?php echo base_url('/HRpayroll?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
-                            <li class="list-group-item <?= ($currentpage == 'HRpayroll') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Payroll</span></li>
+                            <li class="list-group-item <?= ($currentpage == 'HRpayroll') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>My Payrolls</span></li>
                         </a>
                         <a href="<?php echo base_url('/HRleave?fdate=' . $fdate . '&todate=' . $todate) ?>">
-                            <li class="list-group-item <?= ($currentpage == 'HRleave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leave</span></li>
-                        </a>
-                        <a href="<?php echo base_url('/login-accounts') ?>">
-                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
+                            <li class="list-group-item <?= ($currentpage == 'HRleave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>My Leaves</span></li>
                         </a>
                     </ul>
                 </div>
@@ -245,16 +251,7 @@
             <div class="page-content">
                 <nav class="navbar">
                     <div class="container-fluid">
-                        <form class="d-flex">
-                            <!-- <div class="input-group">
-                                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
-                                <input class="form-control main-search-box" type="search" placeholder="Search employee" aria-label="Search">
-                            </div> -->
-                        </form>
                         <div class="nav-myprofile">
-                            <a href="#"></a>
-
-
                             <?php
                             if (empty($session->get('Image')) || $session->get('Image') == null) { ?>
                                 <img class="circular--landscape" src="<?php echo base_url('public/images/default-profile.png') ?>">
@@ -286,7 +283,6 @@
                         </div>
                     </div>
                 </nav>
-
                 <?php echo ($this->renderSection("body")) ?>
             </div>
         </div>
@@ -317,11 +313,9 @@
 
     <!-- tiny editor -->
     <?php
-
-    use App\Models\CareerModel;
-
-    $this->careerModel = new CareerModel();
-    $ret_arr = $this->careerModel->get_tinyMCE_code();
+        use App\Models\CareerModel;
+        $this->careerModel = new CareerModel();
+        $ret_arr = $this->careerModel->get_tinyMCE_code();
     ?>
     <script src="https://cdn.tiny.cloud/1/<?= $ret_arr['tinyMCE_API']; ?>/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
@@ -341,26 +335,24 @@
 
 
         $(document).ready(function() {
-            // Handle click on candidates-menu
-            const downIcon = $('.candidates-menu .down-icon'); // Get the down icon
-            const upIcon = $('.candidates-menu .up-icon'); // Get the up icon
+            const downIcon = $('.candidates-menu .down-icon');
+            const upIcon = $('.candidates-menu .up-icon');
             if ($('.sublist').hasClass('hidden')) {
-                downIcon.css('display', 'inline-block'); // Show down icon
-                upIcon.css('display', 'none'); // Hide up icon
+                downIcon.css('display', 'inline-block');
+                upIcon.css('display', 'none');
             } else {
-                downIcon.css('display', 'none'); // Hide down icon
-                upIcon.css('display', 'inline-block'); // Show up icon
+                downIcon.css('display', 'none');
+                upIcon.css('display', 'inline-block');
             }
 
             $('.candidates-menu').on('click', function() {
-                const sublist = $('.sublist').toggleClass('hidden'); // Get the next submenu (sublist)
-
+                const sublist = $('.sublist').toggleClass('hidden');
                 if ($('.sublist').hasClass('hidden')) {
-                    downIcon.css('display', 'inline-block'); // Show down icon
-                    upIcon.css('display', 'none'); // Hide up icon
+                    downIcon.css('display', 'inline-block');
+                    upIcon.css('display', 'none');
                 } else {
-                    downIcon.css('display', 'none'); // Hide down icon
-                    upIcon.css('display', 'inline-block'); // Show up icon
+                    downIcon.css('display', 'none');
+                    upIcon.css('display', 'inline-block');
                 }
             });
         });
@@ -370,15 +362,9 @@
                 columnDefs: [{
                         className: 'align-left',
                         targets: '_all'
-                    } // Apply to all columns
+                    }
                 ]
             });
-            // $('.dataTable').DataTable({
-            //     columnDefs: [{ 
-            //                     className: 'align-left', 
-            //                     targets: '_all' } // Apply to all columns
-            //                 ]
-            // });
         });
 
         tinymce.init({
