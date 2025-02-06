@@ -251,6 +251,12 @@
             <div class="page-content">
                 <nav class="navbar">
                     <div class="container-fluid">
+                        <form class="d-flex">
+                            <!-- <div class="input-group">
+                                <span class="input-group-text"><i class="fa-solid fa-magnifying-glass"></i></span>
+                                <input class="form-control main-search-box" type="search" placeholder="Search employee" aria-label="Search">
+                            </div> -->
+                        </form>
                         <div class="nav-myprofile">
                             <?php
                             if (empty($session->get('Image')) || $session->get('Image') == null) { ?>
@@ -269,7 +275,7 @@
                                         <a href="#">Notifications <i class="fa-regular fa-bell nav-bar-icon"></i></a>
                                     </ul>
                                     <?php if ($session->get('user_level') == 42) { ?>
-                                        <ul>  
+                                        <ul>
                                             <a href="<?php echo base_url('/settings') ?>">Settings <i class="fa-solid fa-gear nav-bar-icon"></i></a>
                                         </ul>
                                     <?php } ?>
@@ -313,9 +319,11 @@
 
     <!-- tiny editor -->
     <?php
-        use App\Models\CareerModel;
-        $this->careerModel = new CareerModel();
-        $ret_arr = $this->careerModel->get_tinyMCE_code();
+
+    use App\Models\CareerModel;
+
+    $this->careerModel = new CareerModel();
+    $ret_arr = $this->careerModel->get_tinyMCE_code();
     ?>
     <script src="https://cdn.tiny.cloud/1/<?= $ret_arr['tinyMCE_API']; ?>/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 
@@ -360,10 +368,9 @@
         $(document).ready(function() {
             $('#dataTable').DataTable({
                 columnDefs: [{
-                        className: 'align-left',
-                        targets: '_all'
-                    }
-                ]
+                    className: 'align-left',
+                    targets: '_all'
+                }]
             });
         });
 
