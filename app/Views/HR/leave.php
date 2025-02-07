@@ -189,7 +189,7 @@
             var cmpdate = $('#CompDate').val();
             var sdate = $('#Start_time').val();
             var edate = $('#End_time').val();
-            var reason = $('#Reason').val();
+            var reason = $('#Reason').val().trim();
             var flag = true;
             $('#LeaveType').removeClass('is-invalid');
             $('#Date').removeClass('is-invalid');
@@ -238,11 +238,6 @@
                 $('#LeaveForm').submit();
             }
         });
-
-
-
-
-
     });
 </script>
 
