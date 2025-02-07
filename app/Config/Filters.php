@@ -2,6 +2,10 @@
 
 namespace Config;
 
+use App\Filters\Admin;
+use App\Filters\AdminOrHrexecutive;
+use App\Filters\AdminOrHrexeOrHrrecruiter;
+use App\Filters\Superadmin;
 use CodeIgniter\Config\BaseConfig;
 use CodeIgniter\Filters\CSRF;
 use CodeIgniter\Filters\DebugToolbar;
@@ -10,6 +14,12 @@ use CodeIgniter\Filters\InvalidChars;
 use CodeIgniter\Filters\SecureHeaders;
 
 use App\Filters\Auth;
+use App\Filters\Employee;
+use App\Filters\Hrexecutive;
+use App\Filters\Hrrecruiter;
+use App\Filters\Permission;
+use App\Filters\SuperOrAdminOrHrexecutive;
+use App\Filters\SuperOrAdminOrHrexeOrHrrecruiter;
 
 class Filters extends BaseConfig
 {
@@ -26,6 +36,17 @@ class Filters extends BaseConfig
         'invalidchars'  => InvalidChars::class,
         'secureheaders' => SecureHeaders::class,
         'auth'          => Auth::class,
+
+        'superadmin'    => Superadmin::class,
+        'admin'         => Admin::class,
+        'hrexecutive'   => Hrexecutive::class,
+        'hrrecruiter'   => Hrrecruiter::class,
+        'employee'      => Employee::class,
+        
+        'superoradminorexe' => SuperOrAdminOrHrexecutive::class,
+        'adminorexe'    => AdminOrHrexecutive::class,
+        'adminorexeorrec'=> AdminOrHrexeOrHrrecruiter::class,
+        'suporadminorexeorrec' => SuperOrAdminOrHrexeOrHrrecruiter::class,
     ];
 
     /**

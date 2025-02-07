@@ -400,7 +400,7 @@ if (isset($_SESSION['msg'])) {
                         </div>
                     </div>
                 </form>
-            <?php } elseif ($roundList[0]['RoundID'] >= 1) { ?>
+            <?php } elseif (!empty($roundList[0]) && $roundList[0]['RoundID'] >= 1) { ?>
                 <div class="row">
                     <div class="col col-lg-5 mt-4 ms-5">
                         <div class="row w-75">
@@ -588,7 +588,7 @@ if (isset($_SESSION['msg'])) {
         </div>
 
         <div class="col col-lg-12 round" id="tab-round-2">
-            <?php if ($roundList[0]['RoundID'] == 1) { ?>
+            <?php if (!empty($roundList[0]) && $roundList[0]['RoundID'] == 1) { ?>
                 <form action="<?= site_url('/update_interviewpro') ?>" method="post" class="RoundForm" id="RoundForm2">
                     <div class="row">
                         <input type="hidden" name="CandidateId" value="<?= $candidate_details[0]['CandidateId'] ?>">
@@ -745,7 +745,7 @@ if (isset($_SESSION['msg'])) {
                         </div>
                     </div>
                 </form>
-            <?php } elseif ($roundList[0]['RoundID'] >= 2) { ?>
+            <?php } elseif (!empty($roundList[0]) && $roundList[0]['RoundID'] >= 2) { ?>
                 <div class="row">
                     <div class="col col-lg-5 mt-4 ms-5">
                         <div class="row w-75">
@@ -933,7 +933,7 @@ if (isset($_SESSION['msg'])) {
         </div>
 
         <div class="col col-lg-12 round" id="tab-round-3">
-            <?php if ($roundList[0]['RoundID'] == 2) { ?>
+            <?php if (!empty($roundList[0]) && $roundList[0]['RoundID'] == 2) { ?>
                 <form action="<?= site_url('/update_interviewpro') ?>" method="post" class="RoundForm" id="RoundForm3">
                     <div class="row">
                         <input type="hidden" name="CandidateId" value="<?= $candidate_details[0]['CandidateId'] ?>">
@@ -1090,7 +1090,7 @@ if (isset($_SESSION['msg'])) {
                         </div>
                     </div>
                 </form>
-            <?php } elseif ($roundList[0]['RoundID'] >= 3) { ?>
+            <?php } elseif (!empty($roundList[0]) && $roundList[0]['RoundID'] >= 3) { ?>
                 <div class="row">
                     <div class="col col-lg-5 mt-4 ms-5">
                         <div class="row w-75">
@@ -1279,7 +1279,7 @@ if (isset($_SESSION['msg'])) {
         </div>
 
         <div class="col col-lg-12 round" id="tab-round-4">
-            <?php if ($roundList[0]['RoundID'] == 3) { ?>
+            <?php if (!empty($roundList[0]) && $roundList[0]['RoundID'] == 3) { ?>
                 <form action="<?= site_url('/update_interviewpro') ?>" method="post" class="RoundForm" id="RoundForm4">
                     <div class="row">
                         <input type="hidden" name="CandidateId" value="<?= $candidate_details[0]['CandidateId'] ?>">
@@ -1436,7 +1436,7 @@ if (isset($_SESSION['msg'])) {
                         </div>
                     </div>
                 </form>
-            <?php } elseif ($roundList[0]['RoundID'] >= 4) { ?>
+            <?php } elseif (!empty($roundList[0]) && $roundList[0]['RoundID'] >= 4) { ?>
                 <div class="row">
                     <div class="col col-lg-5 mt-4 ms-5">
                         <div class="row w-75">
@@ -1624,7 +1624,7 @@ if (isset($_SESSION['msg'])) {
         </div>
 
         <div class="col col-lg-12 round" id="tab-round-5">
-            <?php if ($roundList[0]['RoundID'] == 4) { ?>
+            <?php if (!empty($roundList[0]) && $roundList[0]['RoundID'] == 4) { ?>
                 <form action="<?= site_url('/update_interviewpro') ?>" method="post" class="RoundForm" id="RoundForm5">
                     <div class="row">
                         <input type="hidden" name="CandidateId" value="<?= $candidate_details[0]['CandidateId'] ?>">
@@ -1781,7 +1781,7 @@ if (isset($_SESSION['msg'])) {
                         </div>
                     </div>
                 </form>
-            <?php } elseif ($roundList[0]['RoundID'] >= 5) { ?>
+            <?php } elseif (!empty($roundList[0]) && $roundList[0]['RoundID'] >= 5) { ?>
                 <div class="row">
                     <div class="col col-lg-5 mt-4 ms-5">
                         <div class="row w-75">
@@ -1969,7 +1969,7 @@ if (isset($_SESSION['msg'])) {
         </div>
 
         <div class="col col-lg-12 round" id="tab-round-6">
-            <?php if ($roundList[0]['RoundID'] == 5) { ?>
+            <?php if (!empty($roundList[0]) && $roundList[0]['RoundID'] == 5) { ?>
                 <form action="<?= site_url('/update_interviewpro') ?>" method="post" class="RoundForm" id="RoundForm6">
                     <div class="row">
                         <input type="hidden" name="CandidateId" value="<?= $candidate_details[0]['CandidateId'] ?>">
@@ -2122,7 +2122,7 @@ if (isset($_SESSION['msg'])) {
                         </div>
                     </div>
                 </form>
-            <?php } elseif ($roundList[0]['RoundID'] >= 6) { ?>
+            <?php } elseif (!empty($roundList[0]) && $roundList[0]['RoundID'] >= 6) { ?>
                 <div class="row">
                     <div class="col col-lg-5 mt-4 ms-5">
                         <div class="row w-75">

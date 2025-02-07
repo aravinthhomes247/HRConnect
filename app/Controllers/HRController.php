@@ -57,6 +57,9 @@ class HRController extends BaseController
         $this->PhpMailer = \Config\Services::email();
     }
 
+    public function NoPermission(){
+        return view('nopermission');
+    }
 
 
     public function register()
