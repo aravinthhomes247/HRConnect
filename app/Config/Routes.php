@@ -260,7 +260,7 @@ $routes->get('/downloadpayslipexcel', 'HRController::DownloadPayslipExcel',['fil
 // Tickets
 $routes->get('/tickets', 'HRController::Tickets',['filter' => 'superadmin']);
 $routes->post('/add-ticket', 'HRController::AddTicket',['filter' => 'superadmin']);
-$routes->get('/ticket-edit/(:num)', 'HRController::EditTicket/$1',['filter' => 'superadmin']);
+$routes->get('/ticket-edit/(:num)', 'HRController::EditTicket/$1',['filter' => 'auth']);
 $routes->post('/ticket-update-status', 'HRController::StatusTicketUpdate',['filter' => 'superadmin']);
 $routes->get('/tickets-update-status/(:num)/(:num)', 'HRController::StatusTicketsUpdate/$1/$2',['filter' => 'superadmin']);
 
@@ -269,7 +269,7 @@ $routes->get('/leave', 'HRController::Leaves',['filter' => 'superoradminorexe'])
 $routes->get('/leave-edit/(:num)', 'HRController::GetLeave/$1',['filter' => 'superoradminorexe']);
 $routes->post('/leave-update-status', 'HRController::StatusLeaveUpdate',['filter' => 'superoradminorexe']);
 $routes->get('/leave-update-status/(:num)/(:num)', 'HRController::StatusLeavesUpdate/$1/$2',['filter' => 'superoradminorexe']);
-$routes->post('/add-leave', 'HRController::AddLeave',['filter' => 'superoradminorexe']);
+$routes->post('/add-leave', 'HRController::AddLeave',['filter' => 'auth']);
 
 // Employee login pages
 $routes->get('/user-dashboard', 'HRController::UserDashboard',['filter' => 'employee']);
@@ -295,8 +295,6 @@ $routes->post('/store-account', 'HRController::StoreAccount',['filter' => 'super
 $routes->get('/edit-account/(:num)', 'HRController::EditAccount/$1',['filter' => 'superoradminorexe']);
 $routes->post('/update-account/(:num)', 'HRController::UpdateAccount/$1',['filter' => 'superoradminorexe']);
 $routes->get('/deactactaccount/(:any)', 'HRController::ActDactAccount/$1',['filter' => 'superoradminorexe']);
-
-
 
 /*
  * --------------------------------------------------------------------

@@ -1603,10 +1603,15 @@ class EmployeeModel extends Model
 
     public function ApplyLeave($data)
     {
-        $sql = "INSERT INTO `leaves`(`EmployeeIDFK`, `TypeIDFK`, `Date`, `CompDate`, `Reason`, `Start_time`, `End_time`) 
-                VALUES (?,?,?,?,?,?,?)";
-        $this->db->query($sql, [$data['EmployeeIDFK'], $data['TypeIDFK'], $data['Date'], $data['CompDate'], $data['Reason'], $data['Start_time'], $data['End_time']]);
-        return true;
+        $sql="SELECT COUNT(*) as leaves FROM leaves WHERE EmployeeIDFK =? AND DATE(Date) = ? AND TypeIDFK != 6";
+        $count = $this->db->query($sql,[$data['EmployeeIDFK'], $data['Date']])->getRow()->leaves;
+        if($count == 0){
+            $sql = "INSERT INTO `leaves`(`EmployeeIDFK`, `TypeIDFK`, `Date`, `CompDate`, `Reason`, `Start_time`, `End_time`) 
+                    VALUES (?,?,?,?,?,?,?)";
+            $this->db->query($sql, [$data['EmployeeIDFK'], $data['TypeIDFK'], $data['Date'], $data['CompDate'], $data['Reason'], $data['Start_time'], $data['End_time']]);
+            return true;
+        }
+        return false;
     }
 
     public function GetUserLeaves($id)
@@ -1629,6 +1634,7 @@ class EmployeeModel extends Model
         $sql = "SELECT TypeIDFK, COUNT(*) AS leave_count 
                 FROM leaves 
                 WHERE EmployeeIDFK = ? 
+                AND (Status = 1 OR Status = 0)
                 AND DATE(Date) BETWEEN DATE_FORMAT(NOW(), '%Y-%m-01') AND LAST_DAY(NOW()) 
                 GROUP BY TypeIDFK";
         $leaves = $this->db->query($sql, [$id])->getResultArray();

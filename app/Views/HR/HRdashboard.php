@@ -167,7 +167,7 @@
                         </div>
                     </div>
                     <div class="row row-lg-12">
-                        <span><?= $event['EventDescription'] ?></span>
+                        <span style="overflow-y: scroll;max-height: 50px;"><?= $event['EventDescription'] ?></span>
                     </div>
                 </div>
             <?php endforeach; ?>

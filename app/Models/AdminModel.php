@@ -185,6 +185,12 @@ class AdminModel extends Model
         return true;
     }
 
+    public function AutoRemoveEvents(){
+        $sql = "DELETE FROM events WHERE DATE(EventDate) < CURRENT_DATE()";
+        $this->db->query($sql);
+        return true;
+    }
+
     public function AttendanceHolidays($badge){
         $start = $badge*5;
         $sql = "SELECT Name, Date,

@@ -47,6 +47,7 @@
                 <th>Leave Type</th>
                 <th>Reason</th>
                 <th>Status</th>
+                <th>Date</th>
                 <th>Raised On</th>
             </tr>
         </thead>
@@ -69,6 +70,7 @@
                             $color = '#F94343';
                         } ?>
                         <td style="color:<?= $color ?>"><?= $text ?></td>
+                        <td><?= date('d-M-Y', strtotime($leave['Date'])) ?></td>
                         <td><?= date('d-M-Y', strtotime($leave['Created_at'])) ?></td>
                     </tr>
                 <?php endforeach; ?>
@@ -131,7 +133,7 @@
                     </div>
                     <div class="row mb-2">
                         <div class="col-3">
-                            <h6 class="mt-2">Date</h6>
+                            <h6 class="mt-2">Leave Date</h6>
                         </div>
                         <div class="col-9">
                             <input type="date" class="form-control" name="Date" id="Date" required>
@@ -171,6 +173,12 @@
 
 <script>
     $(document).ready(function() {
+        var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
+        error = error.trim();
+        if(error){
+            Swal.fire(error);
+        }
+
         $('#examp1').dataTable({});
 
         $('#LeaveType').on("change", function() {

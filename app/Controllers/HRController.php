@@ -250,6 +250,7 @@ class HRController extends BaseController
         $cron = $this->admin->cronjobs();
         if(!$cron){
             $this->admin->AutoRemoveHolidays();
+            $this->admin->AutoRemoveEvents();
             $this->empModel->autopayslipmaker();
             $this->empModel->AutoLeaveGenerater();
         }
@@ -5045,8 +5046,12 @@ class HRController extends BaseController
         $data['Start_time'] = $_POST['Start_time'] ?? '00:00:00';
         $data['End_time'] = $_POST['End_time'] ?? '00:00:00';
         $data['Reason'] = $_POST['Reason'] ?? '';
-        $this->empModel->ApplyLeave($data);
-        return redirect()->back();
+        $result = $this->empModel->ApplyLeave($data);
+        if ($result) {
+            return redirect()->back()->with('Error','Leave Applied!');
+        }else{
+            return redirect()->back()->with('Error','Already Applied!');
+        }
     }
 
     public function Accounts(){
