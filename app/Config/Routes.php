@@ -259,7 +259,7 @@ $routes->get('/downloadpayslipexcel', 'HRController::DownloadPayslipExcel',['fil
 
 // Tickets
 $routes->get('/tickets', 'HRController::Tickets',['filter' => 'superoradminorexe']);
-$routes->post('/add-ticket', 'HRController::AddTicket',['filter' => 'superoradminorexe']);
+$routes->post('/add-ticket', 'HRController::AddTicket',['filter' => 'auth']);
 $routes->get('/ticket-edit/(:num)', 'HRController::EditTicket/$1',['filter' => 'auth']);
 $routes->post('/ticket-update-status', 'HRController::StatusTicketUpdate',['filter' => 'superoradminorexe']);
 $routes->get('/tickets-update-status/(:num)/(:num)', 'HRController::StatusTicketsUpdate/$1/$2',['filter' => 'superoradminorexe']);
