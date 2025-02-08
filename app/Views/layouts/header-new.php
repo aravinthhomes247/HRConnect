@@ -19,8 +19,8 @@
 
         <!-- Bootsrup 5.3 -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-
+            integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" 
+            crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
             crossorigin="anonymous"></script>
@@ -57,8 +57,7 @@
             $fdate = date("Y-m-d");
             $todate = date("Y-m-d");
             $currentpage = uri_string();
-            $currentpage = preg_replace('/\/\d+$/', '', $currentpage)
-            // print_r($currentpage);exit(0);
+            $currentpage = preg_replace('/\/\d+$/', '', $currentpage);
             ?>
             <?php if ($session->get('user_level') == 42) { ?>
                 <div class="sidebar">
@@ -85,7 +84,7 @@
                         <a href="<?php echo base_url('payrolls?trickid=1&fdate=' . date('Y-m-d', strtotime('-1 month', strtotime($fdate)))) ?>">
                             <li class="list-group-item <?= ($currentpage == 'payrolls') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Payrolls</span></li>
                         </a>
-                        <a href="<?php echo base_url('/leave?trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>">
+                        <a href="<?php echo base_url('/leave?trickid=1&fdate=' . date('Y-m-01') . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'leave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leaves</span></li>
                         </a>
                         <a href="<?php echo base_url('careers?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
@@ -135,38 +134,44 @@
                         <a href="<?php echo base_url('/departments') ?>">
                             <li class="list-group-item <?= ($currentpage == 'departments' || $currentpage == 'add-department' || $currentpage == 'edit-department') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/corporate.png'); ?>" class="sidemenu-img-10"><span>Departments</span></li>
                         </a>
-                        <a href="<?php echo base_url('/login-accounts') ?>">
-                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
-                        </a>
                         <a href="<?php echo base_url('/totalEmps?trickid=1') ?>">
                             <li class="list-group-item <?= ($currentpage == 'totalEmps' || $currentpage == 'editEmp-view' || $currentpage == 'add_emp') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Employees</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/reportemp?trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>">
+                            <li class="list-group-item <?= ($currentpage == 'reportemp') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/time-fast.ico'); ?>" class="sidemenu-img-4"><span>Time Logs</span></li>
                         </a>
                         <a href="<?php echo base_url('careers?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'careers' || $currentpage == 'applicants' || $currentpage == 'add-career' || $currentpage == 'edit-career') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/career.ico'); ?>" class="sidemenu-img-7"><span>Careers</span></li>
                         </a>
-                        <a href="<?php echo base_url('/leave?trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>">
+                        <a href="<?php echo base_url('tickets?trickid=1&fdate=' . $fdate . '&todate=' . $todate) ?>">
+                            <li class="list-group-item <?= ($currentpage == 'tickets') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>Tickets</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/leave?trickid=1&fdate=' . date('Y-m-01') . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'leave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leaves</span></li>
                         </a>
                         <a href="javascript:void(0);">
                             <li class="list-group-item candidates-menu"> <img src="<?php echo base_url('../public/images/img/candi.ico'); ?>" class="sidemenu-img-9"><span>Candidates<i class="fa-solid fa-angle-down down-icon"></i><i class="fa-solid fa-angle-up up-icon hidden"></i></span></li>
                         </a>
                         <ul class="sublist <?= in_array($currentpage, ['HRcandidate_List', 'HRmy_overdues', 'HRtodays_activity']) ? '' : 'hidden' ?>">
-                            <a href="<?php echo base_url('/HRcandidate_List?trickid=12&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
-                                <li class="list-group-item <?= ($currentpage == 'HRcandidate_List' && $trickid != 11 && $trickid != 9) ? 'active' : '' ?>">Track Candidates</li>
+                            <a href="<?php echo site_url('/candidate?trickid=12&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
+                                <li class="list-group-item  <?= ($currentpage == 'candidate' && $trickid != 11 && $trickid != 9) ? 'active' : '' ?>">Track Candidates</li>
                             </a>
-                            <a href="<?php echo site_url('/HRcandidate_List?trickid=11&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
-                                <li class="list-group-item <?= ($currentpage == 'HRcandidate_List' && $trickid == 11) ? 'active' : '' ?>">Today Scheduled</li>
+                            <a href="<?php echo site_url('/candidate?trickid=11&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
+                                <li class="list-group-item <?= ($currentpage == 'candidate' && $trickid == 11) ? 'active' : '' ?>">Today Scheduled</li>
                             </a>
-                            <a href="<?php echo site_url('/HRcandidate_List?trickid=9&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
-                                <li class="list-group-item <?= ($currentpage == 'HRcandidate_List' && $trickid == 9) ? 'active' : '' ?>">Upcoming Scheduled</li>
+                            <a href="<?php echo site_url('/candidate?trickid=9&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
+                                <li class="list-group-item <?= ($currentpage == 'candidate' && $trickid == 9) ? 'active' : '' ?>">Upcoming Scheduled</li>
                             </a>
-                            <a href="<?php echo site_url('/HRmy_overdues?trickid=12&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
-                                <li class="list-group-item <?= ($currentpage == 'HRmy_overdues') ? 'active' : '' ?>">My Overdues</li>
+                            <a href="<?php echo site_url('/my_overdues?trickid=12&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
+                                <li class="list-group-item <?= ($currentpage == 'my_overdues') ? 'active' : '' ?>">My Overdues</li>
                             </a>
-                            <a href="<?php echo base_url('/HRtodays_activity?&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
-                                <li class="list-group-item <?= ($currentpage == 'HRtodays_activity') ? 'active' : '' ?>">Track Activities</li>
+                            <a href="<?php echo site_url('/todays_activity?fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
+                                <li class="list-group-item <?= ($currentpage == 'todays_activity') ? 'active' : '' ?>">Track Activities</li>
                             </a>
                         </ul>
+                        <a href="<?php echo base_url('/login-accounts') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'login-accounts' || $currentpage == 'edit-account') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/key_blur.png'); ?>" class="sidemenu-img-12"><span>Accounts</span></li>
+                        </a>
                         <!-- <a href="<?php echo base_url('HRTickets') ?>">
                             <li class="list-group-item <?= ($currentpage == 'HRTickets') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>My Tickets</span></li>
                         </a>
@@ -191,6 +196,15 @@
                         <a href="javascript:void(0);">
                             <li class="list-group-item candidates-menu"> <img src="<?php echo base_url('../public/images/img/candi.ico'); ?>" class="sidemenu-img-9"><span>Candidates<i class="fa-solid fa-angle-down down-icon"></i><i class="fa-solid fa-angle-up up-icon hidden"></i></span></li>
                         </a>
+                        <a href="<?php echo base_url('HRTickets') ?>">
+                            <li class="list-group-item <?= ($currentpage == 'HRTickets') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>Tickets</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/HRpayroll?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
+                            <li class="list-group-item <?= ($currentpage == 'HRpayroll') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Payroll</span></li>
+                        </a>
+                        <a href="<?php echo base_url('/HRleave?fdate=' . $fdate . '&todate=' . $todate) ?>">
+                            <li class="list-group-item <?= ($currentpage == 'HRleave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leave</span></li>
+                        </a>
                         <ul class="sublist <?= in_array($currentpage, ['HRcandidate_List', 'HRmy_overdues', 'HRtodays_activity']) ? '' : 'hidden' ?>">
                             <a href="<?php echo base_url('/HRcandidate_List?trickid=12&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
                                 <li class="list-group-item <?= ($currentpage == 'HRcandidate_List' && $trickid != 11 && $trickid != 9) ? 'active' : '' ?>">Track Candidates</li>
@@ -208,15 +222,6 @@
                                 <li class="list-group-item <?= ($currentpage == 'HRtodays_activity') ? 'active' : '' ?>">Track Activities</li>
                             </a>
                         </ul>
-                        <a href="<?php echo base_url('HRTickets') ?>">
-                            <li class="list-group-item <?= ($currentpage == 'HRTickets') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>Tickets</span></li>
-                        </a>
-                        <a href="<?php echo base_url('/HRpayroll?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
-                            <li class="list-group-item <?= ($currentpage == 'HRpayroll') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/calendar-salary.ico'); ?>" class="sidemenu-img-6"><span>Payroll</span></li>
-                        </a>
-                        <a href="<?php echo base_url('/HRleave?fdate=' . $fdate . '&todate=' . $todate) ?>">
-                            <li class="list-group-item <?= ($currentpage == 'HRleave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leave</span></li>
-                        </a>
                     </ul>
                 </div>
             <?php } else { ?>
@@ -328,11 +333,9 @@
 
     <!-- tiny editor -->
     <?php
-
-    use App\Models\CareerModel;
-
-    $this->careerModel = new CareerModel();
-    $ret_arr = $this->careerModel->get_tinyMCE_code();
+        use App\Models\CareerModel;
+        $this->careerModel = new CareerModel();
+        $ret_arr = $this->careerModel->get_tinyMCE_code();
     ?>
     <script src="https://cdn.tiny.cloud/1/<?= $ret_arr['tinyMCE_API']; ?>/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
 

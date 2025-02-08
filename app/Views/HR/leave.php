@@ -173,7 +173,7 @@
 
 <script>
     $(document).ready(function() {
-        var error = '<? session()->getFlashdata('Error') ?? '' ?>';
+        var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
         error = error.trim();
         if(error){
             Swal.fire(error);

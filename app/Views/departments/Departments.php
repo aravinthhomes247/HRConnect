@@ -53,31 +53,31 @@
             </thead>
             <tbody>
                 <?php
-                    foreach($departments as $i => $department){
-                        $days = [];
-                        for ($j = 1; $j <= 7; $j++) {
-                            if ($department['WO' . $j] == 1) {
-                                $days[] = date('l', strtotime("Sunday +$j days -1 day"));
-                            }
-                        } ?>
-                        <tr>
-                            <td><?= $i+1 ?></td>
-                            <td><?= $department['deptName'] ?></td>
-                            <td><?= (count($days) != 0) ? implode(', ', $days) : 'NA' ?></td>
-                            <td><?= $department['CLPM'] ?> Day</td>
-                            <td><?= $department['SLPM'] ?> Day</td>
-                            <td><?= $department['PLPM'] ?> Day</td>
-                            <td><?= $department['holidayCount'] ?> Days</td>
-                            <td>
-                                <a href="javascript:void(0);" class="menu-trigger">
-                                    <img src="<?php echo base_url('../public/images/img/Group.png') ?>" alt="menu" id="menu-icon">
-                                </a>
-                                <div class="dropdown" style="display: none;">
-                                    <a href="<?php echo site_url('/edit-department/'.$department['IDPK']) ?>">Edit</a>
-                                    <a href="<?php echo site_url('/delete-department/'.$department['IDPK']) ?>">Delete</a>
-                                </div>
-                            </td>
-                        </tr>
+                foreach ($departments as $i => $department) {
+                    $days = [];
+                    for ($j = 1; $j <= 7; $j++) {
+                        if ($department['WO' . $j] == 1) {
+                            $days[] = date('l', strtotime("Sunday +$j days -1 day"));
+                        }
+                    } ?>
+                    <tr>
+                        <td><?= $i + 1 ?></td>
+                        <td><?= $department['deptName'] ?></td>
+                        <td><?= (count($days) != 0) ? implode(', ', $days) : 'NA' ?></td>
+                        <td><?= $department['CLPM'] ?> Day</td>
+                        <td><?= $department['SLPM'] ?> Day</td>
+                        <td><?= $department['PLPM'] ?> Day</td>
+                        <td><?= $department['holidayCount'] ?> Days</td>
+                        <td>
+                            <a href="javascript:void(0);" class="menu-trigger">
+                                <img src="<?php echo base_url('../public/images/img/Group.png') ?>" alt="menu" id="menu-icon">
+                            </a>
+                            <div class="dropdown" style="display: none;">
+                                <a href="<?php echo site_url('/edit-department/' . $department['IDPK']) ?>">Edit</a>
+                                <a href="<?php echo site_url('/delete-department/' . $department['IDPK']) ?>">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
                 <?php } ?>
             </tbody>
         </table>
@@ -86,6 +86,11 @@
 
 
 <script>
+    var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
+    error = error.trim();
+    if (error) {
+        Swal.fire(error);
+    }
     // Select all menu-trigger elements
     const menuTriggers = document.querySelectorAll('.menu-trigger');
     menuTriggers.forEach((trigger) => {

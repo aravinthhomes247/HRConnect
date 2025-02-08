@@ -2,74 +2,66 @@
 
 namespace App\Controllers;
 
-use App\Models\AdminModel;
-use App\Models\EmployeeModel;
-use App\Models\LogModel;
-use App\Models\EventsModel;
-use App\Models\LeaveReasonModel;
-use App\Models\CandidateModel;
-use App\Models\CareerModel;
-
-use App\Models\InterviewersModel;
-use App\Models\EmpBankDetailsModel;
-// use App\Models\HRModel;
-
-use CodeIgniter\Files\File;
-
-use PhpOffice\PhpSpreadsheet\Spreadsheet;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
-
-use PhpOffice\PhpSpreadsheet\IOFactory;
-
 use Dompdf\Dompdf;
 use Dompdf\Options;
-
-use App\Controllers\BaseController;
+use App\Models\LogModel;
+use App\Models\AdminModel;
+use App\Models\EventsModel;
+use App\Models\CareerModel;
+use CodeIgniter\Files\File;
+use App\Models\EmployeeModel;
+use App\Models\CandidateModel;
 use CodeIgniter\HTTP\Response;
+use App\Models\LeaveReasonModel;
+use App\Models\InterviewersModel;
+use App\Controllers\BaseController;
+use App\Models\EmpBankDetailsModel;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
 
 class HRController extends BaseController
 {
-
+    private $db;
     private $admin;
     private $session;
-    private $careerModel;
+    private $LRModel;
+    private $empModel;
+    private $logModel;
+    private $eveModel;
     private $PhpMailer;
+    private $careerModel;
+    private $candidateModel;
+    private $interviewerModel;
+    private $empBankDetailsModel;
+
     public function __construct()
     {
         helper(['form', 'url', 'session']);
-        $this->admin = new AdminModel();
-        $this->session = session();
-
-        $this->db      = \Config\Database::connect();
-        // $this->db1      = \Config\Database::connect($homesGroup);
-
-        $this->careerModel = new CareerModel();
-        $this->empModel = new EmployeeModel();
-        $this->logModel = new LogModel();
-        $this->eveModel = new EventsModel();
-        $this->LRModel = new LeaveReasonModel();
-        $this->candidateModel = new CandidateModel();
-
-
-        $this->interviewerModel = new InterviewersModel();
+        $this->db                  = \Config\Database::connect();
+        // $this->db1                 = \Config\Database::connect($homesGroup);
+        $this->admin               = new AdminModel();
+        $this->session             = session();
+        $this->LRModel             = new LeaveReasonModel();
+        $this->empModel            = new EmployeeModel();
+        $this->logModel            = new LogModel();
+        $this->eveModel            = new EventsModel();
+        $this->PhpMailer           = \Config\Services::email();
+        $this->careerModel         = new CareerModel();
+        $this->candidateModel      = new CandidateModel();
+        $this->interviewerModel    = new InterviewersModel();
         $this->empBankDetailsModel = new EmpBankDetailsModel();
-
-        $this->PhpMailer = \Config\Services::email();
     }
 
     public function NoPermission(){
         return view('nopermission');
     }
 
-
     public function register()
     {
         return view('register');
     }
 
-    /**
-     * register
-     */
     public function createAdmin()
     {
         $inputs = $this->validate(
@@ -79,16 +71,9 @@ class HRController extends BaseController
                 'admin_login_password' => 'required|min_length[5]'
             ]
         );
-
         if (!$inputs) {
-            return view(
-                'register',
-                [
-                    'validation' => $this->validator
-                ]
-            );
+            return view('register',['validation' => $this->validator]);
         }
-
         $this->admin->save(
             [
                 'user_name' => $this->request->getVar('user_name'),
@@ -100,30 +85,20 @@ class HRController extends BaseController
         return redirect()->to(site_url('/register'));
     }
 
-    /**
-     * login form
-     */
     public function login()
     {
         return view('login');
     }
 
-    /**
-     * login validate
-     */
     public function loginValidate()
     {
         $fdate = date("Y-m-d");
         $todate = date("Y-m-d");
-
         $email = $this->request->getVar('admin_login_email');
         $password = $this->request->getVar('admin_login_password');
         $user = $this->admin->where('admin_login_email', $email)->where('login_access', 1)->first();
-
         $employee = $this->empModel->where('EmployeeId', $user['EmpIDFK'])->select('Image, EmployeeName, EmployeeId')->first();
         $Desig = $this->empModel->getdesignationM($user['EmpIDFK']);
-        // print_r([$user,$employee,$Desig]);exit(0);
-
         if ($user) {
             $pass = $user['admin_login_password'];
             if ($password == $pass) {
@@ -161,75 +136,20 @@ class HRController extends BaseController
         session()->setFlashdata('failed', 'Failed! incorrect email');
         return redirect()->to(site_url('/login'));
     }
-
-    // public function loginValidate()
-    // {
-    //     $sId=1;
-    //     $sName='HR Executive';
-    //     $sEmail='hr@homes247.in';
-    //     $sPassword='HR@247';
-    //     // print_r($sName);print_r($sEmail);print_r($sPassword);exit();
-
-    // 	$inputs = $this->validate([
-    // 		'admin_login_email' => 'required|valid_email',
-    // 		'admin_login_password' => 'required|min_length[5]'
-    // 	]);
-
-    // 	if (!$inputs) {
-    // 		return view('login', [
-    // 			'validation' => $this->validator
-    // 		]);
-    // 	}
-
-    // 	$email = $this->request->getVar('admin_login_email');
-    // 	$password = $this->request->getVar('admin_login_password');
-
-    // 	$user = $sEmail == $email;
-    // 	$user1 = $password == $sPassword;
-
-    // 	if ($user && $user1) {
-    // 		$pass = $user1 && $user;            
-    // 		if ($pass) {
-    // 			$sessionData = [
-    //                 'sId'=>$sId,
-    //                 'sName'=>$sName,   
-    //                 'sEmail'=>$sEmail,                 
-    // 				'admin_login_email' => $user,
-    // 				'loggedIn' => true,
-    // 			];
-
-    // 			$this->session->set($sessionData);
-    // 			return redirect()->to('dashboard');
-    // 		}
-
-    // 		session()->setFlashdata('failed', 'Failed! incorrect password');
-    // 		return redirect()->to(site_url('/login'));
-    // 	}else{
-    //         session()->setFlashdata('failed', 'Failed! Invalid Credentials');
-    // 		return redirect()->to(site_url('/login'));
-    //     }
-
-    // 	session()->setFlashdata('failed', 'Failed! incorrect email');
-    // 	return redirect()->to(site_url('/login'));
-    // }
-
     public function logout()
     {
         $session = session();
         $session->destroy();
         return redirect()->to('login');
     }
-
-    // DashBoard Page Controllers 
     public function dashboard()
     {
+        $logModel = new LogModel();
         $date['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
         $date['todate'] = $_GET['todate'] ?? date('Y-m-d');
         $data['badge'] = $_GET['badge'] ?? 0;
         $data['badge'] = ($data['badge'] == -1) ? 0 : $data['badge'];
         $data['count'] = count($this->empModel->allEmpsCountM());
-
-        $logModel = new LogModel();
         $data['presents'] = count($logModel->presentslog());
         $data['absent'] = $data['count'] - $data['presents'];
         $data['lateComers'] = count($logModel->lateComerslog());
@@ -240,9 +160,6 @@ class HRController extends BaseController
         $data['abnormalDetails'] = $logModel->AbnormalListM($data);
         $data['leaves'] = $this->empModel->leaveDetails($data);
         $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
-
-        // print_r($data['presents']);exit(0);
-
         return view('dashboard', $data);
     }
 
@@ -260,29 +177,27 @@ class HRController extends BaseController
     function HRBasedDashboard()
     {
         $session = session();
-        $data = [
-            'fdate' => $_GET['fdate'] ?? date('Y-m-d'),
-            'todate' => $_GET['todate'] ?? date('Y-m-d'),
-            'HRid' => $_GET['HRid'],
-            'userLevel' => $session->get('user_level'),
-        ];
-        $HRid = $_GET['HRid'];
-        $this->admin->AutoRemoveHolidays();
         $candidateModel = new CandidateModel();
+        $HRid = $_GET['HRid'];
+        
+        $data['HRid'] = $_GET['HRid'];
         $data['showHR'] = $this->empModel->getHR();
-        $data['HRassignedCandidatesCount'] = count($candidateModel->getHRassignedCandidatesCount($HRid, $data));
+        $data['events'] = $this->empModel->eventsDetails();
+        $data['birthdays'] = $this->empModel->birthdayDetails();
+        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data['todate'] = $_GET['todate'] ?? date('Y-m-d');
+        $data['userLevel'] = $session->get('user_level') ?? 0;
+        $data['allCareerList'] = $this->careerModel->ShowAll($data);
+        $data['workAnniversarys'] = $this->empModel->workAnniversaryDetails();
         $data['HRscheduledCount'] = count($candidateModel->getHRscheduledCount($HRid, $data));
         $data['HRnotScheduledCount'] = count($candidateModel->getHRnotScheduledCount($HRid, $data));
         $data['HRtotalCandidatesCount'] = count($candidateModel->getHRCandidatesCount($HRid, $data));
-        $data['HRSelectedCandidatesCount'] = count($candidateModel->getHRSelectedCandidatesCount($HRid, $data));
         $data['HRJoinedCandidatesCount'] = count($candidateModel->getHRJoinedCandidatesCount($HRid, $data));
+        $data['HRSelectedCandidatesCount'] = count($candidateModel->getHRSelectedCandidatesCount($HRid, $data));
+        $data['HRassignedCandidatesCount'] = count($candidateModel->getHRassignedCandidatesCount($HRid, $data));
         $data['HRrejectedCandidatesCount'] = count($candidateModel->getHRrejectedCandidatesCount($HRid, $data));
 
-        $data['allCareerList'] = $this->careerModel->ShowAll($data);
-        $data['workAnniversarys'] = $this->empModel->workAnniversaryDetails();
-        $data['birthdays'] = $this->empModel->birthdayDetails();
-        $data['events'] = $this->empModel->eventsDetails();
-
+        // $this->admin->AutoRemoveHolidays();
         return view('HRBasedDashboard', $data);
     }
 
@@ -290,93 +205,79 @@ class HRController extends BaseController
     {
         $logModel = new LogModel();
         $data['badge'] = $_GET['badge'] ?? 0;
+        $data1['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data1['todate'] = $_GET['todate'] ?? date('Y-m-d');
         $data['badge'] = ($data['badge'] == -1) ? 0 : $data['badge'];
-        $data1 = ['fdate' => $_GET['fdate'] ?? date('Y-m-d'), 'todate' => $_GET['todate'] ?? date('Y-m-d')];
 
-        $this->admin->AutoRemoveHolidays();
         $data['showHR'] = $this->empModel->getHR();
+        $data['leaves'] = $this->empModel->leaveDetails($data);
         $data['eventsDetailsTable'] = $this->empModel->eventsDetails();
         $data['count'] = count($this->empModel->allEmpsCountM());
-        $data['birthdayDetailsTable'] = $this->empModel->birthdayDetails();
-        $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
-        $data['workAnniversaryDetailsTable'] = $this->empModel->workAnniversaryDetails();
         $data['abnormalDetails'] = $logModel->AbnormalListM($data1);
-        $data['leaves'] = $this->empModel->leaveDetails($data);
-
-        // Presents 
-        $data['presents'] = count($logModel->selectDRpresentsM($data1));
-        // absents
+        $data['birthdayDetailsTable'] = $this->empModel->birthdayDetails();
         $data2['absent'] = count($logModel->selectDRabsentsM($data1));
-        // LateComers 
+        $data['holidays'] = $this->admin->AttendanceHolidays($data['badge']);
+        $data['presents'] = count($logModel->selectDRpresentsM($data1));
+        $data['workAnniversaryDetailsTable'] = $this->empModel->workAnniversaryDetails();
         $data3['lateComers'] = count($logModel->selectDRlateComersM($data1));
-        // print_r($data3['lateComers']);exit();
 
         $data = $data + $data1 + $data2 + $data3;
+        
+        // $this->admin->AutoRemoveHolidays();
         return view('dashboard', $data);
     }
 
     public function presentsListC()
     {
-        $data = [
-            'LRID' => $_GET['LRID'] ?? 'NA',
-            'fdate' => $_GET['fdate'],
-            'todate' => $_GET['todate'],
-            'trickid' => $_GET['trickid'] ?? 1,
-        ];
         $logModel = new LogModel();
-
-        $data['presentsdetailslog'] = $logModel->presentsListM($data);
-
-        $data['presents'] = count($logModel->presentsListM($data));
-        $data['absent'] = count($logModel->absentsListM($data));
+        
+        $data['LRID'] = $_GET['LRID'] ?? 'NA';
+        $data['trickid'] = $_GET['trickid'] ?? 1;
+        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data['todate'] = $_GET['todate'] ?? date('Y-m-d');
         $data['countFilter'] = $logModel->filterCountM($data);
+        $data['presentsdetailslog'] = $logModel->presentsListM($data);
+        $data['absent'] = count($logModel->absentsListM($data));
+        $data['presents'] = count($logModel->presentsListM($data));
 
         return view('employees/presents_view', $data);
     }
 
     public function absentsListC()
     {
-        $data = [
-            'LRID' => $_GET['LRID'] ?? 0,
-            'fdate' => $_GET['fdate'],
-            'todate' => $_GET['todate'],
-            'trickid' => $_GET['trickid'],
-        ];
+        $data['fdate'] = $_GET['fdate'];
+        $data['todate'] = $_GET['todate'];
+        $data['LRID'] = $_GET['LRID'] ?? 0;
+        $data['trickid'] = $_GET['trickid'];
 
-        $data1 = [
-            'LRID' => $_GET['LRID'] ?? 0,
-            'fdate' => $_GET['fdate'],
-            'todate' => $_GET['todate'],
-            'trickid' => 1,
-        ];
+        $data1['trickid'] = 1;
+        $data1['LRID'] = $_GET['LRID'] ?? 0;
+        $data1['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data1['todate'] = $_GET['todate'] ?? date('Y-m-d');
 
         $logModel = new LogModel();
 
         $data['selectReason'] = $logModel->selectReasonM();
-        $data['selectleavereason'] = $this->empModel->selectleaveReasonM();
-        $data['absentsdetailslog'] = $logModel->absentsListM($data);
-        $data['presents'] = count($logModel->presentsListM($data));
         $data['countFilter'] = $logModel->filterCountM($data);
+        $data['absentsdetailslog'] = $logModel->absentsListM($data);
+        $data['selectleavereason'] = $this->empModel->selectleaveReasonM();
         $data['absent'] = count($logModel->absentsListM($data1));
+        $data['presents'] = count($logModel->presentsListM($data));
+
         return view('employees/absents_view', $data);
     }
 
     public function lateComersListC()
     {
-        $data = [
-            'fdate' => $_GET['fdate'],
-            'todate' => $_GET['todate'],
-        ];
         $logModel = new LogModel();
+
+        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data['todate'] = $_GET['todate'] ?? date('Y-m-d');
         $data['lateComersDetailsLog'] = $logModel->lateComersListM($data);
         $data['lateComers'] = count($logModel->lateComersListM($data));
 
-        // print_r($data['lateComersDetailsLog']);exit();
         return view('employees/lateComers_view', $data);
     }
-
-
-    // Events page Controllera 
     public function allevents()
     {
         $eveModel = new EventsModel();
@@ -386,25 +287,24 @@ class HRController extends BaseController
     public function storeEvents()
     {
         $eventModel = new EventsModel();
-        $data = [
-            'EventName' => $this->request->getVar('EventName'),
-            'EventDescription' => $this->request->getVar('EventDescription'),
-            'EventDate' => $this->request->getVar('EventDate'),
-            'Type' => $this->request->getVar('Type'),
-        ];
+
+        $data['EventName'] = $this->request->getVar('EventName');
+        $data['EventDescription'] = $this->request->getVar('EventDescription');
+        $data['EventDate'] = $this->request->getVar('EventDate');
+        $data['Type'] = $this->request->getVar('Type');
         $eventModel->insert($data);
+
         return $this->response->redirect(site_url('/allevents'));
     }
 
     public function storeEvent()
     {
         $eventModel = new EventsModel();
-        $data = [
-            'EventName' => $this->request->getVar('EventName'),
-            'EventDescription' => $this->request->getVar('EventDescription'),
-            'EventDate' => $this->request->getVar('EventDate'),
-            'Type' => $this->request->getVar('Type'),
-        ];
+        
+        $data['EventName'] = $this->request->getVar('EventName');
+        $data['EventDescription'] = $this->request->getVar('EventDescription');
+        $data['EventDate'] = $this->request->getVar('EventDate');
+        $data['Type'] = $this->request->getVar('Type');
 
         $eventModel->insert($data);
         return redirect()->back();
@@ -414,81 +314,55 @@ class HRController extends BaseController
     {
         $eventModel = new EventsModel();
         $data['event'] = $eventModel->EventDetails($id);
-        // print_r($data['event']);exit(0);
         return $this->response->setJSON(['status' => 'success', 'files' => $data['event']]);
     }
 
     public function UpdateEvent()
     {
         $eventModel = new EventsModel();
+
+        $data['Type'] = $_POST['Type'];
         $data['EventId'] = $_POST['id'];
         $data['EventName'] = $_POST['EventName'];
-        $data['EventDescription'] = $_POST['EventDescription'];
         $data['EventDate'] = $_POST['EventDate'];
-        $data['Type'] = $_POST['Type'];
+        $data['EventDescription'] = $_POST['EventDescription'];
         $result = $eventModel->UpdateEvent($data);
+        
         return $this->response->redirect(site_url('/allevents'));
     }
-
     public function DeleteEvent($id)
     {
         $eventModel = new EventsModel();
         $result = $eventModel->DeleteEvent($id);
         return $this->response->redirect(site_url('/allevents'));
     }
-
-
-    // Employess pages controllers 
     public function workAnniversary()
     {
-
         $data['allworkAnniversaryDetailsTable'] = $this->empModel->allworkAnniversaryDetails();
-
         return view('employees/view_allWorkAnniersary', $data);
     }
     public function allbirthdays()
     {
-
         $data['allbirthdaysDetailsTable'] = $this->empModel->allBrirthdaysDetails();
         return view('employees/view_birthdays', $data);
     }
-
     public function allEmpslist()
     {
-        $data = [
-            'trickid' => $_GET['trickid'],
-        ];
-
-
+        $data['trickid'] = $_GET['trickid'];
         $data['active'] = $this->empModel->activeCountM();
-        $data['inactive'] = $this->empModel->inActiveCountM();
         $data['abscond'] = $this->empModel->abscondCountM();
+        $data['inactive'] = $this->empModel->inActiveCountM();
         $data['allEmpCount'] = $this->empModel->allEmpCountM();
         $data['missing'] = $this->empModel->MissingSalaryCountM();
-
         $data['allEmpsList'] = $this->empModel->allEmpsListM($data);
-        // $data['allEmpsList'] = $this->empModel->orderBy('EmployeeName', 'ASC')->findAll();
+        
         return view('employees/emp_view', $data);
     }
-
-    // public function attendanceListC()
-    // {
-    //     $data = [
-    //         'fdate' => $_GET['fdate'],
-    //         'todate' => $_GET['todate'],
-    //     ];
-    //     $logModel = new LogModel();
-
-    //     $data['attendanceList'] = $logModel->attendanceListM($data);
-
-    //     return view('employees/attendance_view', $data);
-    // }
-
     public function createEmp()
     {
-        $data['selectdesignation'] = $this->empModel->selectdesignationM();
         $data['selectdepart'] = $this->empModel->selectdepartM();
         $data['selectEmpType'] = $this->empModel->selectEmpTypeM();
+        $data['selectdesignation'] = $this->empModel->selectdesignationM();
         $data['Managers'] = $this->interviewerModel->getReportingManager();
 
         return view('employees/add_emp', $data);
@@ -497,14 +371,10 @@ class HRController extends BaseController
     public function check_EmpCode_availability()
     {
         $requestBody = json_decode($this->request->getBody());
-
         $EmpCode = $requestBody->EmpCode;
 
         if ('post' === $this->request->getMethod() && $EmpCode) {
-            // $model = new UserModel();
-
             $result = $this->empModel->get_EmpCode($EmpCode);
-
             if ($result === true) {
                 echo '<span style="color:red;">Employee Code already taken</span>';
             } else {
@@ -534,7 +404,6 @@ class HRController extends BaseController
             $id = substr($EmpCode, 7);
             $code = substr($EmpCode, 0, 7);
         }
-
         $data['Employee'] = [
             'StringCode' => $code,
             'NumericCode' => $id,
@@ -576,10 +445,10 @@ class HRController extends BaseController
             'EmployeeIDFK' => $EmployeeId,
             'PF' => $_POST['PF'] ?? 0,
             'PT' => $_POST['PT'] ?? 0,
-            'Grativity' => $_POST['Grativity'] ?? 0,
             'HRA' => $_POST['HRA'] ?? 0,
             'FBP' => $_POST['FBP'] ?? 0,
             'PF_VOL' => $_POST['PF_VOL'] ?? 0,
+            'Grativity' => $_POST['Grativity'] ?? 0,
             'Insurance' => $_POST['Insurance'] ?? 0,
             'NetSalary' => $_POST['NetSalary'] ?? 0,
             'BasicSalary' => $_POST['BasicSalary'] ?? 0,
@@ -653,20 +522,18 @@ class HRController extends BaseController
             }
         }
 
-        // print_r($data);exit(0);
-
         return $this->response->redirect(site_url('/totalEmps?trickid=1'));
     }
     public function singleEmployee($id = null)
     {
-        $trickId = $_GET['trickId'] ?? 1;
-        $date_start = $_GET['fsd'] ?? date('Y-m-d');
-        $date_end = $_GET['fed'] ?? date('Y-m-d');
         $data['id'] = $id;
+        $trickId = $_GET['trickId'] ?? 1;
+        $date_end = $_GET['fed'] ?? date('Y-m-d');
+        $date_start = $_GET['fsd'] ?? date('Y-m-d');
+        $data['EmpTypes'] = $this->empModel->selectEmpTypeM();
+        $data['Departments'] = $this->empModel->selectdepartM();
         $data['BasicDetails'] = $this->empModel->getEmployee($id);
         $data['Designations'] = $this->empModel->selectdesignationM();
-        $data['Departments'] = $this->empModel->selectdepartM();
-        $data['EmpTypes'] = $this->empModel->selectEmpTypeM();
         $data['Managers'] = $this->interviewerModel->getReportingManager();
 
         if ($trickId == 2) {
@@ -677,27 +544,26 @@ class HRController extends BaseController
             $data['Approvals'] = $this->empModel->getEmployeeApprovals($id);
             return view('employees/employees/EmpProfApprovals', $data);
         } elseif ($trickId == 4) {
+            $data['fed'] = $date_end;
+            $data['fsd'] = $date_start;
             $data['Attendence'] = $this->empModel->getEmployeeAttendence($id, $date_start, $date_end);
             $data['TotalDays'] = $this->empModel->getEmployeeTotalWorkDays($id, $date_start, $date_end) ?? 0;
             $data['TotalAbsend'] = $this->empModel->getEmployeeTotalAbsend($id, $date_start, $date_end) ?? 0;
-
-            $data['fsd'] = $date_start;
-            $data['fed'] = $date_end;
             return view('employees/employees/EmpProfAttendence', $data);
         } elseif ($trickId == 5) {
-            $data['LateEntry'] = $this->empModel->getEmployeeLateEntry($id, $date_start, $date_end);
-            $data['fsd'] = $date_start;
             $data['fed'] = $date_end;
+            $data['fsd'] = $date_start;
+            $data['LateEntry'] = $this->empModel->getEmployeeLateEntry($id, $date_start, $date_end);
             return view('employees/employees/EmpProfLateEntry', $data);
         } elseif ($trickId == 6) {
-            $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $date_start, $date_end);
-            $data['fsd'] = $date_start;
             $data['fed'] = $date_end;
+            $data['fsd'] = $date_start;
+            $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $date_start, $date_end);
             return view('employees/employees/EmpProfTimeLogs', $data);
         } elseif ($trickId == 7) {
+            $data['mode'] = $data['mode']['Value'];
             $data['PaySlip'] = $this->empModel->getEmployeePaySlip($id);
             $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
-            $data['mode'] = $data['mode']['Value'];
             return view('employees/employees/EmpProfPaySlip', $data);
         } elseif ($trickId == 8) {
             $data['Files'] = $this->empModel->getEmployeeFiles($id,2);
@@ -751,7 +617,6 @@ class HRController extends BaseController
                 }
             }
             $store = $this->empModel->getEmployeeProFilesStore($data);
-            // Optionally return the data array as JSON
             return $this->response->setJSON(['status' => 'success', 'files' => $data]);
         } else {
             // echo "No files were uploaded.";
@@ -784,8 +649,6 @@ class HRController extends BaseController
             $target_dir = $target_dir2;
             $remove = $this->empModel->getEmployeeProFilesRemove($id, $target_dir2);
         }
-        // $remove = $this->empModel->getEmployeeProFilesRemove($id, $target_dir);
-
         if (!file_exists($target_dir)) {
             mkdir($target_dir, 0777, true);
         }
@@ -814,7 +677,6 @@ class HRController extends BaseController
                 echo "Error uploading file: " . $file->getErrorString();
             }
             $store = $this->empModel->getEmployeeProFilesStore($data);
-            // Optionally return the data array as JSON
             return $this->response->setJSON(['status' => 'success', 'files' => $data]);
         } else {
             // echo "No files were uploaded.";
@@ -823,17 +685,19 @@ class HRController extends BaseController
 
     public function payrolls()
     {
-        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
         $data['trickid'] = $_GET['trickid'] ?? 1;
-        $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
         $data['mode'] = $data['mode']['Value'];
+        $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
+        $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
         $results = $this->empModel->getAllPayslips($data);
-        $data['payslips'] = $results['results'];
+        
         $data['state0'] = $results['mode0'];
         $data['state1'] = $results['mode1'];
         $data['state2'] = $results['mode2'];
+        $data['payslips'] = $results['results'];
         $data['trick1_count'] = $results['trick1_count'];
         $data['trick2_count'] = $results['trick2_count'];
+        
         return view('report/payrolls', $data);
     }
 
@@ -857,22 +721,22 @@ class HRController extends BaseController
         $trickid = $_POST['trickid'] ?? 1;
 
         $id = $_POST['id'];
+        $data['Status'] = 1;
+        $data['PF'] = $_POST['PF'];
+        $data['PT'] = $_POST['PT'];
         $data['LOP'] = $_POST['LOP'];
-        $data['Acc_Type'] = $_POST['Acc_Type'];
-        $data['Basic'] = $_POST['Basic'];
-        $data['Gross'] = $_POST['Gross'];
         $data['HRA'] = $_POST['HRA'];
         $data['FBP'] = $_POST['FBP'];
         $data['SD1'] = $_POST['SD1'];
-        $data['PF'] = $_POST['PF'];
-        $data['PT'] = $_POST['PT'];
-        $data['PFVOL'] = $_POST['PFVOL'];
         $data['SD2'] = $_POST['SD2'];
+        $data['Gross'] = $_POST['Gross'];
+        $data['Basic'] = $_POST['Basic'];
+        $data['PFVOL'] = $_POST['PFVOL'];
+        $data['Acc_Type'] = $_POST['Acc_Type'];
         $data['Insurance'] = $_POST['Insurance'];
         $data['Net_salary'] = $_POST['Net_salary'];
-        $data['Status'] = 1;
-
         $this->empModel->UpdatePayslip($id, $data);
+        
         return $this->response->redirect(site_url('/payrolls?trickid=' . $trickid . '&fdate=' . $fdate));
     }
 
@@ -887,36 +751,36 @@ class HRController extends BaseController
     public function payslipDownload($payslipid)
     {
         $Res = $this->empModel->getEmployeePaySlipSpecific($payslipid);
-
         $date = date('d-m-Y', strtotime($Res['Date']));
+        
         $date = \DateTime::createFromFormat("d-m-Y", $date);
         $maxDays = $date->format("t");
 
-        $data['EmpID'] = $Res['EmployeeCode'] ?? '-';
-        $data['PFNo'] = $Res['PF_No'] ?? '-';
         $data['NOD'] = $maxDays ?? '-';
-        $data['Designation'] = $Res['designations'] ?? '-';
-        $data['AcNo'] = $Res['AccountNo'] ?? '-';
-        $data['ModeofPay'] = $Res['Mode'] ?? 1;
         $data['LOP'] = $Res['LOP'] ?? 0;
-        $data['EmployeeName'] = $Res['EmployeeName'] ?? '-';
-        $data['ESINo'] = $Res['ESI_No'] ?? '-';
-        $data['DOJ'] = $Res['DOJ'] ?? '-';
-        $data['Department'] = $Res['deptName'] ?? '-';
-        $data['PAN'] = $Res['PAN_No'] ?? '-';
-        $data['UANNo'] = $Res['UAN_No'] ?? '-';
-        $data['BASIC'] = $Res['Basic'] ?? 0.00;
-        $data['HRA'] = $Res['HRA'] ?? 0.00;
-        $data['FBP'] = $Res['FBP'] ?? 0.00;
-        $data['SpecialEarnings'] = $Res['SD1'] ?? 0.00;
         $data['PF'] = $Res['PF'] ?? 0.00;
         $data['PT'] = $Res['PT'] ?? 0.00;
-        $data['PFVoluntary'] = $Res['PFVOL'] ?? 0.00;
+        $data['DOJ'] = $Res['DOJ'] ?? '-';
         $data['TDS'] = $Res['TDS'] ?? 0.00;
-        $data['Insurance'] = $Res['Insurance'] ?? 0.00;
-        $data['SpecialDeductions'] = $Res['SD2'] ?? 0.00;
-        $data['Credited_Salary'] = $Res['Net_salary'] ?? '-';
+        $data['HRA'] = $Res['HRA'] ?? 0.00;
+        $data['FBP'] = $Res['FBP'] ?? 0.00;
         $data['Date'] = $Res['Date'] ?? '-';
+        $data['PAN'] = $Res['PAN_No'] ?? '-';
+        $data['PFNo'] = $Res['PF_No'] ?? '-';
+        $data['UANNo'] = $Res['UAN_No'] ?? '-';
+        $data['ESINo'] = $Res['ESI_No'] ?? '-';
+        $data['BASIC'] = $Res['Basic'] ?? 0.00;
+        $data['ModeofPay'] = $Res['Mode'] ?? 1;
+        $data['AcNo'] = $Res['AccountNo'] ?? '-';
+        $data['EmpID'] = $Res['EmployeeCode'] ?? '-';
+        $data['PFVoluntary'] = $Res['PFVOL'] ?? 0.00;
+        $data['Department'] = $Res['deptName'] ?? '-';
+        $data['Insurance'] = $Res['Insurance'] ?? 0.00;
+        $data['SpecialEarnings'] = $Res['SD1'] ?? 0.00;
+        $data['SpecialDeductions'] = $Res['SD2'] ?? 0.00;
+        $data['Designation'] = $Res['designations'] ?? '-';
+        $data['EmployeeName'] = $Res['EmployeeName'] ?? '-';
+        $data['Credited_Salary'] = $Res['Net_salary'] ?? '-';
 
         // return view('report/payslip_format',$data);
 
@@ -4714,8 +4578,7 @@ class HRController extends BaseController
             "WO7" => $_POST['wo7'],
         ];
         $id = $this->admin->UpdateDepartment($data1);
-        // return $this->response->redirect(site_url('edit-department/' . $id));
-        return $this->response->redirect(site_url('/departments'));
+        return redirect()->to(site_url('/departments'))->with('Error', 'Department Updated!');
     }
 
     public function DeleteDepartment($id)
@@ -4780,23 +4643,22 @@ class HRController extends BaseController
 
     public function UpdateJobExperience()
     {
-        $data['options'] = $_POST['options'];
-        $data['remove'] = $_POST['remove'];
+        $data['options'] = $_POST['options'] ?? '';
+        $data['remove'] = $_POST['remove'] ?? '';
         $this->candidateModel->UpdateJobExperience($data);
         return $this->response->redirect(site_url('/settings'));
     }
 
     public function UpdateTicketOptions()
     {
-        $data['Name'] = $_POST['Name'];
-        $data['remove'] = $_POST['remove'];
+        $data['Name'] = $_POST['Name'] ?? '';
+        $data['remove'] = $_POST['remove'] ?? '';
         $this->admin->setTicketTypes($data);
         return $this->response->redirect(site_url('/settings'));
     }
 
     public function UpdateEmployee($id)
     {
-
         $file = $this->request->getFile('Image');
         if (empty($_FILES['Image']['name'])) {
             $imageName = "default.png";
@@ -4810,7 +4672,6 @@ class HRController extends BaseController
         }
 
         $acctype = $this->request->getPost('acc-type');
-
         $this->empModel->UpdateSingleEmployee($id, $data, $acctype);
 
         return $this->response->setJSON(['status' => 'success']);
@@ -4841,13 +4702,19 @@ class HRController extends BaseController
         $trickid = $_GET['trickid'] ?? 1;
         $data['trickid'] = $trickid;
 
-        $data['All'] = count($this->empModel->AllTickets(1, $data));
-        $data['Pending'] = count($this->empModel->AllTickets(2, $data));
-        $data['In_Progress'] = count($this->empModel->AllTickets(3, $data));
-        $data['Resolved'] = count($this->empModel->AllTickets(4, $data));
-        $data['Escalated'] = count($this->empModel->AllTickets(5, $data));
+        if (session()->get('user_level') == 42) {
+            $sac = 1;
+        } else {
+            $sac = 0;
+        }
 
-        $data['tickets'] = $this->empModel->AllTickets($trickid, $data);
+        $data['All'] = count($this->empModel->AllTickets(1, $data,$sac));
+        $data['Pending'] = count($this->empModel->AllTickets(2, $data,$sac));
+        $data['In_Progress'] = count($this->empModel->AllTickets(3, $data,$sac));
+        $data['Resolved'] = count($this->empModel->AllTickets(4, $data,$sac));
+        $data['Escalated'] = count($this->empModel->AllTickets(5, $data,$sac));
+
+        $data['tickets'] = $this->empModel->AllTickets($trickid, $data,$sac);
 
         $data['issuetypes'] = $this->empModel->GetIssueTypes();
 
@@ -5027,14 +4894,20 @@ class HRController extends BaseController
     {
         $id = $_POST['id'];
         $status = $_POST['Status'];
-        $this->empModel->StatusLeaveUpdate($id, $status);
-        return $this->response->redirect(site_url('/leave'));
+        if($status == 2){
+            $Rej_Reason = $_POST['Rej_Reason'];
+        }else{
+            $Rej_Reason = '';
+        }
+        $this->empModel->StatusLeaveUpdate($id, $status, $Rej_Reason);
+        return redirect()->back()->with('Error','Leave Updated!');
     }
 
     public function StatusLeavesUpdate($id, $status)
     {
-        $this->empModel->StatusLeaveUpdate($id, $status);
-        return redirect()->back();
+        $Rej_Reason = '';
+        $this->empModel->StatusLeaveUpdate($id, $status, $Rej_Reason);
+        return redirect()->back()->with('Error','Leave Updated!');
     }
 
     public function AddLeave()

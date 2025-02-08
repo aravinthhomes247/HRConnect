@@ -258,11 +258,11 @@ $routes->get('/payslip-manual-save', 'HRController::payroll_save',['filter' => '
 $routes->get('/downloadpayslipexcel', 'HRController::DownloadPayslipExcel',['filter' => 'superadmin']);
 
 // Tickets
-$routes->get('/tickets', 'HRController::Tickets',['filter' => 'superadmin']);
-$routes->post('/add-ticket', 'HRController::AddTicket',['filter' => 'superadmin']);
+$routes->get('/tickets', 'HRController::Tickets',['filter' => 'superoradminorexe']);
+$routes->post('/add-ticket', 'HRController::AddTicket',['filter' => 'superoradminorexe']);
 $routes->get('/ticket-edit/(:num)', 'HRController::EditTicket/$1',['filter' => 'auth']);
-$routes->post('/ticket-update-status', 'HRController::StatusTicketUpdate',['filter' => 'superadmin']);
-$routes->get('/tickets-update-status/(:num)/(:num)', 'HRController::StatusTicketsUpdate/$1/$2',['filter' => 'superadmin']);
+$routes->post('/ticket-update-status', 'HRController::StatusTicketUpdate',['filter' => 'superoradminorexe']);
+$routes->get('/tickets-update-status/(:num)/(:num)', 'HRController::StatusTicketsUpdate/$1/$2',['filter' => 'superoradminorexe']);
 
 // Leaves
 $routes->get('/leave', 'HRController::Leaves',['filter' => 'superoradminorexe']);

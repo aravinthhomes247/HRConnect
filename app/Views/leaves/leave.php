@@ -187,7 +187,7 @@
                                     <a href="javascript:void(0);" class="updatetic"><i class="fa-solid fa-angle-left"></i> Update Status</a>
                                     <div class="inner-dropdown" style="display: none;">
                                         <a href="<?= base_url('leave-update-status/' . $leave['IDPK'] . '/1') ?>" style="color:#029008">Approve</a>
-                                        <a href="<?= base_url('leave-update-status/' . $leave['IDPK'] . '/2') ?>" style="color:#F94343">Reject</a>
+                                        <!-- <a href="<?= base_url('leave-update-status/' . $leave['IDPK'] . '/2') ?>" style="color:#F94343">Reject</a> -->
                                     </div>
                                 </div>
                             </td>
@@ -226,7 +226,7 @@
                         <div class="col-9">
                             <select name="TypeIDFK" class="form-select" required>
                                 <option value="">Select Case Type</option>
-                                <?php if($issuetypes): ?>
+                                <?php if ($issuetypes): ?>
                                     <?php foreach ($issuetypes as $type): ?>
                                         <option value="<?= $type['IDPK'] ?>"><?= $type['Name'] ?></option>
                                     <?php endforeach; ?>
@@ -296,7 +296,7 @@
                     </div>
                     <div class="col-3" style="display:none;" id="HPERN">
                         <h6>Duration</h6>
-                        <span id="ST"></span> to <span id="ET"></span>
+                        <span id="ST"></span> to <span id="ET"></span> <span id="TD"></span>
                     </div>
                     <div class="col-12 mt-2">
                         <h6>Reason</h6>
@@ -318,6 +318,9 @@
                                 <input class="form-check-input" type="radio" name="Status" id="inlineRadio2" value="2">
                                 <label class="form-check-label" for="inlineRadio2">Rejected</label>
                             </div>
+                        </div>
+                        <div class="col-12 text-center mt-3 Rej_Reason">
+                            <textarea class="form-control" name="Rej_Reason" id="Rej_Reason" placeholder="Add Reason"></textarea>
                         </div>
                         <div class="col-12 text-center mt-3">
                             <button type="submit" class="btn btn-primary">Update Status</button>
@@ -375,6 +378,12 @@
     });
 
     $(document).ready(function() {
+        var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
+        error = error.trim();
+        if (error) {
+            Swal.fire(error);
+        }
+
         var trickid = $('#trickid').val();
 
         $('#examp1').DataTable({});
@@ -408,6 +417,14 @@
             // console.log("A new date selection was made: " + start.format('YYYY-MM-DD') + ' to ' + end.format('YYYY-MM-DD'));
         });
 
+        $('[name="Status"]').on("change", function() {
+            $('.Rej_Reason').hide();
+            var val = $(this).val();
+            if (val == 2) {
+                $('.Rej_Reason').show();
+            }
+        });
+
         $('#examp1').on("click", ".viewtic", function() {
             var id = $(this).data('id');
             $('#id').val(id);
@@ -417,6 +434,7 @@
                 url: '<?= base_url() . '/leave-edit/' ?>' + id,
                 type: 'GET',
                 success: function(response) {
+                    $('.Rej_Reason').hide();
                     $('#LeaveEmpName').html(response.data.EmployeeName);
                     $('#Leavetype').html(response.data.Name);
                     let dateStr = response.data.Date;
@@ -426,12 +444,19 @@
                     let day = String(dateObj.getDate()).padStart(2, '0');
                     let formattedDate = `${year}-${month}-${day}`;
                     $('#leaveRais').html(formattedDate);
-                    if(response.data.TypeIDFK == 6){
+                    if (response.data.TypeIDFK == 6) {
                         $('#HPERN').show();
                         $('#ST').html(response.data.Start_time);
                         $('#ET').html(response.data.End_time);
+                        let startTime = new Date("1970-01-01T" + response.data.Start_time);
+                        let endTime = new Date("1970-01-01T" + response.data.End_time);
+                        let durationMinutes = (endTime - startTime) / (1000 * 60);
+                        let hours = Math.floor(durationMinutes / 60);
+                        let minutes = durationMinutes % 60;
+                        let formattedDuration = (hours > 0 ? hours + "Hr " : "") + (minutes > 0 ? minutes + "Mins" : "");
+                        $('#TD').html(" (" + formattedDuration + ")");
                     }
-                    if(response.data.TypeIDFK == 4){
+                    if (response.data.TypeIDFK == 4) {
                         $('#COMPOFF').show();
                         $('#CO').html(response.data.CompDate);
                     }
@@ -442,6 +467,8 @@
                         $('#inlineRadio1').attr('checked', 'checked');
                     } else if (response.data.Status == 2) {
                         $('#inlineRadio2').attr('checked', 'checked');
+                        $('.Rej_Reason').show();
+                        $('#Rej_Reason').val(response.data.Rej_Reason);
                     }
                     $('#TicketViewModel').modal('show');
                 },

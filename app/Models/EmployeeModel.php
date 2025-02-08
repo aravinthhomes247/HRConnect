@@ -1420,7 +1420,7 @@ class EmployeeModel extends Model
         return true;
     }
 
-    public function AllTickets($trickid, $data)
+    public function AllTickets($trickid, $data, $sac)
     {
         $fdate = $data['fdate'];
         $todate = $data['todate'];
@@ -1436,11 +1436,17 @@ class EmployeeModel extends Model
             $trick = "AND A.Status = 3";
         }
 
+        if ($sac == 1) {
+            $trick2 = "";
+        } else {
+            $trick2 = "AND (C.DesignationIDFK != 1 AND C.DesignationIDFK != 18)";
+        }
+
         $sql = "SELECT A.*, B.Name, C.EmployeeName
                 FROM tickets A 
                 LEFT JOIN ticket_types B ON B.IDPK = A.TypeIDFK
                 LEFT JOIN employees C ON C.EmployeeId = A.EmployeeIDFK
-                WHERE DATE(Raised_On) BETWEEN '$fdate' AND '$todate' $trick";
+                WHERE DATE(Raised_On) BETWEEN '$fdate' AND '$todate' $trick $trick2";
         $records = $this->db->query($sql)->getResultArray();
 
         return $records;
@@ -1556,10 +1562,10 @@ class EmployeeModel extends Model
         if ($sac == 1) {
             $trick2 = "";
         } else {
-            $trick2 = "AND (B.DesignationIDFK != 2 AND B.DesignationIDFK != 18)";
+            $trick2 = "AND (B.DesignationIDFK != 1 AND B.DesignationIDFK != 18)";
         }
 
-        $sql = "SELECT A.*, B.EmployeeName ,C.Name 
+        $sql = "SELECT A.*, B.EmployeeName, C.Name 
                 FROM leaves A
                 LEFT JOIN employees B ON B.EmployeeId = A.EmployeeIDFK
                 LEFT JOIN leavetype C ON C.IDPK = A.TypeIDFK
@@ -1594,9 +1600,9 @@ class EmployeeModel extends Model
         return $leaves;
     }
 
-    public function StatusLeaveUpdate($id, $status)
+    public function StatusLeaveUpdate($id, $status, $Rej_Reason="")
     {
-        $sql = "UPDATE `leaves` SET `Status`= $status WHERE IDPK = $id";
+        $sql = "UPDATE `leaves` SET `Status`= $status, `Rej_Reason`= '$Rej_Reason' WHERE IDPK = $id";
         $this->db->query($sql);
         return true;
     }
