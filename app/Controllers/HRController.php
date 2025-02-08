@@ -3471,26 +3471,13 @@ class HRController extends BaseController
         $todate = date("Y-m-d");
         $canId = $this->request->getPost('CandidateIDFK');
 
-
-        // $data['roundList'] = $this->candidateModel->round_listM($data);
-        // print_r($data['roundList'][0]);exit();
-
         $data = [
             'CandidateIDFK' => $this->request->getPost('CandidateIDFK'),
             'JoiningStatus' => $this->request->getPost('JoiningStatus'),
-
         ];
 
         // print_r($data);exit();
-        $save = $this->candidateModel->update_JoinStatusM($data);
-
-        // if($data['JoiningStatus']==2){
-
-        //     return $this->response->redirect(site_url('/candidate?fdate='.$fdate.'&todate='.$todate.'&trickid=4'));
-        // }else{
-
-        //     return $this->response->redirect(site_url('/candidate?fdate='.$fdate.'&todate='.$todate.'&trickid=8'));
-        // }
+        $this->candidateModel->update_JoinStatusM($data);
 
         $session = session();
         $userLevel = $session->get('user_level');

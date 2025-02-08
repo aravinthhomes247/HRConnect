@@ -1384,7 +1384,7 @@ class CandidateModel extends Model
         }
         // print_r($sql1); exit();
 
-        $sql = "UPDATE `offer_letter` SET `JoiningStatus`='$JoiningStatus'  WHERE CandidateIDFK = '$CandidateID' ";
+        $sql = "UPDATE `offer_letter` SET `JoiningStatus`='$JoiningStatus', `JoiningDate`=CURRENT_DATE() WHERE CandidateIDFK = '$CandidateID' ";
         // print_r($sql);exit();
         $HR_IDFK = session()->get('EmpIDFK');
         $assigned_for = $this->db->query("SELECT AssignTo FROM `candidates` WHERE CandidateId = $CandidateID")->getRow()->AssignTo;
@@ -1411,29 +1411,21 @@ class CandidateModel extends Model
         $EmployementType = $data['EmployementType'];
 
         if ($WorkingStatus == 1) {
-
             if ($EmployementType == 1) {
                 $EmpType = "SELECT EmployeeCode, EmployementType FROM employees WHERE EmployementType = '$EmployementType' ORDER BY EmployeeCode DESC";
                 $data['EmpType'] = $this->db->query($EmpType)->getResultArray();
 
                 $lastId = $data['EmpType'][0]['EmployeeCode'];
-                $LastID  = $lastId + 1;
-                // print_r($LastID);exit();
+                $LastID = $lastId + 1;
             } else {
                 $EmpType = "SELECT EmployeeCode, EmployementType FROM employees WHERE EmployementType = '$EmployementType' ORDER BY EmployeeCode DESC";
                 $data['EmpType'] = $this->db->query($EmpType)->getResultArray();
-
                 $lastId = $data['EmpType'][0]['EmployeeCode'];
-
                 $id = substr($lastId, 7);
                 $code = substr($lastId, 0, 7);
                 $empCode = sprintf("%02d", $id + 1);
                 $LastID  = $code . $empCode;
-                // print_r($LastID);exit();
             }
-
-
-
 
             $select = "SELECT A.CandidateName, A.CandidateContactNo, A.CandidateEmail, A.CandidatePosition,B.JoiningDate  FROM candidates A LEFT JOIN offer_letter B ON CandidateIDFK= A.CandidateId WHERE CandidateId = '$CandidateID' ";
             $data['selectopush'] = $this->db->query($select)->getResultArray();
@@ -1444,24 +1436,15 @@ class CandidateModel extends Model
             $CandidatePosition = $data['selectopush'][0]['CandidatePosition'];
             $JoiningDate = $data['selectopush'][0]['JoiningDate'];
 
-            $sql1 = "INSERT INTO employees (`EmployeeCode`,`EmployeeName`,`ContactNo`,`Email`,`DesignationIDFK`,`EmployementType`,`Status`,`DOJ`) VALUES('$LastID','$CandidateName', '$CandidateContactNo', '$CandidateEmail', '$CandidatePosition','$EmployementType','Working','$JoiningDate')";
-
-            // print_r($sql1);exit();
+            $sql1 = "INSERT INTO employees (`EmployeeCode`,`EmployeeName`,`ContactNo`,`Email`,`DesignationIDFK`,`EmployementType`,`Status`,`DOJ`,`EmployeeCodeInDevice`) VALUES('$LastID','$CandidateName', '$CandidateContactNo', '$CandidateEmail', '$CandidatePosition','$EmployementType','Working','$JoiningDate','$LastID')";
             $this->db->query($sql1);
             $lastInsertedId = $this->db->insertID();
-            // print_r($lastInsertedId);exit();
 
-            $sql2 = "UPDATE `candidates` SET `EmployeeIDFK` = '$lastInsertedId' WHERE CandidateId = '$CandidateID' ";
-
-
+            $sql2 = "INSERT INTO developement_biometric.employees (`EmployeeCode`,`EmployeeName`,`ContactNo`,`Email`,`DesignationIDFK`,`EmployementType`,`Status`,`DOJ`,`EmployeeCodeInDevice`) VALUES('$LastID','$CandidateName', '$CandidateContactNo', '$CandidateEmail', '$CandidatePosition','$EmployementType','Working','$JoiningDate','$LastID')";
             $this->db->query($sql2);
 
-            // $sql3="UPDATE `candidates` SET `EmployeeIDFK` = '$lastInsertedId' WHERE CandidateId = '$CandidateID' ";
-            // $this->db->query($sql3);
-
-
-
-
+            $sql3 = "UPDATE `candidates` SET `EmployeeIDFK` = '$lastInsertedId' WHERE CandidateId = '$CandidateID' ";
+            $this->db->query($sql3);
         }
 
 
@@ -1472,23 +1455,22 @@ class CandidateModel extends Model
             $Status = 'Push to Active Employees';
             $Remarks = 'Candidate has push to Employees ';
 
-            $query = "INSERT INTO candidate_history(`CandidateIDFK`, `Status`, `Remarks`,`HR_IDFK`,`Updated_by`) VALUES('$CandidateID','$Status','$Remarks','$assigned_for','$HR_IDFK')";
+            $query = "INSERT INTO candidate_history (`CandidateIDFK`, `Status`, `Remarks`,`HR_IDFK`,`Updated_by`) VALUES('$CandidateID','$Status','$Remarks','$assigned_for','$HR_IDFK')";
             $this->db->query($query);
         } elseif ($WorkingStatus == 2) {
             $Status = 'Not-Active ';
             $Remarks = 'Candidate is Not-Active ';
 
-            $query = "INSERT INTO candidate_history(`CandidateIDFK`, `Status`, `Remarks`,`HR_IDFK`,`Updated_by`) VALUES('$CandidateID','$Status','$Remarks','$assigned_for','$HR_IDFK')";
+            $query = "INSERT INTO candidate_history (`CandidateIDFK`, `Status`, `Remarks`,`HR_IDFK`,`Updated_by`) VALUES('$CandidateID','$Status','$Remarks','$assigned_for','$HR_IDFK')";
             $this->db->query($query);
         } elseif ($WorkingStatus == 3) {
             $Status = 'Abscond ';
             $Remarks = 'Candidate has Abscond ';
 
-            $query = "INSERT INTO candidate_history(`CandidateIDFK`, `Status`, `Remarks`,`HR_IDFK`,`Updated_by`) VALUES('$CandidateID','$Status','$Remarks','$assigned_for','$HR_IDFK')";
+            $query = "INSERT INTO candidate_history (`CandidateIDFK`, `Status`, `Remarks`,`HR_IDFK`,`Updated_by`) VALUES('$CandidateID','$Status','$Remarks','$assigned_for','$HR_IDFK')";
             $this->db->query($query);
         }
         $sql = "UPDATE `offer_letter` SET `WorkingStatus`='$WorkingStatus'  WHERE CandidateIDFK = '$CandidateID' ";
-        // print_r($sql);exit();
         $this->db->query($sql);
     }
 
