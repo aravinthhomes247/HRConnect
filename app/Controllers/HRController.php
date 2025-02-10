@@ -1423,9 +1423,9 @@ class HRController extends BaseController
 
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
-            return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+            return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with('Error','Candidate Updated!');
         } elseif ($userLevel == 18 || $userLevel == 1) {
-            return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+            return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with('Error','Candidate Updated!');
         }
     }
     public function interviewNotScheduledC()
@@ -1451,9 +1451,9 @@ class HRController extends BaseController
 
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
-            return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+            return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with('Error','Candidate Updated!');
         } elseif ($userLevel == 18 || $userLevel == 1) {
-            return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+            return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with('Error','Candidate Updated!');
         }
     }
     public function edit_Candi_profileC()
@@ -1551,10 +1551,9 @@ class HRController extends BaseController
         $save = $this->candidateModel->update_candidate_arrivedM($data);
 
         if ($data['scheduled'] == 10) {
-            $session->setFlashdata('candidatemsg', 'Thank you for Your Update');
-            return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
+            return redirect()->to(site_url('/interview_process?canId=' . $canId))->with('Error','Candidate Updated!');
         } else {
-            return $this->response->redirect(site_url('/edit_candidate_view?canId=' . $canId));
+            return redirect()->to(site_url('/edit_candidate_view?canId=' . $canId))->with('Error','Candidate Updated!');
         }
     }
     public function update_candidate_rescheduleC()
@@ -1594,9 +1593,9 @@ class HRController extends BaseController
         $session = session();
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
-            return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+            return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with('Error','Candidate Updated!');
         } elseif ($userLevel == 18 || $userLevel == 1) {
-            return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+            return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with('Error','Candidate Updated!');
         }
     }
     public function update_candidate_cancelC()
@@ -1631,9 +1630,9 @@ class HRController extends BaseController
         $session = session();
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
-            return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+            return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with('Error','Candidate Updated!');
         } elseif ($userLevel == 18 || $userLevel == 1) {
-            return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+            return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with('Error','Candidate Updated!');
         }
     }
     public function interview_processC()

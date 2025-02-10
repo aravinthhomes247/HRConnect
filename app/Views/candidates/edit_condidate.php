@@ -356,6 +356,12 @@ if (isset($_SESSION['msg'])) {
 
 <script>
     $(document).ready(function() {
+        var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
+        error = error.trim();
+        if(error){
+            Swal.fire(error);
+        }
+
         $('#type').on('change', function() {
             if ($(this).val() == 1) {
                 $('.EXP').hide();

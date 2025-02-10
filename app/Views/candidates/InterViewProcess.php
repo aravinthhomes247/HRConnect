@@ -338,8 +338,8 @@ if (isset($_SESSION['msg'])) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <input type="hidden" id="OverAllRating" name="OverAllRating" />
-                                <p>Candidate Rating - <span id="OverAllRatingspan"></span></p>
+                                <input type="hidden" id="OverAllRating1" name="OverAllRating" />
+                                <p>Candidate Rating - <span id="OverAllRatingspan1"></span></p>
                                 <textarea class="form-control mt-3 ms-4" name="InterviewRemarks" id="InterviewRemarks" placeholder="Write a remark..." required></textarea>
                                 <div class="col col-12 mt-3">
                                     <div class="form-check form-check-inline">
@@ -683,8 +683,8 @@ if (isset($_SESSION['msg'])) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <input type="hidden" id="OverAllRating" name="OverAllRating" />
-                                <p>Candidate Rating - <span id="OverAllRatingspan"></span></p>
+                                <input type="hidden" id="OverAllRating2" name="OverAllRating" />
+                                <p>Candidate Rating - <span id="OverAllRatingspan2"></span></p>
                                 <textarea class="form-control mt-3 ms-4" name="InterviewRemarks" id="InterviewRemarks" placeholder="Write a remark..." required></textarea>
                                 <div class="col col-12 mt-3">
                                     <div class="form-check form-check-inline">
@@ -1028,8 +1028,8 @@ if (isset($_SESSION['msg'])) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <input type="hidden" id="OverAllRating" name="OverAllRating" />
-                                <p>Candidate Rating - <span id="OverAllRatingspan"></span></p>
+                                <input type="hidden" id="OverAllRating3" name="OverAllRating" />
+                                <p>Candidate Rating - <span id="OverAllRatingspan3"></span></p>
                                 <textarea class="form-control mt-3 ms-4" name="InterviewRemarks" id="InterviewRemarks" placeholder="Write a remark..." required></textarea>
                                 <div class="col col-12 mt-3">
                                     <div class="form-check form-check-inline">
@@ -1374,8 +1374,8 @@ if (isset($_SESSION['msg'])) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <input type="hidden" id="OverAllRating" name="OverAllRating" />
-                                <p>Candidate Rating - <span id="OverAllRatingspan"></span></p>
+                                <input type="hidden" id="OverAllRating4" name="OverAllRating" />
+                                <p>Candidate Rating - <span id="OverAllRatingspan4"></span></p>
                                 <textarea class="form-control mt-3 ms-4" name="InterviewRemarks" id="InterviewRemarks" placeholder="Write a remark..." required></textarea>
                                 <div class="col col-12 mt-3">
                                     <div class="form-check form-check-inline">
@@ -1719,8 +1719,8 @@ if (isset($_SESSION['msg'])) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <input type="hidden" id="OverAllRating" name="OverAllRating" />
-                                <p>Candidate Rating - <span id="OverAllRatingspan"></span></p>
+                                <input type="hidden" id="OverAllRating5" name="OverAllRating" />
+                                <p>Candidate Rating - <span id="OverAllRatingspan5"></span></p>
                                 <textarea class="form-control mt-3 ms-4" name="InterviewRemarks" id="InterviewRemarks" placeholder="Write a remark..." required></textarea>
                                 <div class="col col-12 mt-3">
                                     <div class="form-check form-check-inline">
@@ -2064,8 +2064,8 @@ if (isset($_SESSION['msg'])) {
                                         </tr>
                                     </tbody>
                                 </table>
-                                <input type="hidden" id="OverAllRating" name="OverAllRating" />
-                                <p>Candidate Rating - <span id="OverAllRatingspan"></span></p>
+                                <input type="hidden" id="OverAllRating6" name="OverAllRating" />
+                                <p>Candidate Rating - <span id="OverAllRatingspan6"></span></p>
                                 <textarea class="form-control mt-3 ms-4" name="InterviewRemarks" id="InterviewRemarks" placeholder="Write a remark..." required></textarea>
                                 <div class="col col-12 mt-3">
                                     <div class="form-check form-check-inline">
@@ -3097,6 +3097,12 @@ if (isset($_SESSION['msg'])) {
 
 <script>
     $(document).ready(function() {
+        var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
+        error = error.trim();
+        if(error){
+            Swal.fire(error);
+        }
+
         if ($('#exp-type').val() == 1) {
             $('.EXP').hide();
         }
@@ -3390,31 +3396,31 @@ if (isset($_SESSION['msg'])) {
         $('.com').on('click', function() {
             var val = $(this).data('val');
             $('#Communication' + RoundID).val(val);
-            AverageRating();
+            AverageRating(RoundID);
         });
 
         $('.att').on('click', function() {
             var val = $(this).data('val');
             $('#Attitude' + RoundID).val(val);
-            AverageRating();
+            AverageRating(RoundID);
         });
 
         $('.dis').on('click', function() {
             var val = $(this).data('val');
             $('#Discipline' + RoundID).val(val);
-            AverageRating();
+            AverageRating(RoundID);
         });
 
         $('.dre').on('click', function() {
             var val = $(this).data('val');
             $('#DressCode' + RoundID).val(val);
-            AverageRating();
+            AverageRating(RoundID);
         });
 
         $('.kno').on('click', function() {
             var val = $(this).data('val');
             $('#Knowledge' + RoundID).val(val);
-            AverageRating();
+            AverageRating(RoundID);
         });
 
         // When the icon is clicked, trigger the file input
@@ -3598,15 +3604,17 @@ if (isset($_SESSION['msg'])) {
         ImportantFiles();
     });
 
-    function AverageRating() {
-        let val1 = parseFloat($('#Communication').val()) || 0;
-        let val2 = parseFloat($('#Attitude').val()) || 0;
-        let val3 = parseFloat($('#Discipline').val()) || 0;
-        let val4 = parseFloat($('#DressCode').val()) || 0;
-        let val5 = parseFloat($('#Knowledge').val()) || 0;
+    function AverageRating(RoundID) {
+        console.log("triggred");
+        
+        let val1 = parseFloat($('#Communication'+ RoundID).val()) || 0;
+        let val2 = parseFloat($('#Attitude'+ RoundID).val()) || 0;
+        let val3 = parseFloat($('#Discipline'+ RoundID).val()) || 0;
+        let val4 = parseFloat($('#DressCode'+ RoundID).val()) || 0;
+        let val5 = parseFloat($('#Knowledge'+ RoundID).val()) || 0;
         let ave = Math.round(((val1 + val2 + val3 + val4 + val5) / 5) * 2) / 2;
-        $('#OverAllRating').val(ave);
-        $('#OverAllRatingspan').html(ave);
+        $('#OverAllRating'+ RoundID).val(ave);
+        $('#OverAllRatingspan'+ RoundID).html(ave);
         starsres.forEach((star, i) => {
             if (i < ave - 0.5) {
                 star.classList.remove('fa-star-half-stroke');
