@@ -644,6 +644,12 @@ if (isset($_SESSION['msg'])) {
 
 <!-- autocomplete function  -->
 <script type='text/javascript'>
+    var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
+    error = error.trim();
+    if (error) {
+        Swal.fire(error);
+    }
+
     document.querySelectorAll('.IntTime').forEach(function(input) {
         input.addEventListener('click', function() {
             this.showPicker();

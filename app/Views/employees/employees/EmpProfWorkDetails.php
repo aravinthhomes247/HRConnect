@@ -705,9 +705,9 @@
                     data: data,
                     success: function(response) {
                         console.log('Updated successfully:', response);
-                        // Swal.fire("Employee Updated!").then((result) => {
-                        //     location.reload();
-                        // });
+                        Swal.fire("Employee Updated!").then((result) => {
+                            location.reload();
+                        });
                     },
                     error: function(xhr, status, error) {
                         console.log('Failed to update:', error);
@@ -793,7 +793,7 @@
                         success: function(response) {
                             console.log('Updated successfully:', response);
                             Swal.fire("Employee Updated!").then((result) => {
-                            // location.reload();
+                            location.reload();
                         });
                         },
                         error: function(xhr, status, error) {

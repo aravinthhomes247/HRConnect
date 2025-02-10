@@ -827,6 +827,12 @@ if (isset($_SESSION['msg'])) {
 
     $(document).ready(function() {
         // Initialize...
+        var error = '<?= session()->getFlashdata('Error') ?? '' ?>';
+        error = error.trim();
+        if(error){
+            Swal.fire(error);
+        }
+        
         var trickid = document.getElementById("trickid").value;
         var DESIGNATIONS = <?php echo json_encode($DESIGNATIONS); ?>;
         var SOURCES = <?php echo json_encode($SOURCES); ?>;

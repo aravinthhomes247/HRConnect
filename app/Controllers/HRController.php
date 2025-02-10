@@ -1247,9 +1247,9 @@ class HRController extends BaseController
 
         if ($data['save'] == 1) {
             if ($userLevel == 42) {
-                return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+                return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with("Error","Candidate Added!");
             } else {
-                return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
+                return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'))->with("Error","Candidate Added!");
             }
         } else {
             $candId = $data['save'][0]['CandidateId'];
