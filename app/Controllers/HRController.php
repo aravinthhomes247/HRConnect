@@ -561,9 +561,9 @@ class HRController extends BaseController
             $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $date_start, $date_end);
             return view('employees/employees/EmpProfTimeLogs', $data);
         } elseif ($trickId == 7) {
+            $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
             $data['mode'] = $data['mode']['Value'];
             $data['PaySlip'] = $this->empModel->getEmployeePaySlip($id);
-            $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
             return view('employees/employees/EmpProfPaySlip', $data);
         } elseif ($trickId == 8) {
             $data['Files'] = $this->empModel->getEmployeeFiles($id,2);
@@ -685,9 +685,9 @@ class HRController extends BaseController
     public function payrolls()
     {
         $data['trickid'] = $_GET['trickid'] ?? 1;
+        $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
         $data['mode'] = $data['mode']['Value'];
         $data['fdate'] = $_GET['fdate'] ?? date('Y-m-d');
-        $data['mode'] = $this->admin->getSettingsSpecific('payrol-function');
         $results = $this->empModel->getAllPayslips($data);
         
         $data['state0'] = $results['mode0'];
