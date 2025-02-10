@@ -72,8 +72,8 @@ if (isset($_SESSION['msg'])) {
       </div>
       <div class="modal-body">
         <form action="<?= site_url('/store_interviewer') ?>" method="post">
-          <select class="form-control" name="InterviewerIDFK">
-            <option>--Select-- </option>
+          <select class="form-control" name="InterviewerIDFK" required>
+            <option value="">--Select-- </option>
             <?php
             if ($select_interviewer) {
               foreach ($select_interviewer as $row) { ?>

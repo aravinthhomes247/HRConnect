@@ -651,19 +651,19 @@ if (isset($_SESSION['msg'])) {
                 <div class="modal-body row">
                     <div class="form-group col-lg-3 me-2 mt-3">
                         <label class="form-label">Candidate Name</label>
-                        <input class="form-control" type="text" name="CandidateName" id="CandidateName" placeholder="Enter Candidate Name">
+                        <input class="form-control" type="text" name="CandidateName" id="CandidateName" placeholder="Enter Candidate Name" required>
                     </div>
                     <div class="form-group col-lg-3 ms-5 me-5 mt-3">
                         <label class="form-label">Contact Number</label>
-                        <input class="form-control" type="text" name="CandidateContactNo" id="CandidateContactNo" placeholder="Enter Contact Number">
+                        <input class="form-control" type="text" name="CandidateContactNo" id="CandidateContactNo" placeholder="Enter Contact Number" required>
                     </div>
                     <div class="form-group col-lg-3 ms-2 mt-3">
                         <label class="form-label">Email ID</label>
-                        <input class="form-control" type="email" name="CandidateEmail" id="CandidateEmail" placeholder="Enter Email ID">
+                        <input class="form-control" type="email" name="CandidateEmail" id="CandidateEmail" placeholder="Enter Email ID" required>
                     </div>
                     <div class="form-group col-lg-3 me-2 mt-3">
                         <label class="form-label">Source</label>
-                        <select class="form-control" name="Source" id="Source">
+                        <select class="form-control" name="Source" id="Source" required>
                             <option value="">Select Source</option>
                             <?php
                             if ($socialMedia) {
@@ -675,7 +675,7 @@ if (isset($_SESSION['msg'])) {
                     </div>
                     <div class="form-group col-lg-3 ms-5 me-5 mt-3">
                         <label class="form-label">Position Applied For</label>
-                        <select class="form-control" name="CandidatePosition" id="CandidatePosition">
+                        <select class="form-control" name="CandidatePosition" id="CandidatePosition" required>
                             <option value="">Select Position</option>
                             <?php
                             if ($selectdesignation) {
@@ -687,7 +687,7 @@ if (isset($_SESSION['msg'])) {
                     </div>
                     <div class="form-group col-lg-3 ms-2 mt-3">
                         <label class="form-label">Upload Resume </label> <i class="fa-solid fa-circle-plus addresumebtn"></i>
-                        <input class="form-control" type="file" name="Resumefileinput" id="Resumefileinput" style="display:none;">
+                        <input class="form-control" type="file" name="Resumefileinput" id="Resumefileinput" accept="application/pdf" style="display:none;" required>
                         <div class="upload" id="upload"></div>
                     </div>
                     <div class="sheduleoptions mt-3">
@@ -781,7 +781,6 @@ if (isset($_SESSION['msg'])) {
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
                     <button type="submit" class="btn btn-primary" id="btnUpload">Submit</button>
                 </div>
             </form>

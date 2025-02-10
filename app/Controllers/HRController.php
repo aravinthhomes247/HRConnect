@@ -1282,7 +1282,8 @@ class HRController extends BaseController
         $arr_file         = explode('.', $file_name);
         $file_name        = $this->uploadFile($path, $file_name);
         
-        $extension        = end($arr_file);
+        // $extension        = end($arr_file);
+        $extension        = 'csv';
 
         if ('csv' == $extension) {
             $reader     = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
@@ -1332,26 +1333,26 @@ class HRController extends BaseController
         if (count($list) > 0) {
             $result = $this->candidateModel->candidatesBulkInsert($list, $HR_IDFK);
             if ($result == 1) {
-                $session->setFlashdata('CanidateSuccessMsg', 'All candidate records have been successfully updated with a total of ' . $i . ' existing records and ' . $j . ' new records added.');
+                // $session->setFlashdata('CanidateSuccessMsg', 'All candidate records have been successfully updated with a total of ' . $i . ' existing records and ' . $j . ' new records added.');
                 if ($userLevel == 1) {
-                    return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+                    return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with("Error","$j Candidates added!");
                 } else {
-                    return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+                    return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with("Error","$j Candidates added!");
                 }
             } else {
-                $session->setFlashdata('CanidateSuccessMsg', 'Something went wrong. Please try again.');
+                // $session->setFlashdata('CanidateSuccessMsg', '. Please try again.');
                 if ($userLevel == 1) {
-                    return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+                    return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with("Error","Something went wrong!");
                 } else {
-                    return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+                    return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with("Error","Something went wrong!");
                 }
             }
         } else {
-            $session->setFlashdata('CanidateSuccessMsg', 'No new record is found.');
+            // $session->setFlashdata('CanidateSuccessMsg', '');
             if ($userLevel == 1) {
-                return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+                return redirect()->to(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with("Error","No new record is found!");
             } else {
-                return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
+                return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'))->with("Error","No new record is found!");
             }
         }
     }
@@ -1518,16 +1519,16 @@ class HRController extends BaseController
         $session = session();
         $canId = $this->request->getPost('CandidateId');
         $canName = $this->request->getPost('CandidateName');
-        $file = $this->request->getFile('CandidateResume');
-        $target_dir = "Uploads/candidates/$canId-$canName/";
+        // $file = $this->request->getFile('CandidateResume');
+        // $target_dir = "Uploads/candidates/$canId-$canName/";
 
-        if ($file->isValid() && !$file->hasMoved()) {
-            $fileName = $file->getClientName();
-            $type = $file->getClientMimeType();
-            $file->move('Uploads/candidates/' . $canId . '-' . $canName . '/', $fileName);
-        } else {
-            $fileName = '';
-        }
+        // if ($file->isValid() && !$file->hasMoved()) {
+        //     $fileName = $file->getClientName();
+        //     $type = $file->getClientMimeType();
+        //     $file->move('Uploads/candidates/' . $canId . '-' . $canName . '/', $fileName);
+        // } else {
+        //     $fileName = '';
+        // }
         
         $data = [
             'CandidateId' => $this->request->getPost('CandidateId'),
@@ -1543,7 +1544,8 @@ class HRController extends BaseController
             'ImmediateJoiner' => $this->request->getPost('ImmediateJoiner'),
             'DaysRequired' => $this->request->getPost('DaysRequired'),
             'InterviewDate' => $this->request->getPost('InterviewDate'),
-            'CandidateResume' => $fileName,
+            // 'CandidateResume' => $fileName,
+            'CandidateResume'=>''
         ];
 
         // print_r($data);exit();
@@ -3100,13 +3102,9 @@ class HRController extends BaseController
     }
     public function update_confirmationC()
     {
-        // $data = [
-        //     'canId' => $_GET['canId'],
-        // ];
         $canId = $this->request->getPost('CandidateIDFK');
         $fdate = date('Y-m-d');
         $todate = date('Y-m-d');
-
 
         $data = [
             'CandidateIDFK' => $this->request->getPost('CandidateIDFK'),
@@ -3121,9 +3119,9 @@ class HRController extends BaseController
         $session = session();
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
-            return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
+            return redirect()->to(site_url('/interview_process?canId=' . $canId))->with("Error","Candidate Updated!");
         } elseif ($userLevel == 18 || $userLevel == 1) {
-            return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=4'));
+            return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=4'))->with("Error","Candidate Updated!");
         }
     }
     public function joined_candidate_viewC()
@@ -3166,16 +3164,16 @@ class HRController extends BaseController
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
             if ($data['JoiningStatus'] == 2) {
-                return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
+                return redirect()->to(site_url('/interview_process?canId=' . $canId))->with("Error","Candidate Updated!");
             } else {
-                return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
+                return redirect()->to(site_url('/interview_process?canId=' . $canId))->with("Error","Candidate Updated!");
             }
         } elseif ($userLevel == 18 || $userLevel == 1) {
             // return $this->response->redirect(site_url('/HRcandidate_List?fdate='.$fdate.'&todate='.$todate.'&trickid=1'));
             if ($data['JoiningStatus'] == 2) {
-                return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=4'));
+                return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=4'))->with("Error","Candidate Updated!");
             } else {
-                return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=8'));
+                return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=8'))->with("Error","Candidate Updated!");
             }
         }
     }
@@ -3202,9 +3200,9 @@ class HRController extends BaseController
         $session = session();
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
-            return $this->response->redirect(site_url('/interview_process?canId=' . $canId));
+            return redirect()->to(site_url('/interview_process?canId=' . $canId))->with("Error","Candidate Updated!");
         } elseif ($userLevel == 18 || $userLevel == 1) {
-            return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=8'));
+            return redirect()->to(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=8'))->with("Error","Candidate Updated!");
         }
     }
 

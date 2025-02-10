@@ -113,7 +113,7 @@ $routes->post('/getemployees', 'HRController::get_Emp_autocompleteC', ['filter' 
 $routes->post('/HRComposeMail', 'HRController::insert_HRcompose', ['filter' => 'adminorexeorrec']);
 
 // $routes->get('/HRtodays_activity', 'HRController::HRtodays_candidate_activityC', ['filter' => 'auth']);
-$routes->get('/todays_activity', 'HRController::todays_candidate_activityC', ['filter' => 'suporadminorexeorrec']);
+// $routes->get('/todays_activity', 'HRController::todays_candidate_activityC', ['filter' => 'suporadminorexeorrec']);
 
 $routes->get('/candidate', 'HRController::candidate_ListC', ['filter' => 'suporadminorexeorrec']);
 $routes->get('/add_candidate_view', 'HRController::add_candidateC', ['filter' => 'suporadminorexeorrec']);

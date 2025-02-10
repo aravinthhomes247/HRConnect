@@ -320,40 +320,6 @@ if (isset($_SESSION['msg'])) {
     </div>
 </div>
 
-<!-- <script>
-    $(document).ready(function() {
-        if ($('#exp-type').val() == 1) {
-            $('.EXP').hide();
-        }
-        if ($('#ImmediateJoiner1').prop('checked')) {
-            $('#daysreq').hide();
-        } else {
-            $('#daysreq').show();
-        }
-        $('#exp-type').on("change", function() {
-            if ($(this).val() == 1) {
-                $('.EXP').hide();
-            } else {
-                $('.EXP').show();
-            }
-        });
-        $('#T-year').on('change', function() {
-            var val = parseFloat($(this).val() + '.' + $('#T-month').val()).toFixed(2);
-            $('#TotalExperience').val(val);
-        });
-        $('#T-month').on('change', function() {
-            var val = parseFloat($('#T-year').val() + '.' + $(this).val()).toFixed(2);
-            $('#TotalExperience').val(val);
-        });
-        $('[name="ImmediateJoiner"]').on("change", function() {
-            const isImmediateJoiner = $(this).val() === 'Yes';
-            console.log(isImmediateJoiner);
-            const $daysReq = $('#daysreq');
-            $daysReq.toggle(!isImmediateJoiner);
-        });
-    });
-</script> -->
-
 <script>
     $(document).ready(function() {
         var error = '<?= session()->getFlashdata('Error') ?? '' ?>';

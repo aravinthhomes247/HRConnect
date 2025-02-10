@@ -247,7 +247,7 @@ if (isset($_SESSION['msg'])) {
                 <form action="<?= site_url('/update_interviewpro') ?>" method="post" class="RoundForm" id="RoundForm1">
                     <div class="row">
                         <input type="hidden" name="CandidateId" value="<?= $candidate_details[0]['CandidateId'] ?>">
-                        <input type="hidden" id="RoundID" name="RoundID" value="1">
+                        <input type="hidden" id="RoundID" name="RoundID" value="1"/>
                         <input type="hidden" id="Communication1" name="Communication" />
                         <input type="hidden" id="Attitude1" name="Attitude" />
                         <input type="hidden" id="Discipline1" name="Discipline" />
@@ -2332,8 +2332,8 @@ if (isset($_SESSION['msg'])) {
             </div>
             <div class="files ms-3 me-3" id="doc_files" <?= ((empty($documents) && $document_mail_verification != 0) || (isset($documents[0]['DVStatus']) && $documents[0]['DVStatus'] == 2)) ? '' : 'style="display:none"' ?>>
                 <div class="row mt-4">
-                    <input type="file" id="fileUploader" multiple style="display: none;" />
-                    <input type="file" id="fileReplacer" style="display: none;" />
+                    <input type="file" id="fileUploader" accept="application/pdf" style="display: none;" multiple/>
+                    <input type="file" id="fileReplacer" accept="application/pdf" style="display: none;" />
                     <div class="col upload">
                         <span id="imp_doc_1">SSLC mark Sheet
                             <a href="javascript:void(0);" class="addfile" data-cat="1">
@@ -3605,8 +3605,6 @@ if (isset($_SESSION['msg'])) {
     });
 
     function AverageRating(RoundID) {
-        console.log("triggred");
-        
         let val1 = parseFloat($('#Communication'+ RoundID).val()) || 0;
         let val2 = parseFloat($('#Attitude'+ RoundID).val()) || 0;
         let val3 = parseFloat($('#Discipline'+ RoundID).val()) || 0;

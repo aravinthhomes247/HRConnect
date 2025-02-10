@@ -56,8 +56,8 @@
     </div>
 </div>
 
-<input type="file" id="fileUploader" multiple style="display: none;" />
-<input type="file" id="fileReplacer" style="display: none;" />
+<input type="file" id="fileUploader" accept="application/pdf" style="display: none;" multiple/>
+<input type="file" id="fileReplacer" accept="application/pdf" style="display: none;" />
 <input type="file" id="fileImage" style="display: none;" />
 <div class="files ms-5 mt-3">
     <div class="row w-100">

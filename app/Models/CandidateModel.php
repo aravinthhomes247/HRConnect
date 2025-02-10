@@ -596,6 +596,9 @@ class CandidateModel extends Model
                 }
                 $file->move($target_dir, $fileName);
             }
+            $sql = "UPDATE `candidates` SET `CandidateResume`= '$fileName' WHERE CandidateId = $canId"; 
+            $this->db->query($sql);
+
             return 1;
         } else {
             return $result;
@@ -664,7 +667,8 @@ class CandidateModel extends Model
                 `CandidateExperience`='$CandidateExperience',`TotalExperience`='$TotalExperience', `LastCompany`='$LastCompany', 
                 `ImmediateJoiner`='$ImmediateJoiner',`DaysRequired` = '$DaysRequired', `NoticePeroid`='$NoticePeroid',
                 `CandidateCurrentCTC`='$CandidateCurrentCTC' , `CandidateExpectedCTC`='$CandidateExpectedCTC' , 
-                `CandidateResume`='$CandidateResume', `InterviewDate`='$InterviewDate',`ScheduleStatus`='$scheduled' 
+                -- `CandidateResume`='$CandidateResume', 
+                `InterviewDate`='$InterviewDate',`ScheduleStatus`='$scheduled' 
                 WHERE CandidateId= $CandidateId ";
         $assigned_for = $this->db->query("SELECT AssignTo FROM `candidates` WHERE CandidateId = $CandidateId")->getRow()->AssignTo;
         if ($scheduled == 10) {
@@ -2010,6 +2014,13 @@ class CandidateModel extends Model
             $HR = '';
             $DESIGNATION = '';
             $STATUS = '';
+            if ($data['start_date'] != null || $data['start_date'] != '') {
+                $s = $data['start_date'];
+                $e = $data['end_date'];
+                $DATE = "WHERE DATE(B_sub.added_date) BETWEEN '$s' and '$e'";
+            } else {
+                $DATE = 'WHERE DATE(B_sub.added_date) = CURRENT_DATE()';
+            }
         } else {
             $SEARCH = '';
             if ($data['start_date'] != null || $data['start_date'] != '') {
