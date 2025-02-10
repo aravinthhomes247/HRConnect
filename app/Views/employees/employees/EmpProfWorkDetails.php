@@ -793,7 +793,7 @@
                         success: function(response) {
                             console.log('Updated successfully:', response);
                             Swal.fire("Employee Updated!").then((result) => {
-                            location.reload();
+                            // location.reload();
                         });
                         },
                         error: function(xhr, status, error) {

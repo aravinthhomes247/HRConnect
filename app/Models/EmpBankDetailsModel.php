@@ -2,20 +2,20 @@
 
 namespace App\Models;
 
-use Codeigniter\Controller\HRController;
 use CodeIgniter\Model;
 
 class EmpBankDetailsModel extends Model
 {
+    protected $insertID         = 0;
+    protected $useAutoIncrement = true;
+    protected $protectFields    = true;
+    protected $useSoftDeletes   = false;
+    protected $returnType       = 'array';
     protected $DBGroup          = 'default';
     protected $table            = 'emp_bank_details'; 
     protected $primaryKey       = 'EmployeeIDFK';
-    protected $useAutoIncrement = true;
-    protected $insertID         = 0;
-    protected $returnType       = 'array';
-    protected $useSoftDeletes   = false;
-    protected $protectFields    = true;
     protected $allowedFields    = ['EBD_IDPK','EmployeeIDFK','AccountHolderName','BankName','AccountNo','IFSCode','BankBranch','EBD_Created_at'];
+
     // Dates
     protected $useTimestamps = false;
     protected $dateFormat    = 'datetime';
@@ -26,11 +26,10 @@ class EmpBankDetailsModel extends Model
     // Validation
     protected $validationRules      = [];
     protected $validationMessages   = [];
-    protected $skipValidation       = false;
     protected $cleanValidationRules = true;
+    protected $skipValidation       = false;
 
     // Callbacks
-    protected $allowCallbacks = true;
     protected $beforeInsert   = [];
     protected $afterInsert    = [];
     protected $beforeUpdate   = [];
@@ -39,6 +38,7 @@ class EmpBankDetailsModel extends Model
     protected $afterFind      = [];
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
+    protected $allowCallbacks = true;
 
     public function __construct()
     {

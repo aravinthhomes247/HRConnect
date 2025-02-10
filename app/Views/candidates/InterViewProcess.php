@@ -2529,7 +2529,7 @@ if (isset($_SESSION['msg'])) {
                     <input type="hidden" name="CandidateEmail" value="<?= $candidate_details[0]['CandidateEmail'] ?>">
                     <div class="row mt-3 ms-5">
                         <div class="col col-lg-3 mt-3 ms-2 me-5">
-                            <select class="form-control" name="DepartmentIDFK" id="DepartmentIDFK">
+                            <select class="form-control" name="DepartmentIDFK" id="DepartmentIDFK" required>
                                 <option value="">Select Department</option>
                                 <?php
                                 if ($selectdepart) {
@@ -2540,7 +2540,7 @@ if (isset($_SESSION['msg'])) {
                             </select>
                         </div>
                         <div class="col col-lg-3 mt-3 ms-2 me-5">
-                            <select class="form-control" name="DesignationIDFK" id="DesignationIDFK">
+                            <select class="form-control" name="DesignationIDFK" id="DesignationIDFK" required>
                                 <option value="">Select Designation</option>
                                 <?php
                                 if ($selectdesignation) {
@@ -2551,7 +2551,7 @@ if (isset($_SESSION['msg'])) {
                             </select>
                         </div>
                         <div class="col col-lg-3 mt-3 ms-2 me-5">
-                            <select class="form-control" name="ReportManagerIDFK" id="ReportManagerIDFK">
+                            <select class="form-control" name="ReportManagerIDFK" id="ReportManagerIDFK" required>
                                 <option value="">Reporting Manager</option>
                                 <?php
                                 if ($reportManager) {
@@ -2562,10 +2562,11 @@ if (isset($_SESSION['msg'])) {
                             </select>
                         </div>
                         <div class="col col-lg-3 mt-3 ms-2 me-5">
-                            <input class="form-control" type="text" name="TakeOmSalary" placeholder="Enter Salary">
+                            <input class="form-control" type="text" name="JoiningDate" id="offer-JoiningDate" placeholder="Enter Joining Date" required>
                         </div>
                         <div class="col col-lg-3 mt-3 ms-2 me-5">
-                            <input class="form-control" type="text" name="JoiningDate" id="offer-JoiningDate" placeholder="Enter Joining Date">
+                            <!-- <input class="form-control" type="text" name="TakeOmSalary" placeholder="Enter Salary" required> -->
+                            <input type="hidden" name="TakeOmSalary" value="0">
                         </div>
                         <div class="col col-lg-3 mt-3 ms-2 me-5">
                         </div>

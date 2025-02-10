@@ -575,9 +575,8 @@ class HRController extends BaseController
 
     public function Uploadfiles($type)
     {
-        $canId = $this->request->getPost('empid');
-        $canName = $this->request->getPost('empname');
         $cat = $this->request->getPost('cat');
+        $canId = $this->request->getPost('empid');
         $target_dir1 = "Uploads/candidates/$canId/";
         $target_dir2 = "Uploads/employees/$canId/";
         if ($type == 1) {
@@ -805,25 +804,13 @@ class HRController extends BaseController
         $data['selectEmpType'] = $this->empModel->selectEmpTypeM();
         $desname = $data['emp_obj']['DesignationIDFK'];
         $data['showdesignation'] = $this->empModel->getdesignationM($desname);
-        // print_r($data['showdesignation']);exit();
         return view('employees/editProfile_view', $data);
     }
-    // update Emp data
     public function updateEmp()
     {
-
         $EmployeeId = $this->request->getVar('EmployeeId');
         $data['emp_obj'] = $this->empModel->where('EmployeeId', $EmployeeId)->first();
-
         $oldimgName = $data['emp_obj']['Image'];
-
-        // print_r($data['emp_obj']['Image']);exit();
-
-        // if ($file->isValid() && ! $file->hasMoved()) {
-        //     $imageName = $file->getClientName();
-        //     $file->move('Uploads/ProfilePhotosuploads/',$imageName);
-        // }
-
 
         $file = $this->request->getFile('Image');
         if ($file->isValid() && !$file->hasMoved()) {
@@ -848,63 +835,50 @@ class HRController extends BaseController
             $code = substr($EmpCode, 0, 7);
         }
 
-
         $data = [
-            // 'EmployeeId' => $this->request->getVar('EmployeeId'),
-            'EmployeeName' => $this->request->getVar('EmployeeName'),
-            'EmployeeCode' => $this->request->getVar('EmployeeCode'),
-            'EmployeeCodeInDevice' => $this->request->getPost('EmployeeCode'),
-            'StringCode' => $code,
             'NumericCode' => $id,
-            'Gender' => $this->request->getVar('Gender'),
+            'StringCode' => $code,
+            'Image'  => $imageName,
             'DOB' => $this->request->getVar('DOB'),
-            'ContactNo' => $this->request->getVar('ContactNo'),
-            'AltContactno' => $this->request->getVar('AltContactno'),
+            'DOJ' => $this->request->getVar('DOJ'),
+            'DOR' => $this->request->getVar('DOR'),
             'Email' => $this->request->getVar('Email'),
-            'PersonalMail' => $this->request->getVar('PersonalMail'),
-            'PlaceOfBirth' => $this->request->getVar('PlaceOfBirth'),
+            'Gender' => $this->request->getVar('Gender'),
+            'Status' => $this->request->getVar('Status'),
+            'ContactNo' => $this->request->getVar('ContactNo'),
             'BLOODGROUP' => $this->request->getVar('BLOODGROUP'),
             'FatherName' => $this->request->getVar('FatherName'),
             'MotherName' => $this->request->getVar('MotherName'),
-            'ResidentialAddress' => $this->request->getVar('ResidentialAddress'),
-            'PermanentAddress' => $this->request->getVar('PermanentAddress'),
-            'DepartmentId' => $this->request->getVar('DepartmentId'),
-            'DesignationIDFK' => $this->request->getVar('DesignationIDFK'),
-            'Status' => $this->request->getVar('Status'),
-            'EmployementType' => $this->request->getVar('EmployementType'),
-            'DOJ' => $this->request->getVar('DOJ'),
-            'DOR' => $this->request->getVar('DOR'),
             'LeaveReason' => $this->request->getVar('LeaveReason'),
-            'Image'  => $imageName,
+            'EmployeeName' => $this->request->getVar('EmployeeName'),
+            'EmployeeCode' => $this->request->getVar('EmployeeCode'),
+            'AltContactno' => $this->request->getVar('AltContactno'),
+            'PersonalMail' => $this->request->getVar('PersonalMail'),
+            'PlaceOfBirth' => $this->request->getVar('PlaceOfBirth'),
+            'DepartmentId' => $this->request->getVar('DepartmentId'),
+            'EmployementType' => $this->request->getVar('EmployementType'),
+            'DesignationIDFK' => $this->request->getVar('DesignationIDFK'),
+            'PermanentAddress' => $this->request->getVar('PermanentAddress'),
+            'EmployeeCodeInDevice' => $this->request->getPost('EmployeeCode'),
+            'ResidentialAddress' => $this->request->getVar('ResidentialAddress'),
 
         ];
-        // print_r($EmployeeId);exit();
         $this->empModel->update_employeesHomes($data, $EmployeeId);
         $save = $this->empModel->update($EmployeeId, $data);
-        // print_r($save);exit();
         return $this->response->redirect(site_url('/totalEmps?trickid=1'));
     }
-
-
-
-    // Employee Bank Account Details 
     public function insert_empBankDetailsC()
     {
-
         $id = $this->request->getVar('EmployeeIDFK');
-
         $data = [
-            'EmployeeIDFK' => $this->request->getVar('EmployeeIDFK'),
-            'AccountHolderName' => $this->request->getVar('AccountHolderName'),
+            'IFSCode' => $this->request->getVar('IFSCode'),
             'BankName' => $this->request->getVar('BankName'),
             'AccountNo' => $this->request->getVar('AccountNo'),
-            'IFSCode' => $this->request->getVar('IFSCode'),
             'BankBranch' => $this->request->getVar('BankBranch'),
-
+            'EmployeeIDFK' => $this->request->getVar('EmployeeIDFK'),
+            'AccountHolderName' => $this->request->getVar('AccountHolderName'),
         ];
         $data['empBank'] = $this->empBankDetailsModel->where('EmployeeIDFK', $id)->first();
-
-        // print_r($data['empBank']['EmployeeIDFK']);exit();
 
         if (empty($data['empBank']['EmployeeIDFK'])) {
             $this->empBankDetailsModel->insert($data);
@@ -912,22 +886,16 @@ class HRController extends BaseController
             $this->empBankDetailsModel->update($id, $data);
         }
 
-
-        // return view('employees/edit_view');
         echo "<script>window.history.go(-1)</script> ";
     }
 
-    // added absent leaveReason 
     public function createLR($id, $AbsentDate)
     {
-
         $LRModel = new LeaveReasonModel();
         $data['selectleavereason'] = $this->empModel->selectleaveReasonM();
-        $data['showAbsentEmpDetails'] = $this->empModel->showAbsentEmpM($id, $AbsentDate);
         $data['EmpLeaveTaken'] = $this->empModel->getEmpLeaveTaken($id);
-
+        $data['showAbsentEmpDetails'] = $this->empModel->showAbsentEmpM($id, $AbsentDate);
         return $this->response->setJSON($data);
-        // return view('employees/addReason_view', $data);
     }
     public function storeLeavereason()
     {
@@ -936,20 +904,16 @@ class HRController extends BaseController
         if ($data['id']) {
             $data1 = [
                 'Mail_TypeId' => 2,
-                'SenderId' => $this->request->getVar('EmployeeId'),
                 'ReceiverId' => $_SESSION['EmpIDFK'],
                 'Mail_Msg' => $this->request->getVar('Reason'),
+                'SenderId' => $this->request->getVar('EmployeeId'),
             ];
             $data2 = [
-                'leaveReasonIDFK' => $this->request->getVar('LeaveReason'),
-                'EmployeeIDFK' => $this->request->getVar('EmployeeId'),
                 'absentDate' => $this->request->getVar('AbsentDate'),
+                'EmployeeIDFK' => $this->request->getVar('EmployeeId'),
+                'leaveReasonIDFK' => $this->request->getVar('LeaveReason'),
             ];
-
             $save = $LRModel->addReasons($data1, $data2);
-
-            // echo "<script>window.history.go(-2)</script> ";
-
             return $this->response->redirect(site_url('/absents?trickid=1&LRID=0&fdate=' . date('Y-m-d') . '&todate=' . date('Y-m-d')));
         } else {
             redirect()->to('login');
@@ -957,90 +921,66 @@ class HRController extends BaseController
     }
     public function leaveHistory($id, $AbsentDate)
     {
-        $LRModel = new LeaveReasonModel();
-        $data['showAbsentEmpDetails'] = $this->empModel->showAbsentEmpM($id, $AbsentDate);
         $data['EmpLeaveTaken'] = $this->empModel->getEmpLeaveTaken($id);
+        $data['showAbsentEmpDetails'] = $this->empModel->showAbsentEmpM($id, $AbsentDate);
         return view('employees/leaveHistory_view', $data);
     }
     public function editViewLRC($id, $AbsentDate, $idpk)
     {
         $data['selectleavereason'] = $this->empModel->selectleaveReasonM();
-        $data['showAbsentEmpDetails'] = $this->empModel->showAbsentEmpM($id, $AbsentDate);
-        $data['EmpLeaveTaken'] = $this->empModel->getEmpLeaveTaken($id, $idpk);
         $data['ALRid'] = $this->empModel->getEmpALRid($id, $idpk);
+        $data['EmpLeaveTaken'] = $this->empModel->getEmpLeaveTaken($id, $idpk);
+        $data['showAbsentEmpDetails'] = $this->empModel->showAbsentEmpM($id, $AbsentDate);
         return $this->response->setJSON($data);
-
-        // return view('employees/editReason_view', $data);
     }
     public function updateLR()
     {
-        $IDPK = $this->request->getVar('IDPK');
         $LRModel = new LeaveReasonModel();
         $data = [
             'IDPK' => $this->request->getVar('IDPK'),
+            'Mail_Msg' => $this->request->getVar('Reason'),
             'Mail_IDPK' => $this->request->getVar('Mail_IDPK'),
             'leaveReasonIDFK' => $this->request->getVar('LeaveReason'),
-            'Mail_Msg' => $this->request->getVar('Reason'),
         ];
         $LRModel->editReasons($data);
-
-        // echo "<script>window.history.go(-3)</script> ";
-
         return redirect()->back();
     }
-
-    // Delete Employee
-    // public function delete($EmployeeId = null){      
-    //     $data['empdet'] = $this->empModel->where('EmployeeId', $EmployeeId)->delete($EmployeeId);
-    //     return $this->response->redirect(site_url('/totalEmps'));
-    // }
-
-    // Employees Report pages Controllers 
     public function logHistory()
     {
         $data1 = [
+            'empid' => $_GET['empid'],
             'fdate' => $_GET['fdate'],
             'todate' => $_GET['todate'],
-            'empid' => $_GET['empid'],
         ];
-
-        // print_r($data1['empid']);
         $logModel = new LogModel();
-        // $data1['empLog'] = $data1['empid'];        
         $data1['empLog'] = $logModel->getEmpAllLog($data1);
-        // print_r($data1['empLog']);exit;
-
         return view('report/empReport_view', $data1);
     }
     public function latecomingHistory()
     {
         $data1 = [
+            'empid' => $_GET['empid'],
             'fdate' => $_GET['fdate'],
             'todate' => $_GET['todate'],
-            'empid' => $_GET['empid'],
             'trickid' => $_GET['trickid'],
         ];
 
-        // print_r($data1['empid']);exit();
         $logModel = new LogModel();
-        // $data1['empLog'] = $data1['empid'];        
         $data1['empLatecomer'] = $logModel->getEmpAllLateComing($data1);
-        // print_r($data1['empLatecomer']);exit;
-
         return view('report/empLCReport_view', $data1);
     }
     public function reportSearchAllLog()
     {
         $data1 = [
+            'trickid' => $_GET['trickid'] ?? 1,
             'fdate' => $_GET['fdate'] ?? date('Y-m-d'),
             'todate' => $_GET['todate'] ?? date('Y-m-d'),
-            'trickid' => $_GET['trickid'] ?? 1,
         ];
 
         $logModel = new LogModel();
-        $data1['lateComers'] = count($logModel->lateComersListM($data1)) ?? 0;
-        $data1['earlylogout'] = count($logModel->EarlyoutListM($data1)) ?? 0;
         $data1['abnormal'] = count($logModel->AbnormalListM($data1)) ?? 0;
+        $data1['earlylogout'] = count($logModel->EarlyoutListM($data1)) ?? 0;
+        $data1['lateComers'] = count($logModel->lateComersListM($data1)) ?? 0;
 
         if ($data1['trickid'] == 1) {
             $data1['selectedemps'] = $logModel->getSearchAllLog($data1);
@@ -1062,16 +1002,16 @@ class HRController extends BaseController
     {
         $id = $_GET['id'];
         $data = [
+            'trickid' => 1,
             'fdate' => $_GET['fdate'] ?? date('Y-m-d'),
             'todate' => $_GET['todate'] ?? date('Y-m-d'),
-            'trickid' => 1,
         ];
         $logModel = new LogModel();
-        $data['lateComers'] = count($logModel->lateComersListM($data)) ?? 0;
-        $data['earlylogout'] = count($logModel->EarlyoutListM($data)) ?? 0;
-        $data['abnormal'] = count($logModel->AbnormalListM($data)) ?? 0;
-        $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $data['fdate'], $data['todate']);
         $data['selectedemps'] = $logModel->getSearchAllLog($data);
+        $data['abnormal'] = count($logModel->AbnormalListM($data)) ?? 0;
+        $data['earlylogout'] = count($logModel->EarlyoutListM($data)) ?? 0;
+        $data['lateComers'] = count($logModel->lateComersListM($data)) ?? 0;
+        $data['TimeLogs'] = $this->empModel->getEmployeeTimeLogs($id, $data['fdate'], $data['todate']);
         $userids = [];
         foreach ($data['selectedemps'] as $user) {
             if (!in_array($user['EmployeeId'], $userids)) {
@@ -1082,10 +1022,10 @@ class HRController extends BaseController
                 $data['EmpDesig'] = $user['designations'];
             }
         }
+        $data['EmpID'] = $id;
         $position = array_search($id, $userids);
         $data['PrevEmp'] = $userids[$position - 1] ?? 0;
         $data['NextEmp'] = $userids[$position + 1] ?? 0;
-        $data['EmpID'] = $id;
         return view('report/report_view_dia', $data);
     }
 
@@ -1096,73 +1036,50 @@ class HRController extends BaseController
             'todate' => $_GET['todate'],
             'trickid' => $_GET['trickid'],
         ];
+        $data['allLrCount'] = $this->empModel->allLRCountM($data);
         $data['selectleavereason'] = $this->empModel->selectleaveReasonM();
         $data['leaveRequest'] = $this->empModel->getLeaveRequest($data);
-        $data['allLrCount'] = $this->empModel->allLRCountM($data);
-        $data['approveLrCount'] = $this->empModel->approveLRCountM($data);
         $data['rejectLrCount'] = $this->empModel->rejectLRCountM($data);
+        $data['approveLrCount'] = $this->empModel->approveLRCountM($data);
         $data['pendingLrCount'] = $this->empModel->pendingLRCountM($data);
         return view('employees/leaveRequest_view', $data);
     }
     public function ReadLeaveRequestC($id)
     {
-        // $data['selectleavereason'] = $this->empModel->selectleaveReasonM();
-        $data['empleaveRequest'] = $this->empModel->getEmpLeaveRequest($id);
         $data['empleaveReply'] = $this->empModel->getEmpLeaveReply($id);
-        // print_r($data['empleaveReply']);exit();
+        $data['empleaveRequest'] = $this->empModel->getEmpLeaveRequest($id);
         return view('employees/leaveRequestRead_view', $data);
     }
     public function storeLeaveRequestReply()
     {
         $LRModel = new LeaveReasonModel();
         $data = [
-            // 'LeaveRequestDate' => $this->request->getVar('LeaveRequestDate'),               
             'IDPK' => $this->request->getVar('IDPK'),
             'approve' => $this->request->getVar('approve'),
-            'Mail_Base_IDFK' => $this->request->getVar('Mail_Base_IDFK'),
             'SenderId' => $this->request->getVar('SenderId'),
             'ReceiverId' => $this->request->getVar('ReceiverId'),
+            'Mail_Base_IDFK' => $this->request->getVar('Mail_Base_IDFK'),
             'Mail_Reply_Msg' => $this->request->getVar('Mail_Reply_Msg'),
         ];
         $save = $LRModel->updateLeaveRequestReply($data);
         echo "<script>window.history.go(-1)</script> ";
-        // return $this->response->redirect(site_url('/leaveRequest'));  
     }
 
     public function storehrReply()
     {
-        // print_r($id);exit(); 
         $LRModel = new LeaveReasonModel();
-
         $data = [
-            'Mail_Base_IDFK' => $this->request->getVar('Mail_Base_IDFK'),
             'SenderId' => $this->request->getVar('SenderId'),
             'ReceiverId' => $this->request->getVar('ReceiverId'),
             'Mail_Reply_Msg' => $this->request->getVar('ReplyMsg1'),
+            'Mail_Base_IDFK' => $this->request->getVar('Mail_Base_IDFK'),
         ];
-        // print_r($data);exit();
         $save = $LRModel->addLrReply($data);
         echo "<script>window.history.go(-1)</script> ";
     }
 
-    // public function storeLeaveRequest(){ 
-    //     // print_r($id);exit(); 
-    //     $LRModel = new LeaveReasonModel();          
-
-    //     $data = [          
-    //         'EmployeeIDFK' => $this->request->getVar('EmployeeIDFK'),               
-    //         'EmployeeCodeFK' => $this->request->getVar('EmployeeCodeFK'),               
-    //         'absentDate' => $this->request->getVar('absentDate'),               
-    //         'LeaveReasonIDFK'  => $this->request->getVar('LeaveReasonIDFK'),    
-    //         'Reason'  => $this->request->getVar('Reason'),               
-    //     ];
-    //     $save = $LRModel->addLeaveRequest($data);
-    //     echo "<script>window.history.go(-1)</script> ";
-    // }
-
     public function MailBoxC()
     {
-
         $data = [
             'fdate' => $_GET['fdate'],
             'todate' => $_GET['todate'],
@@ -1170,49 +1087,32 @@ class HRController extends BaseController
             'deptsid' => $_GET['deptsid'],
         ];
         $hrId = $_SESSION['EmpIDFK'];
-        // print_r($data['deptsid']);exit();
-
-
-
         if ($data['trickid'] == 1) {
             $data['selectleavereason'] = $this->empModel->selectleaveReasonM();
             $data['leaveRequest'] = $this->empModel->getLeaveRequest($data);
-            // $data['allLrCount'] = $this->empModel->allLRCountM($data);
-            // $data['approveLrCount'] = $this->empModel->approveLRCountM($data);
-            // $data['rejectLrCount'] = $this->empModel->rejectLRCountM($data);
-            // $data['pendingLrCount'] = $this->empModel->pendingLRCountM($data);
         } elseif ($data['trickid'] == 2 || $data['deptsid'] >= 1 || $data['deptsid'] == 'all') {
             $data['selectdepart'] = $this->empModel->selectdepartM();
             $data['mailempselect'] = $this->empModel->mailEmpSelect($data);
         } elseif ($data['trickid'] == 3) {
-
             $data['HRSentBox'] = $this->empModel->HR_sent_box($data, $hrId);
-            // print_r($data['HR_sent_box']);exit();
         }
-
-
-
         return view('MailBox/MailBox_View', $data);
     }
 
     function get_Emp_autocompleteC()
     {
+        $response = array();
+        $response['token'] = csrf_hash();
         $request = service('request');
         $postData = $request->getPost();
-        $response = array();
-        // Read new token and assign in $response['token']
-        $response['token'] = csrf_hash();
         $data = array();
         if (isset($postData['search'])) {
             $search = $postData['search'];
-            // Fetch record
-
             $empList = $this->empModel->select('EmployeeId,EmployeeName,Email')->like('Email', $search)->orderBy('Email')->findAll();
-            // print_r($empList);exit();
             foreach ($empList as $emp) {
                 $data[] = array(
-                    "value" => $emp['EmployeeId'],
                     "label" => $emp['Email'],
+                    "value" => $emp['EmployeeId'],
                 );
             }
         }
@@ -1226,17 +1126,10 @@ class HRController extends BaseController
         $LRModel = new LeaveReasonModel();
         $data = [
             'SenderId' => $_SESSION['EmpIDFK'],
-            'ReceiverId' => $this->request->getVar('ReceiverId'),
             'Mail_Msg' => $this->request->getVar('replyMsg'),
+            'ReceiverId' => $this->request->getVar('ReceiverId'),
         ];
-        $i = 0;
-        // foreach($data['ReceiverId'] as $key){
-        //     print_r($data['ReceiverId']);
-        //     $i++;
-        // }
-        // exit();
         $save = $LRModel->addHRMail($data);
-        // return view('MailBox/MailBox_View',$data);
         return $this->response->redirect(site_url('/mailBox?fdate=&todate=&trickid=1'));
     }
 
@@ -1248,29 +1141,19 @@ class HRController extends BaseController
         ];
         $hrId = $_SESSION['EmpIDFK'];
         if ($data['trickid'] == 1) {
-            $data['empleaveRequest'] = $this->empModel->getEmpLeaveRequest($data);
             $data['empleaveReply'] = $this->empModel->getEmpLeaveReply($data);
-            // print_r($data['empleaveRequest']);exit();
+            $data['empleaveRequest'] = $this->empModel->getEmpLeaveRequest($data);
         } elseif ($data['trickid'] == 2) {
             $data['HRSentBox'] = $this->empModel->HR_readsent_box($data, $hrId);
-            // $data['empleaveRequest'] = $this->empModel->getEmpLeaveRequest($data);
-            // $data['empleaveReply'] = $this->empModel->getEmpLeaveReply($data);
-            // print_r($data['empleaveRequest']);exit();
         }
         return view('MailBox/ReadMail_View', $data);
     }
-
-
-    // Stars interviewers list 
     public function interviewers_listC()
     {
-
-        $data['select_interviewer'] = $this->interviewerModel->select_interviewerM();
         $data['interviewerList'] = $this->interviewerModel->interviewer_listM();
-
+        $data['select_interviewer'] = $this->interviewerModel->select_interviewerM();
         return view('candidates/interviewers_list_view', $data);
     }
-
     public function store_interviewerC()
     {
         $interviewerModel = new InterviewersModel();
@@ -1285,102 +1168,30 @@ class HRController extends BaseController
 
     public function delete_interviewerC($id)
     {
-        // print_r($id);exit();
-
         $interviewerModel = new InterviewersModel();
         $interviewerModel->where('InterviewerIDFK', $id);
         $interviewerModel->delete();
         return $this->response->redirect(site_url('/interviewers_list'));
     }
 
-
-
-
-
     //*******************************************// Starts Candidates //***********************************************************************//
-
-    // public function candidate_ListC()
-    // {
-    //     $session = session();
-    //     $adminId = $session->get('EmpIDFK');
-    //      // print_r($adminId);exit();
-    //     $data = [
-    //         'trickid' => $_GET['trickid'],
-    //         'fdate' => $_GET['fdate'],
-    //         'todate' => $_GET['todate'],
-    //     ];
-
-
-    //     $data['totalCountList'] = $this->candidateModel->TotatCount_List_CandidatesM($data);
-
-    //     $data['candidate_list'] = $this->candidateModel->List_CandidatesM($data);
-    //     // print_r($data['candidate_list']);exit();
-
-    //     $data['candidateStatus_list'] = $this->candidateModel->getCandidateInterviewStatusM($data);
-    //     $data['candiadtecounts'] = $this->candidateModel->CandidateCountsM($data);
-
-
-    //     $data['notScheduledList'] = $this->candidateModel->getNotScheduledList($data);
-    //     $data['freshList'] = $this->candidateModel->getFreshList($data);
-
-    //     $data['socialMedia'] = $this->candidateModel->Candidate_Source_ListM();
-
-    //     $data['yetToAssignCount'] = $this->candidateModel->getYettoAssignListCount($adminId);
-    //     $data['HRList'] = $this->empModel->getHRList();
-    //     $data['adminId'] = $this->empModel->getHRadminList();
-
-    //     // $sourceId = $_POST['sourceId'];
-    //     // // print_r($sourceId);exit();
-    //     // $data['sourceCount'] = $this->candidateModel->getSourceCount($sourceId);
-
-
-    //     $data['candidateOfferStatus_list'] = $this->candidateModel->getCandidateOfferStatusM($data);
-    //     // print_r($data['notScheduledList']); exit();
-
-
-    //     return view('candidates/candidates_list_view', $data);
-    // }
-    // public function todays_candidate_activityC(){
-
-    //     $data = [
-    //         'trickid' => $_GET['trickid'],
-    //         'HR_IDFK' => $_GET['HR_IDFK'],
-    //     ];
-
-    //     $data['showHR'] = $this->empModel->getHR();
-    //     // print_r($data['showHR']); exit();
-    //     $data['curentDayActivity'] = $this->candidateModel->getCurrentdayActivity($data);
-    //     $data['curentDayCount'] = $this->candidateModel->getCurrentdayCount($data);
-
-    //     return view('candidates/todays_candidate_activity',$data);
-    // }
-
     public function add_candidateC()
     {
-
-
         $data['selectdesignation'] = $this->empModel->selectdesignationM();
         $data['socialMedia'] = $this->candidateModel->Candidate_Source_ListM();
         $data['notScheduleReasons'] = $this->candidateModel->notschedule_reasons_ListM();
-        // print_r($data['notScheduleReasons']);exit();
-
-
         return view('candidates/add_new_candidate', $data);
     }
     function get_Candidate_autocompleteC()
     {
+        $data = array();
+        $response = array();
         $request = service('request');
         $postData = $request->getPost();
-        $response = array();
-        // Read new token and assign in $response['token']
         $response['token'] = csrf_hash();
-        $data = array();
         if (isset($postData['search'])) {
             $search = $postData['search'];
-            // Fetch record
-            // $arr = ['CandidateContactNo'=>$search, 'CandidateName'=>$search];
             $empList = $this->candidateModel->select('CandidateId,CandidateName,CandidateContactNo,ScheduleStatus,Created_at,CallBackDateTime')->like('CandidateContactNo', $search)->orLike('CandidateName', $search)->orderBy('CandidateContactNo')->findAll();
-            // print_r($empList);exit();
             foreach ($empList as $emp) {
                 $fdate = date('Y-m-d', strtotime($emp['Created_at']));
                 $callback = date('Y-m-d', strtotime($emp['CallBackDateTime']));
@@ -1399,7 +1210,6 @@ class HRController extends BaseController
     public function insert_candidateC()
     {
         $session = session();
-        // 'HR_IDFK' => $session->get('EmpIDFK'),
         $fdate = date("Y-m-d");
         $todate = date("Y-m-d");
 
@@ -1418,25 +1228,23 @@ class HRController extends BaseController
         }
 
         $data = [
-            'CandidateName' => $this->request->getPost('CandidateName'),
+            'CallBackDateTime' => $callBackdb,
+            'CandidateResume' => $originalFileName,
             'HR_IDFK' => $session->get('EmpIDFK'),
-            'CandidateContactNo' => $this->request->getPost('CandidateContactNo'),
-            'CandidateEmail' => $this->request->getPost('CandidateEmail'),
             'Source' => $this->request->getPost('Source'),
             'scheduled' => $this->request->getPost('scheduled'),
             'NotScheduled' => $this->request->getPost('NotScheduled'),
-            'CallBackDateTime' => $callBackdb,
-            'CandidatePosition' => $this->request->getPost('CandidatePosition'),
+            'CandidateName' => $this->request->getPost('CandidateName'),
             'InterviewDate' =>  $this->request->getPost('InterviewDate'),
+            'CandidateEmail' => $this->request->getPost('CandidateEmail'),
             'CandidateReason' => $this->request->getPost('CandidateReason'),
-            'CandidateResume' => $originalFileName
+            'CandidatePosition' => $this->request->getPost('CandidatePosition'),
+            'CandidateContactNo' => $this->request->getPost('CandidateContactNo'),
         ];
 
-        // print_r($data); exit();
         $data['save'] = $this->candidateModel->insert_candidateM($data, $file);
-
         $userLevel = $session->get('user_level');
-        // print_r($data['user_level']); exit();
+
         if ($data['save'] == 1) {
             if ($userLevel == 42) {
                 return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=1'));
@@ -1445,11 +1253,7 @@ class HRController extends BaseController
             }
         } else {
             $candId = $data['save'][0]['CandidateId'];
-            // print_r($candId); exit();
-
             $session->setFlashdata('candidatemsg', 'Candaidate Already Exists ');
-
-            // return view('candidates/add_new_candidate', $data);
             return $this->response->redirect(site_url('/edit_candidate_view?canId=' . $candId));
         }
     }
@@ -1467,30 +1271,22 @@ class HRController extends BaseController
     public function store_candidate_excelfileC()
     {
         $session = session();
-        $HR_IDFK = $session->get('EmpIDFK');
-        // print_r($HR_IDFK);exit();
         $fdate = date("Y-m-d");
         $todate = date("Y-m-d");
+        $HR_IDFK = $session->get('EmpIDFK');
         $userLevel = $session->get('user_level');
-        // $socialMedia = $this->candidateModel->Candidate_Source_ListM();
-        // print_r($socialMedia[0]['SM_IDPK']);exit();
-
-
-        $path             = 'Uploads/new_candidate/';
+        
         $json             = [];
-        $file_name         = $this->request->getFile('file');
-        $file_name         = $this->uploadFile($path, $file_name);
+        $path             = 'Uploads/new_candidate/';
+        $file_name        = $this->request->getFile('file');
         $arr_file         = explode('.', $file_name);
-        $extension         = end($arr_file);
+        $file_name        = $this->uploadFile($path, $file_name);
+        
+        $extension        = end($arr_file);
 
         if ('csv' == $extension) {
             $reader     = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
-            // $reader 	= new \PhpOffice\PhpSpreadsheet\IOFactory::createReader($extension);
         }
-        // else {
-        // $reader 	= new \PhpOffice\PhpSpreadsheet\Reader\Csv();
-        //     $session->setFlashdata('CanidateSuccessMsg','Upload CSV file format only.');
-        // }
         $spreadsheet     = $reader->load($file_name);
         $sheet_data     = $spreadsheet->getActiveSheet()->toArray();
 
@@ -1509,10 +1305,8 @@ class HRController extends BaseController
                     $position = $val[5];
                     $sourceidpk = $this->candidateModel->getSourceIdpk($sourcefield);
                     $positionidpk = $this->candidateModel->getPositionIdpk($position);
-                    // print_r($sourceidpk[0]['SM_IDPK']);exit();
                     $sourceid = $sourceidpk[0]['SM_IDPK'];
                     $position = $positionidpk[0]['IDPK'];
-                    // print_r($position); exit();
 
                     if (!empty($sourceid)) {
                         $source = $sourceidpk[0]['SM_IDPK'];
@@ -1520,13 +1314,13 @@ class HRController extends BaseController
                         $source = 10;
                     }
                     $list[] = [
-                        'CandidateName'                    => $val[1],
-                        'CandidateContactNo'            => $val[2],
-                        'CandidateEmail'                => $val[3],
-                        'Source'                        => $source,
-                        'CandidatePosition'                => $position,
-                        'HR_IDFK'                        => $HR_IDFK,
-                        'user_level'                    => $userLevel
+                        'CandidateName'      => $val[1],
+                        'CandidateContactNo' => $val[2],
+                        'CandidateEmail'     => $val[3],
+                        'Source'             => $source,
+                        'CandidatePosition'  => $position,
+                        'HR_IDFK'            => $HR_IDFK,
+                        'user_level'         => $userLevel
                     ];
                 }
             }
@@ -1545,7 +1339,6 @@ class HRController extends BaseController
                     return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
                 }
             } else {
-
                 $session->setFlashdata('CanidateSuccessMsg', 'Something went wrong. Please try again.');
                 if ($userLevel == 1) {
                     return $this->response->redirect(site_url('/candidate?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
@@ -1561,19 +1354,13 @@ class HRController extends BaseController
                 return $this->response->redirect(site_url('/HRcandidate_List?fdate=' . $fdate . '&todate=' . $todate . '&trickid=12'));
             }
         }
-
-        // print_r($json);exit();
-        // return redirect('add_candidateC');
-
-        // echo json_encode($json);
     }
     public function source_count()
     {
         $session = session();
-        $adminId = $session->get('EmpIDFK');
         $sourceId = $_POST['sourceId'];
+        $adminId = $session->get('EmpIDFK');
         $data['sourceCount'] = $this->candidateModel->getSourceCount($sourceId, $adminId);
-        // print_r($data['sourceCount'][0]['Count']);exit();
         return $data['sourceCount'][0]['Count'];
     }
 
@@ -1581,13 +1368,12 @@ class HRController extends BaseController
     {
         $session = session();
         $data = [
-            'Source' => $this->request->getPost('assignSource'),
+            'adminId' => $session->get('EmpIDFK'),
             'assignto' => $this->request->getPost('assignto'),
+            'Source' => $this->request->getPost('assignSource'),
             'assignCount' => $this->request->getPost('assignCount'),
-            'adminId' => $session->get('EmpIDFK')
         ];
 
-        // print_r($data);exit();
         $count = $this->candidateModel->update_assignToM($data);
         $session->setFlashdata('candidatemsg', 'Assigned Successfully');
         return $this->response->redirect(site_url('/candidate?fdate=&todate=&trickid=12'));
@@ -1596,17 +1382,15 @@ class HRController extends BaseController
     public function reassignCandidatesC()
     {
         $session = session();
-        // $adminId = $session->get('EmpIDFK');
         $data = [
-            'assignfrom' => $this->request->getPost('assignfrom') ?? '',
-            'Source' => $this->request->getPost('assignSource'),
             'assignto' => $this->request->getPost('assignto'),
-            'assignCount' => $this->request->getPost('assignCount'),
-            'assignas' => $this->request->getPost('reassignstatus') ?? 0,
+            'Source' => $this->request->getPost('assignSource'),
             'trickid'  => $this->request->getPost('trickid') ?? 0,
+            'assignCount' => $this->request->getPost('assignCount'),
+            'assignfrom' => $this->request->getPost('assignfrom') ?? '',
+            'assignas' => $this->request->getPost('reassignstatus') ?? 0,
         ];
 
-        // print_r($data);exit();
         $count = $this->candidateModel->update_reassignToM($data);
         $session->setFlashdata('candidatemsg', 'Re Assigned Successfully');
         return $this->response->redirect(site_url('/candidate?fdate=&todate=&trickid=12'));
@@ -1614,13 +1398,10 @@ class HRController extends BaseController
 
     public function scheducleCandidateC()
     {
-        $data = [
-            'canId' => $_GET['canId'],
-        ];
-
-        $data['candidate_details'] = $this->candidateModel->Candidate_DetailsM($data);
-        $data['notScheduleReasons'] = $this->candidateModel->notschedule_reasons_ListM();
+        $data['canId'] = $_GET['canId'];
         $data['selectdesignation'] = $this->empModel->selectdesignationM();
+        $data['notScheduleReasons'] = $this->candidateModel->notschedule_reasons_ListM();
+        $data['candidate_details'] = $this->candidateModel->Candidate_DetailsM($data);
 
         return view('candidates/scheducleCandidate', $data);
     }
@@ -1629,25 +1410,16 @@ class HRController extends BaseController
         $session = session();
         $fdate = date('Y-m-d');
         $todate = date('Y-m-d');
-
         $canId = $this->request->getPost('CandidateId');
-
-        // $InterviewDate = $this->request->getPost('InterviewDate');
-        // $stringdate = "2023/03/21 1:00 PM";
-        // $timestemp = strtotime($InterviewDate);
-        // $InterviewDate = date('Y-m-d H:i', $timestemp);
-        // print_r($InterviewDate);exit();
 
         $data2 = [
             'HR_IDFK' => $session->get('EmpIDFK'),
             'CandidateId' => $this->request->getPost('CandidateId'),
             'InterviewDate' => $this->request->getPost('InterviewDate'),
             'CandidateReason' => $this->request->getPost('CandidateReason'),
-            // 'CandidateResume' => $fileName,
         ];
 
         $save = $this->candidateModel->interviewScheduledM($data2);
-
 
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
@@ -1659,7 +1431,6 @@ class HRController extends BaseController
     public function interviewNotScheduledC()
     {
         $session = session();
-
         $fdate = date('Y-m-d');
         $todate = date('Y-m-d');
 
@@ -1670,15 +1441,13 @@ class HRController extends BaseController
             $callBackdb = $callBack;
         }
         $data2 = [
-            'HR_IDFK' => $session->get('EmpIDFK'),
-            'CandidateId' => $this->request->getPost('CandidateId'),
-            'scheduled' => $this->request->getPost('scheduled'),
             'CallBackDateTime' => $callBackdb,
-            // 'CandidateResume' => $fileName,
+            'HR_IDFK' => $session->get('EmpIDFK'),
+            'scheduled' => $this->request->getPost('scheduled'),
+            'CandidateId' => $this->request->getPost('CandidateId'),
         ];
 
         $save = $this->candidateModel->interviewNotScheduledM($data2);
-
 
         $userLevel = $session->get('user_level');
         if ($userLevel == 42) {
@@ -1689,20 +1458,16 @@ class HRController extends BaseController
     }
     public function edit_Candi_profileC()
     {
-        $data = [
-            'canId' => $_GET['canId'],
-        ];
-
+        $data['canId'] = $_GET['canId'];
         $data['selectdesignation'] = $this->empModel->selectdesignationM();
-        $data['candidate_details'] = $this->candidateModel->Candidate_DetailsM($data);
         $data['notScheduleReasons'] = $this->candidateModel->notschedule_reasons_ListM();
+        $data['candidate_details'] = $this->candidateModel->Candidate_DetailsM($data);
 
         return view('candidates/edit_Candidate_profile', $data);
     }
     public function update_CandiProfileC()
     {
         $canId = $this->request->getPost('CandidateId');
-
         $file = $this->request->getFile('CandidateResume');
         $target_dir = "Uploads/candidates/$canId/";
         if (!file_exists($target_dir)) {
@@ -1717,118 +1482,44 @@ class HRController extends BaseController
         }
 
         $data = [
+            'LastCompany' => $this->request->getPost('LastCompany'),
             'CandidateId' => $this->request->getPost('CandidateId'),
+            'CandidateExperience' => $this->request->getPost('exp'),
+            'NoticePeroid' => $this->request->getPost('NoticePeroid'),
+            'DaysRequired' => $this->request->getPost('DaysRequired'),
             'CandidateName' => $this->request->getPost('CandidateName'),
-            'CandidateContactNo' => $this->request->getPost('CandidateContactNo'),
             'CandidateEmail' => $this->request->getPost('CandidateEmail'),
+            'ImmediateJoiner' => $this->request->getPost('ImmediateJoiner'),
+            'TotalExperience' => $this->request->getPost('TotalExperience'),
             'CandidateLocation' => $this->request->getPost('CandidateLocation'),
             'CandidatePosition' => $this->request->getPost('CandidatePosition'),
+            'CandidateContactNo' => $this->request->getPost('CandidateContactNo'),
             'CandidateEducation' => $this->request->getPost('CandidateEducation'),
-            'CandidateExperience' => $this->request->getPost('exp'),
-            'TotalExperience' => $this->request->getPost('TotalExperience'),
-            'LastCompany' => $this->request->getPost('LastCompany'),
-            'NoticePeroid' => $this->request->getPost('NoticePeroid'),
             'CandidateCurrentCTC' => $this->request->getPost('CandidateCurrentCTC'),
             'CandidateExpectedCTC' => $this->request->getPost('CandidateExpectedCTC'),
-            'ImmediateJoiner' => $this->request->getPost('ImmediateJoiner'),
-            'DaysRequired' => $this->request->getPost('DaysRequired'),
             'CandidateResume' => $fileName,
         ];
 
         $save = $this->candidateModel->edit_Candi_profileM($data);
         return $this->response->redirect(site_url('/' . $this->request->getPost('returnurl') . '?canId=' . $canId));
-        // return $this->response->redirect(site_url('/edit_Candi_profile?canId=' . $canId));
     }
     public function edit_candidateC()
     {
-        $data = [
-            'canId' => $_GET['canId'],
-        ];
-
-        $data['candidate_details'] = $this->candidateModel->Candidate_DetailsM($data);
-        $data['notScheduleReasons'] = $this->candidateModel->notschedule_reasons_ListM();
+        $data['canId'] = $_GET['canId'];
         $data['selectdesignation'] = $this->empModel->selectdesignationM();
+        $data['notScheduleReasons'] = $this->candidateModel->notschedule_reasons_ListM();
+        $data['candidate_details'] = $this->candidateModel->Candidate_DetailsM($data);
 
         return view('candidates/edit_condidate', $data);
     }
 
-    // public function update_candidateApplicatioArrivedC()
-    // {
-    //     // $data = [
-    //     //     'canId' => $_GET['canId'], 
-    //     // ];
-    //     // print_r($data);exit();
-    //     $session = session();
-
-
-    //     $canId = $this->request->getPost('CandidateId');
-    //     // $canName = $this->request->getPost('CandidateName');
-    //     $file = $this->request->getFile('CandidateResume');
-
-    //     $target_dir = "Uploads/candidates/$canId/";
-
-    // 	if (!file_exists($target_dir))
-    //     {
-    //         mkdir('./Uploads/candidates/'.$canId, 0777, true );
-    //     }
-
-    //     if ($file->isValid() && !$file->hasMoved()) {
-    //         $fileName = $file->getClientName();
-    //         $type = $file->getClientMimeType();
-    //         $file->move('Uploads/candidates/'.$canId.'-'.$canName.'/', $fileName);
-    //     }
-    //     // print_r($target_dir);exit();
-
-
-    //     $data = [
-    //         'CandidateId' => $this->request->getPost('CandidateId'),
-    //         'scheduled' => $this->request->getPost('scheduled'),
-    //         'CandidateLocation' => $this->request->getPost('CandidateLocation'),
-    //         'CandidateEducation' => $this->request->getPost('CandidateEducation'),
-    //         'CandidateExperience' => $this->request->getPost('exp'),
-    //         'TotalExperience' => $this->request->getPost('TotalExperience'),
-    //         'LastCompany' => $this->request->getPost('LastCompany'),
-    //         'NoticePeroid' => $this->request->getPost('NoticePeroid'),
-    //         'CandidateCurrentCTC' => $this->request->getPost('CandidateCurrentCTC'),
-    //         'CandidateExpectedCTC' => $this->request->getPost('CandidateExpectedCTC'),
-    //         'ImmediateJoiner' => $this->request->getPost('ImmediateJoiner'),
-    //         'DaysRequired' => $this->request->getPost('DaysRequired'),
-    //         'InterviewDate' => $this->request->getPost('InterviewDate'),
-    //         'CandidateResume' => $fileName,
-    //     ];
-
-    //     // print_r($data);exit();
-
-    //     $save = $this->candidateModel->update_candidate_arrivedM($data);
-
-    //     if($data['scheduled']==10){
-    //         return $this->response->redirect(site_url('/candidates_application?canId='. $canId));
-    //     }else{
-    //         return $this->response->redirect(site_url('/edit_candidate_view?canId='. $canId));
-    //         // $session->setFlashdata('candidatemsg', 'Thank you for Your Update');
-    //     }
-
-
-    // }
     public function update_candidateArrivedC()
     {
-        // $data = [
-        //     'canId' => $_GET['canId'], 
-        // ];
-        // print_r($data);exit();
         $session = session();
-
-
         $canId = $this->request->getPost('CandidateId');
         $canName = $this->request->getPost('CandidateName');
         $file = $this->request->getFile('CandidateResume');
-
         $target_dir = "Uploads/candidates/$canId-$canName/";
-
-        // if (!file_exists($target_dir))
-        // {
-        //     mkdir('./Uploads/candidates/'.$canId.'-'.$canName, 0777, true );
-        // }
 
         if ($file->isValid() && !$file->hasMoved()) {
             $fileName = $file->getClientName();
@@ -1837,14 +1528,7 @@ class HRController extends BaseController
         } else {
             $fileName = '';
         }
-        // print_r($target_dir);exit();
-
-        // $canId = $this->request->getPost('CandidateId');        
-        // $InterviewDate = $this->request->getPost('InterviewDate');
-        // // print_r($InterviewDate);exit();
-        // $InterviewDate = strtotime($InterviewDate); 
-        // $InterviewDate = date("Y-m-d H:i:s", $InterviewDate);
-
+        
         $data = [
             'CandidateId' => $this->request->getPost('CandidateId'),
             'scheduled' => $this->request->getPost('scheduled'),
