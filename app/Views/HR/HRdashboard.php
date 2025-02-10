@@ -297,13 +297,13 @@
                         <label class="form-check-label" for="type2">Announcement</label>
                     </div>
                     <div class="mb-3">
-                        <input class="form-control" name="EventName" id="evt-title" placeholder="Write your subject heading here.">
+                        <input class="form-control" name="EventName" id="evt-title" placeholder="Write your subject heading here." required>
                     </div>
                     <div class="mb-3">
-                        <textarea class="form-control" name="EventDescription" id="evt-description" rows="5" placeholder="Write a message here to share with employees."></textarea>
+                        <textarea class="form-control" name="EventDescription" id="evt-description" rows="5" placeholder="Write a message here to share with employees." required></textarea>
                     </div>
                     <div class="mb-3">
-                        <input class="form-control" type="datetime-local" name="EventDate">
+                        <input class="form-control" type="datetime-local" name="EventDate" required>
                     </div>
                 </div>
                 <div class="modal-footer">

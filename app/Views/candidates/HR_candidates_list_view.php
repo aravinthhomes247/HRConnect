@@ -773,6 +773,51 @@ if (isset($_SESSION['msg'])) {
             $('#filter-group').append(HTML);
         }
 
+        $('.addresumebtn').on("click", function() {
+            $('#Resumefileinput').click();
+        });
+
+        $('#Resumefileinput').on("change", function() {
+            const files = this.files;
+            var name;
+            Array.from(files).forEach(file => {
+                name = file.name;
+            });
+            var HTML = `<div class="file">
+                            <div class="name"> <span> ` + name + ` </span></div>
+                        </div>`;
+            $('#upload').html(HTML);
+        });
+
+        $('.IntDate').daterangepicker({
+            singleDatePicker: true,
+            showDropdowns: true,
+            minDate: moment(),
+            locale: {
+                format: 'YYYY/MM/DD'
+            }
+        });
+
+        $('#IntDate1').on('change', function() {
+            var val = $('#IntDate1').val() + ' ' + $('#IntTime1').val();
+            $('#InterviewDate').val(val);
+        });
+
+        $('#IntTime1').on('change', function() {
+            var val = $('#IntDate1').val() + ' ' + $('#IntTime1').val();
+            $('#InterviewDate').val(val);
+        });
+
+        $('#IntDate2').on('change', function() {
+            var val = $('#IntDate2').val() + ' ' + $('#IntTime2').val();
+            $('#CallBackDateTime').val(val);
+        });
+
+        $('#IntTime2').on('change', function() {
+            var val = $('#IntDate2').val() + ' ' + $('#IntTime2').val();
+            $('#CallBackDateTime').val(val);
+        });
+
         $('a.tab').filter(function() {
             return $(this).data('trackid') == trickid;
         }).addClass('active');

@@ -193,9 +193,6 @@
                         <a href="<?php echo base_url('careers?&fdate=' . date("2020-01-01") . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'careers' || $currentpage == 'applicants' || $currentpage == 'add-career' || $currentpage == 'edit-career') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/career.ico'); ?>" class="sidemenu-img-7"><span>Careers</span></li>
                         </a>
-                        <a href="javascript:void(0);">
-                            <li class="list-group-item candidates-menu"> <img src="<?php echo base_url('../public/images/img/candi.ico'); ?>" class="sidemenu-img-9"><span>Candidates<i class="fa-solid fa-angle-down down-icon"></i><i class="fa-solid fa-angle-up up-icon hidden"></i></span></li>
-                        </a>
                         <a href="<?php echo base_url('HRTickets') ?>">
                             <li class="list-group-item <?= ($currentpage == 'HRTickets') ? 'active' : '' ?>"><img src="<?php echo base_url('../public/images/img/Vector.ico'); ?>" class="sidemenu-img-5"><span>Tickets</span></li>
                         </a>
@@ -204,6 +201,9 @@
                         </a>
                         <a href="<?php echo base_url('/HRleave?fdate=' . $fdate . '&todate=' . $todate) ?>">
                             <li class="list-group-item <?= ($currentpage == 'HRleave') ? 'active' : '' ?>"> <img src="<?php echo base_url('../public/images/img/department.ico'); ?>" class="sidemenu-img-3"><span>Leave</span></li>
+                        </a>
+                        <a href="javascript:void(0);">
+                            <li class="list-group-item candidates-menu"> <img src="<?php echo base_url('../public/images/img/candi.ico'); ?>" class="sidemenu-img-9"><span>Candidates<i class="fa-solid fa-angle-down down-icon"></i><i class="fa-solid fa-angle-up up-icon hidden"></i></span></li>
                         </a>
                         <ul class="sublist <?= in_array($currentpage, ['HRcandidate_List', 'HRmy_overdues', 'HRtodays_activity']) ? '' : 'hidden' ?>">
                             <a href="<?php echo base_url('/HRcandidate_List?trickid=12&fs=&fd=&hr=&fsd-1=&fed-1=&fsd-2=&fed-2=') ?>">
